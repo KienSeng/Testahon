@@ -1,6 +1,6 @@
-import sun.reflect.annotation.ExceptionProxy;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -8,14 +8,21 @@ import java.util.Properties;
  */
 public class PropertiesFileReader {
     Properties prop = new Properties();
-    File file = new File("config.properties");
+    InputStream  propertyFile = null;
 
-    public String getPropertyByKey() throws Exception{
 
+    public String loadProperty(String key) throws Exception{
+        
     }
 
-    public int getPropertyByKey() throws Exception {
+    //For internal use only
+    private String readFromPropertyFile(String key) throws Exception{
+        propertyFile = new FileInputStream("config.properties");
 
+        String data = prop.getProperty(key);
+        Logger.write("readFromPropertyFile(): " + data);
+
+        return data;
     }
 
     private void closeFile() throws Exception{

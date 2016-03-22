@@ -5,5 +5,5 @@ import java.sql.Connection;
  */
 public class Global {
     public static Connection dbConnection;
-
+    public static String propertyFileLocation;
 }
