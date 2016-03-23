@@ -1,6 +1,5 @@
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
-import java.sql.ParameterMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -11,7 +10,7 @@ public class DbConnector {
     private static Statement st;
     private static ResultSet rs;
 
-    public void connectDb(String username, String password, String dbServerName, int port, String dbName) throws Exception{
+    public void connectDb(String username, String password, String dbServerName, int port, String dbName) throws Exception {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         SQLServerDataSource con = new SQLServerDataSource();
 
@@ -32,31 +31,31 @@ public class DbConnector {
         Logger.write("Connecting to SQL Server.");
         Global.dbConnection = con.getConnection();
 
-        if(Global.dbConnection != null){
+        if (Global.dbConnection != null) {
             Logger.write("Connection to SQL Server established.");
         }
     }
 
-    public void disconnectDb() throws Exception{
-        if(!st.isClosed()){
+    public void disconnectDb() throws Exception {
+        if (!st.isClosed()) {
             st.close();
         }
 
-        if(Global.dbConnection == null){
+        if (Global.dbConnection == null) {
             Logger.write("DB Connection has been closed or no connection has not been established.");
         } else {
             Global.dbConnection.close();
         }
     }
 
-    public void executeStatement(String sqlStatement) throws Exception{
+    public void executeStatement(String sqlStatement) throws Exception {
         st = Global.dbConnection.createStatement();
         rs = st.executeQuery(sqlStatement);
         closeStatement();
     }
 
-    public void closeStatement() throws Exception{
-        if(st != null || !st.isClosed()){
+    public void closeStatement() throws Exception {
+        if (st != null || !st.isClosed()) {
             st.close();
         }
     }
