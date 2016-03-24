@@ -1,3 +1,7 @@
+package Database;
+
+import Debugger.Logger;
+import Global.Global;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 import java.sql.ResultSet;
