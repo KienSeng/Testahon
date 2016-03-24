@@ -1,4 +1,7 @@
+package Global;
+
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -7,6 +10,6 @@ import java.util.Map;
 public class Global {
     public static Connection dbConnection;
     public static String propertyFileLocation;
-    public static Map<String, String> propertyMap;
+    public static HashMap<String, String> propertyMap = new HashMap<>();
     public static String propertiesFileLocation;
 }
