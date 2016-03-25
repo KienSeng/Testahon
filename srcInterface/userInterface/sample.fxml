@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
 
-<Accordion id="side_parent_nav" fx:id="side_parent_nav" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.Controller">
-  <panes>
-    <TitledPane animated="false" text="Announcement">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="319.0" prefWidth="386.0" />
-      </content>
-    </TitledPane>
-    <TitledPane animated="false" prefHeight="171.0" prefWidth="202.0" text="QA Corner" />
-    <TitledPane animated="false" text="Server Monitoring" />
-      <TitledPane animated="false" layoutX="10.0" layoutY="60.0" text="Service Monitoring" />
-      <TitledPane animated="false" layoutX="10.0" layoutY="85.0" text="TA Corner" />
-  </panes>
-</Accordion>
+<FlowPane fx:id="layout_flowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.Controller">
+   <children>
+      <VBox fx:id="layout_vbox" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT">
+         <children>
+            <ImageView fx:id="img_header" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../img_header.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Accordion fx:id="side_nav_bar">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <FlowPane.margin>
+            <Insets />
+         </FlowPane.margin></Accordion>
+   </children>
+</FlowPane>
