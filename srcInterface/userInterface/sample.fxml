@@ -4,8 +4,7 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<Accordion xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.Controller">
+<Accordion id="side_parent_nav" fx:id="side_parent_nav" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.Controller">
   <panes>
     <TitledPane animated="false" text="Announcement">
       <content>

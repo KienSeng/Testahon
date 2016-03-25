@@ -5,6 +5,8 @@ import Global.Global;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -34,8 +36,8 @@ public class PropertiesFileReader {
     }
 
     //For internal use only
-    private String readFromPropertyFile(String key) throws Exception {
-        propertyFile = new FileInputStream("config.properties");
+    private String readFromPropertyFile(String filePath, String key) throws Exception {
+        propertyFile = new FileInputStream(filePath);
 
         String data = prop.getProperty(key);
         Logger.write("readFromPropertyFile(): " + data);
@@ -57,5 +59,14 @@ public class PropertiesFileReader {
         }
 
         loadAllPropertyToMap();
+    }
+
+    public static HashMap<String, String> returnAllValueFromPropertyMap() throws Exception{
+        HashMap<String, String> mapToReturn = new HashMap<>();
+        for (Map.Entry<?, ?> entry : Global.propertyMap.entrySet()) {
+            mapToReturn.put(entry.getKey().toString(), entry.getValue().toString());
+        }
+
+        return mapToReturn;
     }
 }

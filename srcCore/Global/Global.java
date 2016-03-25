@@ -11,5 +11,4 @@ public class Global {
     public static Connection dbConnection;
     public static String propertyFileLocation;
     public static HashMap<String, String> propertyMap = new HashMap<>();
-    public static String propertiesFileLocation;
 }
