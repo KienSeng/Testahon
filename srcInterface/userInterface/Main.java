@@ -16,8 +16,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxml = new FXMLLoader(getClass().getResource("/userInterface/sample.fxml"));
         Parent root = fxml.load();
-//        Controller controller = fxml.getController();
-//        controller.setStage(primaryStage);
+        Controller controller = fxml.getController();
+        controller.setStage(primaryStage);
 
         Scene scene = new Scene(root);
         primaryStage.setTitle("JSQA Dashboard");

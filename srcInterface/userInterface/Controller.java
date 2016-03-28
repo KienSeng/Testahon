@@ -1,6 +1,7 @@
 package userInterface;
 
 import PropertiesFile.PropertiesFileReader;
+import com.sun.corba.se.spi.activation.Server;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +33,7 @@ public class Controller{
     @FXML private Accordion side_nav_bar;
     @FXML private ScrollPane main_content_pane;
     @FXML private HBox container_content_hBox;
-    private Stage stage;
+    @FXML private Stage stage;
 
     private int navigationBarFontSize = 15;
 
@@ -38,6 +41,7 @@ public class Controller{
         //Add listener to auto resize header image
         layout_mainVPane.setMinWidth(Double.MAX_VALUE);
         layout_mainVPane.widthProperty().addListener(widthChangedlistener);
+//        layout_mainVPane.widthProperty().addListener(heightChangedlistener);
         layout_mainVPane.setOrientation(Orientation.VERTICAL);
         layout_mainVPane.setColumnHalignment(HPos.CENTER);
 
@@ -45,6 +49,7 @@ public class Controller{
         layout_vbox.setAlignment(Pos.CENTER);
 
         container_content_hBox.setSpacing(20);
+        container_content_hBox.setMinHeight(stage.getScene().getHeight() - 200);
 
         //Set Header image
         File imageFile = new File("/../../img_header.jpg");
@@ -113,10 +118,14 @@ public class Controller{
         @Override
         public void handle(ActionEvent event) {
             if(event.getTarget().toString().contains("Server")){
-                FXMLLoader fxml = new FXMLLoader(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
                 try {
                     main_content_pane.setContent(fxml.load());
-                } catch (IOException e) {
+                    ServerMonitorController serverMonitor = fxml.getController();
+                    serverMonitor.listAllPanePropertyFile();
+                    serverMonitor.setFlowPaneDimension(main_content_pane.getHeight(), main_content_pane.getWidth());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -127,14 +136,15 @@ public class Controller{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             layout_vbox.setMinWidth((Double) newValue);
-            main_content_pane.setMinWidth((Double) newValue - 50);
+            main_content_pane.setMinWidth((Double) newValue - 240);
+
         }
     };
 
     final ChangeListener<Number> heightChangedlistener = new ChangeListener<Number>() {
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-            layout_vbox.setMinHeight((Double) newValue);
+//            layout_vbox.setMinHeight((Double) newValue);
             main_content_pane.setMinHeight((Double) newValue);
 
         }

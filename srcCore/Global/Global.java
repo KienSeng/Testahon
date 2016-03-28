@@ -10,5 +10,6 @@ import java.util.Map;
 public class Global {
     public static Connection dbConnection;
     public static String propertyFileLocation;
+    public static String serverPropertyFileLocation;
     public static HashMap<String, String> propertyMap = new HashMap<>();
 }

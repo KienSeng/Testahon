@@ -5,10 +5,7 @@ import Global.Global;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by kienseng.koh on 3/22/2016.
@@ -36,13 +33,32 @@ public class PropertiesFileReader {
     }
 
     //For internal use only
-    private String readFromPropertyFile(String filePath, String key) throws Exception {
+    public String readFromPropertyFile(String filePath, String key) throws Exception {
         propertyFile = new FileInputStream(filePath);
 
         String data = prop.getProperty(key);
         Logger.write("readFromPropertyFile(): " + data);
 
         return data;
+    }
+
+    private HashMap<String, String> getAllFromPropertyFile (String filePath) throws Exception{
+        HashMap<String, String> propertyMap = new HashMap<>();
+
+        propertyFile = new FileInputStream(filePath);
+        prop.load(propertyFile);
+
+        Set<Object> keys = prop.keySet();
+
+        for (Object k : keys) {
+            String key = (String) k;
+            String value = prop.getProperty(key);
+            propertyMap.put(key, value);
+        }
+
+        closeFile();
+
+        return propertyMap;
     }
 
     public void setFile(String path) throws Exception{
