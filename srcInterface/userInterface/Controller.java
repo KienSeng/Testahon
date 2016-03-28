@@ -1,52 +1,50 @@
 package userInterface;
 
 import PropertiesFile.PropertiesFileReader;
-import com.sun.xml.internal.ws.client.SenderException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
-import sun.reflect.annotation.ExceptionProxy;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Controller{
     @FXML private VBox layout_vbox;
-    @FXML private FlowPane layout_flowPane;
+    @FXML private FlowPane layout_mainVPane;
     @FXML private ImageView img_header;
     @FXML private Accordion side_nav_bar;
     @FXML private ScrollPane main_content_pane;
+    @FXML private HBox container_content_hBox;
+    private Stage stage;
 
     private int navigationBarFontSize = 15;
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
-        layout_flowPane.setMinWidth(Double.MAX_VALUE);
-        layout_flowPane.widthProperty().addListener(widthChangedlistener);
+        layout_mainVPane.setMinWidth(Double.MAX_VALUE);
+        layout_mainVPane.widthProperty().addListener(widthChangedlistener);
+        layout_mainVPane.setOrientation(Orientation.VERTICAL);
+        layout_mainVPane.setColumnHalignment(HPos.CENTER);
 
         layout_vbox.setStyle("-fx-background-color: DAE6F3;");
+        layout_vbox.setAlignment(Pos.CENTER);
+
+        container_content_hBox.setSpacing(20);
 
         //Set Header image
         File imageFile = new File("/../../img_header.jpg");
@@ -100,14 +98,13 @@ public class Controller{
             //Add pane to an array
             side_nav_bar.getPanes().addAll(pane);
 
-            main_content_pane.widthProperty().addListener(widthChangedlistener);
-            main_content_pane.heightProperty().addListener(heightChangedlistener);
             main_content_pane.setStyle("-fx-background-color: DAE6F3;");
-            main_content_pane.setMinHeight(layout_flowPane.getHeight()- 100);
+            main_content_pane.setMinHeight(layout_mainVPane.getHeight()- 100);
             main_content_pane.setFitToHeight(false);
             main_content_pane.setFitToWidth(true);
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
         }
     }
 
@@ -130,7 +127,7 @@ public class Controller{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             layout_vbox.setMinWidth((Double) newValue);
-//            main_content_pane.setMinWidth((Double) newValue - 230);
+            main_content_pane.setMinWidth((Double) newValue - 50);
         }
     };
 
@@ -138,7 +135,12 @@ public class Controller{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             layout_vbox.setMinHeight((Double) newValue);
-//            main_content_pane.setMinHeight((Double) newValue);
+            main_content_pane.setMinHeight((Double) newValue);
+
         }
     };
+
+    public void setStage(Stage stage) throws Exception{
+        this.stage = stage;
+    }
 }
