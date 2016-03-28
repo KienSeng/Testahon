@@ -17,6 +17,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -25,6 +26,7 @@ import javafx.scene.text.TextAlignment;
 import sun.reflect.annotation.ExceptionProxy;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +43,7 @@ public class Controller{
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
-//        layout_flowPane.setMinWidth(Double.MAX_VALUE);
+        layout_flowPane.setMinWidth(Double.MAX_VALUE);
         layout_flowPane.widthProperty().addListener(widthChangedlistener);
 
         layout_vbox.setStyle("-fx-background-color: DAE6F3;");
@@ -88,7 +90,6 @@ public class Controller{
             for(int j = 0; j < childItems.length; j++){
                 Button button = new Button();
                 button.setText(childItems[j]);
-                button.setMinWidth(150);
                 button.setAlignment(Pos.CENTER_LEFT);
                 button.setFont(Font.font(navigationBarFontSize));
                 button.setOnAction(buttonEventHandler);
@@ -102,7 +103,7 @@ public class Controller{
             main_content_pane.widthProperty().addListener(widthChangedlistener);
             main_content_pane.heightProperty().addListener(heightChangedlistener);
             main_content_pane.setStyle("-fx-background-color: DAE6F3;");
-//            main_content_pane.setMinHeight(350);
+            main_content_pane.setMinHeight(layout_flowPane.getHeight()- 100);
             main_content_pane.setFitToHeight(false);
             main_content_pane.setFitToWidth(true);
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -115,9 +116,10 @@ public class Controller{
         @Override
         public void handle(ActionEvent event) {
             if(event.getTarget().toString().contains("Server")){
+                FXMLLoader fxml = new FXMLLoader(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
                 try {
-                    main_content_pane.setContent(setNewFXML("/userInterface/ServerMonitoring.fxml").load());
-                } catch (Exception e) {
+                    main_content_pane.setContent(fxml.load());
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -128,22 +130,15 @@ public class Controller{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             layout_vbox.setMinWidth((Double) newValue);
-            main_content_pane.setMinWidth((Double) newValue - 230);
+//            main_content_pane.setMinWidth((Double) newValue - 230);
         }
     };
 
     final ChangeListener<Number> heightChangedlistener = new ChangeListener<Number>() {
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//            layout_vbox.setMinHeight((Double) newValue);
+            layout_vbox.setMinHeight((Double) newValue);
 //            main_content_pane.setMinHeight((Double) newValue);
         }
     };
-
-    private FXMLLoader setNewFXML(String FXMLFilePath) throws Exception{
-        FXMLLoader fxml = new FXMLLoader();
-        URL location = getClass().getResource(FXMLFilePath);
-        fxml.setLocation(location);
-        return fxml;
-    }
 }

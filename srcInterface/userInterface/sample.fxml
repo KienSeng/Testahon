@@ -27,6 +27,6 @@
          <FlowPane.margin>
             <Insets />
          </FlowPane.margin></Accordion>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" fx:id="main_content_pane"/>
+      <ScrollPane fx:id="main_content_pane" prefHeight="200.0" prefWidth="200.0" />
    </children>
 </FlowPane>
