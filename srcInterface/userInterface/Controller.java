@@ -37,6 +37,8 @@ public class Controller{
 
     private int navigationBarFontSize = 15;
 
+    ServerMonitorController serverMonitor;
+
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
         layout_mainVPane.setMinWidth(Double.MAX_VALUE);
@@ -112,9 +114,13 @@ public class Controller{
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-            btn_exit.setOnAction(e -> System.out.println("aaaaaaaaaaaaaaaaaaaaa"));
+//            btn_exit.setOnAction(e -> );
         }
     }
+
+//    public Double getScrollPaneWidth() throws Exception{
+//
+//    }
 
     @FXML
     private EventHandler<ActionEvent> buttonEventHandler = new EventHandler<ActionEvent>() {
@@ -125,7 +131,10 @@ public class Controller{
                 fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
                 try {
                     main_content_pane.setContent(fxml.load());
-                    ServerMonitorController serverMonitor = fxml.getController();
+                    main_content_pane.widthProperty().addListener(widthChangedlistener);
+                    main_content_pane.heightProperty().addListener(heightChangedlistener);
+
+                    serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -139,7 +148,6 @@ public class Controller{
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             layout_vbox.setMinWidth((Double) newValue);
             main_content_pane.setMinWidth((Double) newValue - 230);
-
         }
     };
 
@@ -147,7 +155,28 @@ public class Controller{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             container_content_hBox.setPrefHeight((Double) newValue - 330);
-//            System.out.println(newValue);
+        }
+    };
+
+    final ChangeListener<Number> scrollPaneWidthChangedlistener = new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+            try {
+                serverMonitor.setFlowPaneWidth((Double) newValue - 50);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    final ChangeListener<Number> scrollPaneHeightChangedlistener = new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+            try {
+                serverMonitor.setFlowPaneHeight((Double) newValue - 50);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     };
 

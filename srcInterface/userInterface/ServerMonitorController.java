@@ -15,6 +15,7 @@ import sun.reflect.annotation.ExceptionProxy;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.PaintEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -24,19 +25,24 @@ public class ServerMonitorController implements Initializable{
     @FXML private FlowPane serverMonitor_FlowPane;
     @FXML private Label lbl_contents;
     @FXML private VBox serverMonitor_vBox;
+    @FXML private Label lbl_healthStatus;
 
     int contentsFontSize = 13;
+    Double flowPaneChildHeight = 0.0;
+    Double flowPaneChildWidth = 0.0;
 
     String serverName = "NA";
     String pingTime = "NA";
     String healthStatus = "NA";
     String lastCheck = "NA";
 
+    Object mainController = null;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serverMonitor_FlowPane.setOrientation(Orientation.HORIZONTAL);
-        serverMonitor_FlowPane.setMinWidth(Double.MAX_VALUE);
+        serverMonitor_FlowPane.setPrefWidth(700);
         System.out.println("HAHAHAHAHAHAHA");
     }
 
@@ -54,20 +60,50 @@ public class ServerMonitorController implements Initializable{
             serverName = singleServer[i].trim();
 
             lbl_contents = new Label();
-            lbl_contents.setText("Server: " + serverName);
+            lbl_contents.setText(updateServerDetailsLabel());
             lbl_contents.setId("lbl_ServerName_" + serverName);
             lbl_contents.setFont(Font.font(contentsFontSize));
+            lbl_contents.setAlignment(Pos.CENTER_LEFT);
+
+            lbl_healthStatus = new Label();
+            lbl_healthStatus.setText(healthStatus);
+            lbl_healthStatus.setId("lbl_HealthStatus_" + serverName);
+            lbl_healthStatus.setFont(Font.font(contentsFontSize + 10));
+            lbl_healthStatus.setAlignment(Pos.CENTER);
 
             serverMonitor_vBox = new VBox();
             serverMonitor_vBox.getChildren().add(lbl_contents);
+            serverMonitor_vBox.getChildren().add(lbl_healthStatus);
             serverMonitor_vBox.setStyle("-fx-background-color: #00FF00");
             serverMonitor_vBox.setSpacing(5);
-            serverMonitor_vBox.setMaxHeight(30);
+            serverMonitor_vBox.setMinWidth(150);
+            serverMonitor_vBox.setMinHeight(70);
+
             serverMonitor_FlowPane.getChildren().add(serverMonitor_vBox);
         }
     }
 
-    private void getAllInfo() throws Exception{
+    private String updateServerDetailsLabel() throws Exception{
+        StringBuilder str = new StringBuilder();
 
+        str.append("Server: " + serverName + "\n");
+        str.append("Ping Time: " + pingTime + "\n");
+        str.append("Last Check: " + lastCheck + "\n");
+
+        return str.toString();
+    }
+
+    private void pingOnce() throws Exception{
+
+    }
+
+    public void setFlowPaneWidth(Double width) throws Exception{
+        serverMonitor_FlowPane.setMinWidth(width);
+        System.out.println(serverMonitor_FlowPane.getWidth());
+    }
+
+    public void setFlowPaneHeight(Double height) throws Exception{
+        serverMonitor_FlowPane.setMinHeight(height);
+        System.out.println(serverMonitor_FlowPane.getHeight());
     }
 }
