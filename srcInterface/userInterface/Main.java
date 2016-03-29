@@ -1,5 +1,6 @@
 package userInterface;
 
+import ServerMonitor.PingTool;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static void main(String[] args) throws Exception{
+//        PingTool.setHostAddress("orion");
+//        PingTool.ping();
         launch(args);
     }
 

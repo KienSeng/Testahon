@@ -2,8 +2,8 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -31,5 +31,6 @@
             <ScrollPane fx:id="main_content_pane" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </HBox>
+      <Button fx:id="btn_exit" mnemonicParsing="false" prefHeight="38.0" prefWidth="138.0" text="Exit" />
    </children>
 </FlowPane>
