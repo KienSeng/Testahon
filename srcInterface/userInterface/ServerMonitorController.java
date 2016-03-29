@@ -27,6 +27,11 @@ public class ServerMonitorController implements Initializable{
 
     int contentsFontSize = 13;
 
+    String serverName = "NA";
+    String pingTime = "NA";
+    String healthStatus = "NA";
+    String lastCheck = "NA";
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -46,9 +51,11 @@ public class ServerMonitorController implements Initializable{
         String[] singleServer = serverList.split(",");
 
         for(int i = 0; i < singleServer.length; i++){
+            serverName = singleServer[i].trim();
+
             lbl_contents = new Label();
-            lbl_contents.setText("Server: " + singleServer[i].trim());
-            lbl_contents.setId("ServerName_" + singleServer[i].trim());
+            lbl_contents.setText("Server: " + serverName);
+            lbl_contents.setId("lbl_ServerName_" + serverName);
             lbl_contents.setFont(Font.font(contentsFontSize));
 
             serverMonitor_vBox = new VBox();
@@ -60,7 +67,7 @@ public class ServerMonitorController implements Initializable{
         }
     }
 
-    private void getAllpingInfo() throws Exception{
+    private void getAllInfo() throws Exception{
 
     }
 }
