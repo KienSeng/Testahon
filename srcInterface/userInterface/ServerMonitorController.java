@@ -42,7 +42,7 @@ public class ServerMonitorController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serverMonitor_FlowPane.setOrientation(Orientation.HORIZONTAL);
-        serverMonitor_FlowPane.setPrefWidth(700);
+//        serverMonitor_FlowPane.setPrefWidth(700);
         System.out.println("HAHAHAHAHAHAHA");
     }
 
@@ -53,7 +53,7 @@ public class ServerMonitorController implements Initializable{
         serverMonitor_FlowPane.setPadding(new Insets(15,15,15,15));
         serverMonitor_FlowPane.setRowValignment(VPos.TOP);
 
-        String serverList = "vela.jobstreet.com, orion.jobstreet.com,libra.jobstreet.com,ta-controller, ta-node-01";
+        String serverList = "vela.jobstreet.com,libra.jobstreet.com,orion.jobstreet.com,ta-controller.jobstreet.com, Drone, Lobster, Chiru, Duiker, Dule, Simian, Horde, Coley, Catla, Maleo, Millerbird, Morepork, Baryonyx, Poacher, Dove, Duck, Swarm, Filly, Maggot";
         String[] singleServer = serverList.split(",");
 
         for(int i = 0; i < singleServer.length; i++){
@@ -99,11 +99,9 @@ public class ServerMonitorController implements Initializable{
 
     public void setFlowPaneWidth(Double width) throws Exception{
         serverMonitor_FlowPane.setMinWidth(width);
-        System.out.println(serverMonitor_FlowPane.getWidth());
     }
 
     public void setFlowPaneHeight(Double height) throws Exception{
         serverMonitor_FlowPane.setMinHeight(height);
-        System.out.println(serverMonitor_FlowPane.getHeight());
     }
 }

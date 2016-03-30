@@ -109,7 +109,7 @@ public class Controller{
             side_nav_bar.setMaxHeight(400);
 
             main_content_pane.setStyle("-fx-background-color: DAE6F3;");
-            main_content_pane.setFitToHeight(true);
+            main_content_pane.setFitToHeight(false);
             main_content_pane.setFitToWidth(true);
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -131,8 +131,8 @@ public class Controller{
                 fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
                 try {
                     main_content_pane.setContent(fxml.load());
-                    main_content_pane.widthProperty().addListener(widthChangedlistener);
-                    main_content_pane.heightProperty().addListener(heightChangedlistener);
+                    main_content_pane.widthProperty().addListener(scrollPaneWidthChangedlistener);
+                    main_content_pane.heightProperty().addListener(scrollPaneHeightChangedlistener);
 
                     serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
