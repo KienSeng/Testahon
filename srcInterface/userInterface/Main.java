@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static void main(String[] args) throws Exception{
-//        PingTool.setHostAddress("orion");
-//        PingTool.ping();
         launch(args);
     }
 

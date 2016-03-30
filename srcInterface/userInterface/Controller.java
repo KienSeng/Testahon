@@ -11,6 +11,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -134,6 +135,7 @@ public class Controller{
                     main_content_pane.setContent(fxml.load());
                     serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
+                    serverMonitor.startPing();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -159,5 +161,4 @@ public class Controller{
     public void setStage(Stage stage) throws Exception{
         this.stage = stage;
     }
-
 }

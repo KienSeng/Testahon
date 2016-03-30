@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -19,7 +20,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.PaintEvent;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class ServerMonitorController implements Initializable{
@@ -30,21 +34,17 @@ public class ServerMonitorController implements Initializable{
     @FXML private Label lbl_healthStatus;
 
     int contentsFontSize = 13;
-    Double flowPaneChildHeight = 0.0;
-    Double flowPaneChildWidth = 0.0;
 
     String serverName = "NA";
     String pingTime = "NA";
     String healthStatus = "NA";
     String lastCheck = "NA";
-
-    Object mainController = null;
+    String[] singleServer;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serverMonitor_FlowPane.setOrientation(Orientation.HORIZONTAL);
-//        serverMonitor_FlowPane.setPrefWidth(700);
         System.out.println("HAHAHAHAHAHAHA");
     }
 
@@ -58,15 +58,15 @@ public class ServerMonitorController implements Initializable{
         PropertiesFileReader propFile = new PropertiesFileReader();
         String serverList = propFile.readFromPropertyFile("DashboardSettings.properties", "Server_To_Monitor");
 
-//        String serverList = "vela.jobstreet.com,libra.jobstreet.com,orion.jobstreet.com,ta-controller.jobstreet.com, Drone, Lobster, Chiru, Duiker, Dule, Simian, Horde, Coley, Catla, Maleo, Millerbird, Morepork, Baryonyx, Poacher, Dove, Duck, Swarm, Filly, Maggot";
-        String[] singleServer = serverList.split(",");
+//        serverList = "vela.jobstreet.com,libra.jobstreet.com,orion.jobstreet.com,ta-controller.jobstreet.com, Drone, Lobster, Chiru, Duiker, Dule, Simian, Horde, Coley, Catla, Maleo, Millerbird, Morepork, Baryonyx, Poacher, Dove, Duck, Swarm, Filly, Maggot";
+        singleServer = serverList.split(",");
 
         for(int i = 0; i < singleServer.length; i++){
             serverName = singleServer[i].trim();
 
-            lbl_contents = new Label();
-            lbl_contents.setText(updateServerDetailsLabel());
+             lbl_contents = new Label();
             lbl_contents.setId("lbl_ServerName_" + serverName);
+            lbl_contents.setText(updateServerDetailsLabel());
             lbl_contents.setFont(Font.font(contentsFontSize));
             lbl_contents.setAlignment(Pos.CENTER_LEFT);
 
@@ -84,6 +84,8 @@ public class ServerMonitorController implements Initializable{
             serverMonitor_vBox.setMinWidth(150);
             serverMonitor_vBox.setMinHeight(70);
 
+            lbl_contents = (Label) serverMonitor_vBox.lookup("#lbl_ServerName_" + singleServer[i]);
+
             serverMonitor_FlowPane.getChildren().add(serverMonitor_vBox);
         }
     }
@@ -98,17 +100,26 @@ public class ServerMonitorController implements Initializable{
         return str.toString();
     }
 
-    private void pingOnce() throws Exception{
+    public void startPing() throws Exception{
         PingTool svrMonitor = new PingTool();
 
+        for(int i = 0; i < singleServer.length; i++){
+            VBox vBox = (VBox) serverMonitor_FlowPane.getChildren().get(i);
+            Label label = (Label) vBox.getChildren().get(0);
 
+            serverName = singleServer[i];
+            pingTime = String.valueOf(svrMonitor.ping(singleServer[i])[1]);
+            lastCheck = getCurrentTime("HH:mm:ss");
+            label.setText(updateServerDetailsLabel());
+        }
     }
 
-    public void setFlowPaneWidth(Double width) throws Exception{
-        serverMonitor_FlowPane.setMinWidth(width);
-    }
+    private String getCurrentTime(String timeFormat) throws Exception{
+        SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
 
-    public void setFlowPaneHeight(Double height) throws Exception{
-        serverMonitor_FlowPane.setMinHeight(height);
+        Date now = new Date();
+        String date = simpleDate.format(now);
+
+        return date;
     }
 }
