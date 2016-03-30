@@ -3,26 +3,19 @@ package userInterface;
 
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.PingTool;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import sun.reflect.annotation.ExceptionProxy;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.PaintEvent;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -44,12 +37,15 @@ public class ServerMonitorController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        serverMonitor_FlowPane.setOrientation(Orientation.HORIZONTAL);
         System.out.println("HAHAHAHAHAHAHA");
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
     public void listAllPanePropertyFile() throws Exception{
+        serverMonitor_FlowPane.setOrientation(Orientation.HORIZONTAL);
         serverMonitor_FlowPane.setHgap(15);
         serverMonitor_FlowPane.setVgap(15);
         serverMonitor_FlowPane.setPadding(new Insets(15,15,15,15));
@@ -100,6 +96,15 @@ public class ServerMonitorController implements Initializable{
         return str.toString();
     }
 
+    private String getCurrentTime(String timeFormat) throws Exception{
+        SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
+
+        Date now = new Date();
+        String date = simpleDate.format(now);
+
+        return date;
+    }
+
     public void startPing() throws Exception{
         PingTool svrMonitor = new PingTool();
 
@@ -114,12 +119,20 @@ public class ServerMonitorController implements Initializable{
         }
     }
 
-    private String getCurrentTime(String timeFormat) throws Exception{
-        SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
+    Task task = new Task<Void>() {
 
-        Date now = new Date();
-        String date = simpleDate.format(now);
-
-        return date;
-    }
+        @Override
+        protected Void call() throws Exception {
+            while(true){
+                Platform.runLater (() -> {
+                    try {
+                        startPing();
+                        Thread.sleep(3000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }
+    };
 }
