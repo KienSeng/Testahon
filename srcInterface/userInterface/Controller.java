@@ -114,13 +114,14 @@ public class Controller{
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-//            btn_exit.setOnAction(e -> );
+            btn_exit.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    stage.close();
+                }
+            });
         }
     }
-
-//    public Double getScrollPaneWidth() throws Exception{
-//
-//    }
 
     @FXML
     private EventHandler<ActionEvent> buttonEventHandler = new EventHandler<ActionEvent>() {
@@ -131,9 +132,6 @@ public class Controller{
                 fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
                 try {
                     main_content_pane.setContent(fxml.load());
-                    main_content_pane.widthProperty().addListener(scrollPaneWidthChangedlistener);
-                    main_content_pane.heightProperty().addListener(scrollPaneHeightChangedlistener);
-
                     serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
                 } catch (Exception e) {
@@ -155,28 +153,6 @@ public class Controller{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             container_content_hBox.setPrefHeight((Double) newValue - 330);
-        }
-    };
-
-    final ChangeListener<Number> scrollPaneWidthChangedlistener = new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-            try {
-                serverMonitor.setFlowPaneWidth((Double) newValue - 50);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    final ChangeListener<Number> scrollPaneHeightChangedlistener = new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-            try {
-                serverMonitor.setFlowPaneHeight((Double) newValue - 50);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     };
 

@@ -25,8 +25,8 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         primaryStage.setTitle("JSQA Dashboard");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(800);
-        primaryStage.setMinHeight(600);
+        primaryStage.setMinWidth(1024);
+        primaryStage.setMinHeight(768);
         primaryStage.setMaximized(true);
         primaryStage.show();
     }
