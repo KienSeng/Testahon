@@ -1,6 +1,8 @@
 package userInterface;
 
 
+import PropertiesFile.PropertiesFileReader;
+import ServerMonitor.PingTool;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
@@ -53,7 +55,10 @@ public class ServerMonitorController implements Initializable{
         serverMonitor_FlowPane.setPadding(new Insets(15,15,15,15));
         serverMonitor_FlowPane.setRowValignment(VPos.TOP);
 
-        String serverList = "vela.jobstreet.com,libra.jobstreet.com,orion.jobstreet.com,ta-controller.jobstreet.com, Drone, Lobster, Chiru, Duiker, Dule, Simian, Horde, Coley, Catla, Maleo, Millerbird, Morepork, Baryonyx, Poacher, Dove, Duck, Swarm, Filly, Maggot";
+        PropertiesFileReader propFile = new PropertiesFileReader();
+        String serverList = propFile.readFromPropertyFile("DashboardSettings.properties", "Server_To_Monitor");
+
+//        String serverList = "vela.jobstreet.com,libra.jobstreet.com,orion.jobstreet.com,ta-controller.jobstreet.com, Drone, Lobster, Chiru, Duiker, Dule, Simian, Horde, Coley, Catla, Maleo, Millerbird, Morepork, Baryonyx, Poacher, Dove, Duck, Swarm, Filly, Maggot";
         String[] singleServer = serverList.split(",");
 
         for(int i = 0; i < singleServer.length; i++){
@@ -94,6 +99,8 @@ public class ServerMonitorController implements Initializable{
     }
 
     private void pingOnce() throws Exception{
+        PingTool svrMonitor = new PingTool();
+
 
     }
 

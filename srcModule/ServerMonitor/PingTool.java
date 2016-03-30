@@ -9,10 +9,9 @@ import java.net.InetAddress;
  * Created by kienseng.koh on 3/24/2016.
  */
 public class PingTool {
-    static String ipAddress;
 
-    public static int ping() throws Exception{
-        InputStream is = Runtime.getRuntime().exec("ping " + ipAddress + " -n 1").getInputStream();
+    public String[] ping(String serverAddress) throws Exception{
+        InputStream is = Runtime.getRuntime().exec("ping " + serverAddress + " -n 1").getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader buff = new BufferedReader (isr);
 
@@ -25,10 +24,10 @@ public class PingTool {
         String[] splittedString = line2.toString().split(" ");
         int averagePing = Integer.parseInt(splittedString[splittedString.length - 1].replace("ms", "").trim());
 
-        return averagePing;
-    }
+        String[] strToReturn = new String[2];
+        strToReturn[0] = serverAddress;
+        strToReturn[1] = String.valueOf(averagePing);
 
-    public static void setHostAddress(String hostAddress) throws Exception{
-        ipAddress = hostAddress;
+        return strToReturn;
     }
 }

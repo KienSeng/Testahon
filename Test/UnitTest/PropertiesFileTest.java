@@ -11,10 +11,10 @@ public class PropertiesFileTest {
     static PropertiesFileReader file = new PropertiesFileReader();
 
     public static void testRetrieveAllValue() throws Exception{
-        Logger.debugMode(true);
-        file.setFile("PropertyTest.properties");
-        file.loadAllPropertyToMap();
-
-        Logger.loopMap("Property Map", Global.propertyMap);
+//        Logger.debugMode(true);
+//        file.setFile("PropertyTest.properties");
+//        file.loadAllPropertyToMap();
+//
+//        Logger.loopMap("Property Map", Global.propertyMap);
     }
 }

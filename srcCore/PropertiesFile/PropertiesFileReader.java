@@ -32,11 +32,13 @@ public class PropertiesFileReader {
         closeFile();
     }
 
-    //For internal use only
     public String readFromPropertyFile(String filePath, String key) throws Exception {
         propertyFile = new FileInputStream(filePath);
+        prop.load(propertyFile);
 
         String data = prop.getProperty(key);
+        closeFile();
+
         Logger.write("readFromPropertyFile(): " + data);
 
         return data;
