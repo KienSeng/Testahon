@@ -14,15 +14,21 @@ public class PingTool {
         InputStream is = Runtime.getRuntime().exec("ping " + serverAddress + " -n 1").getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader buff = new BufferedReader (isr);
+        int averagePing = -1;
 
         String line;
         StringBuilder line2 = new StringBuilder();
         while((line = buff.readLine()) != null){
             line2.append(line + "\n");
+            System.out.println(line2);
         }
 
         String[] splittedString = line2.toString().split(" ");
-        int averagePing = Integer.parseInt(splittedString[splittedString.length - 1].replace("ms", "").trim());
+        try{
+            averagePing = Integer.parseInt(splittedString[splittedString.length - 1].replace("ms", "").trim());
+        }catch (Exception e){
+            averagePing = -1;
+        }
 
         String[] strToReturn = new String[2];
         strToReturn[0] = serverAddress;

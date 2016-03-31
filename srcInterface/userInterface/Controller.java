@@ -135,6 +135,7 @@ public class Controller{
                     main_content_pane.setContent(fxml.load());
                     serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
+//                    serverMonitor.startPing();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -7,8 +7,10 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -32,15 +34,16 @@ public class ServerMonitorController implements Initializable{
     String pingTime = "NA";
     String healthStatus = "NA";
     String lastCheck = "NA";
+
     String[] singleServer;
+
+    boolean paneIsActive = false;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("HAHAHAHAHAHAHA");
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        paneIsActive = true;
     }
 
     @FXML
@@ -57,10 +60,10 @@ public class ServerMonitorController implements Initializable{
 //        serverList = "vela.jobstreet.com,libra.jobstreet.com,orion.jobstreet.com,ta-controller.jobstreet.com, Drone, Lobster, Chiru, Duiker, Dule, Simian, Horde, Coley, Catla, Maleo, Millerbird, Morepork, Baryonyx, Poacher, Dove, Duck, Swarm, Filly, Maggot";
         singleServer = serverList.split(",");
 
-        for(int i = 0; i < singleServer.length; i++){
+        for(int i = 0; i < singleServer.length; i++) {
             serverName = singleServer[i].trim();
 
-             lbl_contents = new Label();
+            lbl_contents = new Label();
             lbl_contents.setId("lbl_ServerName_" + serverName);
             lbl_contents.setText(updateServerDetailsLabel());
             lbl_contents.setFont(Font.font(contentsFontSize));
@@ -75,7 +78,7 @@ public class ServerMonitorController implements Initializable{
             serverMonitor_vBox = new VBox();
             serverMonitor_vBox.getChildren().add(lbl_contents);
             serverMonitor_vBox.getChildren().add(lbl_healthStatus);
-            serverMonitor_vBox.setStyle("-fx-background-color: #00FF00");
+            serverMonitor_vBox.setStyle("-fx-background-color: #C0C0C0");
             serverMonitor_vBox.setSpacing(5);
             serverMonitor_vBox.setMinWidth(150);
             serverMonitor_vBox.setMinHeight(70);
@@ -83,11 +86,19 @@ public class ServerMonitorController implements Initializable{
             lbl_contents = (Label) serverMonitor_vBox.lookup("#lbl_ServerName_" + singleServer[i]);
 
             serverMonitor_FlowPane.getChildren().add(serverMonitor_vBox);
+
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
     private String updateServerDetailsLabel() throws Exception{
         StringBuilder str = new StringBuilder();
+
+        if(pingTime.equals("-1")){
+            pingTime = "NA";
+        }
 
         str.append("Server: " + serverName + "\n");
         str.append("Ping Time: " + pingTime + "\n");
@@ -111,27 +122,45 @@ public class ServerMonitorController implements Initializable{
         for(int i = 0; i < singleServer.length; i++){
             VBox vBox = (VBox) serverMonitor_FlowPane.getChildren().get(i);
             Label label = (Label) vBox.getChildren().get(0);
+            Label healthLabel = (Label) vBox.getChildren().get(1);
 
             serverName = singleServer[i];
             pingTime = String.valueOf(svrMonitor.ping(singleServer[i])[1]);
             lastCheck = getCurrentTime("HH:mm:ss");
+
+            if(Integer.parseInt(pingTime) <= 0){
+                vBox.setStyle("-fx-background-color: #FF0000");
+                healthLabel.setText("OFFLINE");
+            } else {
+                vBox.setStyle("-fx-background-color: #00FF00");
+                healthLabel.setText("ONLINE");
+            }
+
             label.setText(updateServerDetailsLabel());
         }
     }
 
-    Task task = new Task<Void>() {
-
+    Task task = new Task<String>() {
         @Override
-        protected Void call() throws Exception {
+        protected String call() throws Exception {
             while(true){
-                Platform.runLater (() -> {
-                    try {
-                        startPing();
-                        Thread.sleep(3000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                try {
+                    Platform.runLater(() -> {
+                        try {
+                            startPing();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    if(!paneIsActive){
+                        return null;
                     }
-                });
+                    Thread.sleep(15000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
         }
     };
