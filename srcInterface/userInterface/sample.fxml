@@ -25,10 +25,10 @@
          <children>
             <Accordion fx:id="side_nav_bar">
                <cursor>
-                  <Cursor fx:constant="HAND" />
+                  <Cursor fx:constant="DEFAULT" />
                </cursor>
             </Accordion>
-            <ScrollPane fx:id="main_content_pane" fitToHeight="true" fitToWidth="true"/>
+            <ScrollPane fx:id="main_content_pane" fitToHeight="true" fitToWidth="true" />
          </children>
       </HBox>
       <Button fx:id="btn_exit" mnemonicParsing="false" prefHeight="38.0" prefWidth="138.0" text="Exit" />

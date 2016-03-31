@@ -8,17 +8,21 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -35,6 +39,7 @@ public class Controller{
     @FXML private HBox container_content_hBox;
     @FXML private Stage stage;
     @FXML private Button btn_exit;
+    @FXML private TitledPane pane;
 
     private int navigationBarFontSize = 15;
 
@@ -50,7 +55,6 @@ public class Controller{
         layout_mainVPane.setColumnHalignment(HPos.CENTER);
         layout_mainVPane.setVgap(10);
 
-        layout_vbox.setStyle("-fx-background-color: DAE6F3;");
         layout_vbox.setAlignment(Pos.CENTER);
 
         container_content_hBox.setSpacing(20);
@@ -62,7 +66,6 @@ public class Controller{
         img_header.setImage(headerImage);
 
         //Populate navigation bar
-        TitledPane pane;
         PropertiesFileReader file = new PropertiesFileReader();
 
         file.setFile("Layout.properties");
@@ -83,9 +86,9 @@ public class Controller{
         for(int i = 0; i < paneCount; i++){
             pane = new TitledPane();
 
-            GridPane grid = new GridPane();
-            grid.setVgap(4);
-            grid.setPadding(new Insets(5, 5, 5, 30));
+            VBox side_bar_child_vbox = new VBox(10);
+            side_bar_child_vbox.setFillWidth(true);
+            side_bar_child_vbox.setAlignment(Pos.CENTER_LEFT);
 
             pane.setMaxHeight(Double.MAX_VALUE);
             pane.setText(layoutMap.get("left_nav_bar_item_parent_" + i));
@@ -97,24 +100,25 @@ public class Controller{
             //Loop child content array to populate pane
             for(int j = 0; j < childItems.length; j++){
                 Button button = new Button();
-                button.setText(childItems[j]);
-                button.setAlignment(Pos.CENTER_LEFT);
+                button.setText("  " + childItems[j]);
                 button.setFont(Font.font(navigationBarFontSize));
                 button.setOnAction(buttonEventHandler);
+                button.setMinWidth(180);
+                button.setId("sidebarButton");
+                side_bar_child_vbox.getChildren().add(button);
 
-                grid.add(button, 0, j);
-                pane.setContent(grid);
+                pane.setContent(side_bar_child_vbox);
             }
             //Add pane to an array
             side_nav_bar.getPanes().addAll(pane);
-            side_nav_bar.setMaxHeight(400);
+            side_nav_bar.setMaxHeight(200);
 
-            main_content_pane.setStyle("-fx-background-color: DAE6F3;");
             main_content_pane.setFitToHeight(false);
             main_content_pane.setFitToWidth(true);
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+            btn_exit.setId("btnExit");
             btn_exit.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -123,6 +127,8 @@ public class Controller{
             });
         }
     }
+
+
 
     @FXML
     private EventHandler<ActionEvent> buttonEventHandler = new EventHandler<ActionEvent>() {
@@ -135,7 +141,6 @@ public class Controller{
                     main_content_pane.setContent(fxml.load());
                     serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
-//                    serverMonitor.startPing();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

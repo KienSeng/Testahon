@@ -12,8 +12,10 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.net.URL;
@@ -53,6 +55,7 @@ public class ServerMonitorController implements Initializable{
         serverMonitor_FlowPane.setVgap(15);
         serverMonitor_FlowPane.setPadding(new Insets(15,15,15,15));
         serverMonitor_FlowPane.setRowValignment(VPos.TOP);
+        serverMonitor_FlowPane.setStyle("-fx-background-color: #FFFFFF;");
 
         PropertiesFileReader propFile = new PropertiesFileReader();
         String serverList = propFile.readFromPropertyFile("DashboardSettings.properties", "Server_To_Monitor");
@@ -82,6 +85,7 @@ public class ServerMonitorController implements Initializable{
             serverMonitor_vBox.setSpacing(5);
             serverMonitor_vBox.setMinWidth(150);
             serverMonitor_vBox.setMinHeight(70);
+            serverMonitor_vBox.setEffect(new DropShadow());
 
             lbl_contents = (Label) serverMonitor_vBox.lookup("#lbl_ServerName_" + singleServer[i]);
 
@@ -130,9 +134,13 @@ public class ServerMonitorController implements Initializable{
 
             if(Integer.parseInt(pingTime) <= 0){
                 vBox.setStyle("-fx-background-color: #FF0000");
+                healthLabel.setTextFill(Color.web("#FFFFFF"));
+                label.setTextFill(Color.web("#FFFFFF"));
                 healthLabel.setText("OFFLINE");
             } else {
                 vBox.setStyle("-fx-background-color: #00FF00");
+                healthLabel.setTextFill(Color.web("#000000"));
+                label.setTextFill(Color.web("#000000"));
                 healthLabel.setText("ONLINE");
             }
 

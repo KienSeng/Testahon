@@ -21,6 +21,7 @@ public class Main extends Application {
         controller.setStage(primaryStage);
 
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("StyleSheet.css").toExternalForm());
         primaryStage.setTitle("JSQA Dashboard");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1024);
