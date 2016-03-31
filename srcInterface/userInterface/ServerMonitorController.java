@@ -22,8 +22,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ServerMonitorController implements Initializable{
+public class ServerMonitorController implements Initializable, Runnable{
 
     @FXML private FlowPane serverMonitor_FlowPane;
     @FXML private Label lbl_contents;
@@ -39,12 +41,12 @@ public class ServerMonitorController implements Initializable{
 
     String[] singleServer;
 
-    boolean paneIsActive = false;
+    static boolean paneIsActive = false;
+    ExecutorService executor;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("HAHAHAHAHAHAHA");
         paneIsActive = true;
     }
 
@@ -91,8 +93,10 @@ public class ServerMonitorController implements Initializable{
 
             serverMonitor_FlowPane.getChildren().add(serverMonitor_vBox);
 
+            executor = Executors.newFixedThreadPool(3);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
+            thread.setPriority(Thread.MIN_PRIORITY);
             thread.start();
         }
     }
@@ -120,7 +124,7 @@ public class ServerMonitorController implements Initializable{
         return date;
     }
 
-    public void startPing() throws Exception{
+    public Runnable startPing() throws Exception{
         PingTool svrMonitor = new PingTool();
 
         for(int i = 0; i < singleServer.length; i++){
@@ -146,6 +150,7 @@ public class ServerMonitorController implements Initializable{
 
             label.setText(updateServerDetailsLabel());
         }
+        return null;
     }
 
     Task task = new Task<String>() {
@@ -155,13 +160,17 @@ public class ServerMonitorController implements Initializable{
                 try {
                     Platform.runLater(() -> {
                         try {
-                            startPing();
+
+//                            startPing();
+                            Runnable worker = startPing();
+                            executor.submit(worker);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     });
 
                     if(!paneIsActive){
+                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                         return null;
                     }
                     Thread.sleep(15000);
@@ -172,4 +181,19 @@ public class ServerMonitorController implements Initializable{
             }
         }
     };
+
+    public static void stopThread() throws Exception{
+        System.out.println("HHHHHHHHHHHHHHHHH");
+        paneIsActive = false;
+
+    }
+
+    public static boolean isPaneActive() throws Exception{
+        return isPaneActive();
+    }
+
+    @Override
+    public void run() {
+
+    }
 }

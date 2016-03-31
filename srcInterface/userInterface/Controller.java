@@ -14,15 +14,11 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -138,9 +134,23 @@ public class Controller{
                 FXMLLoader fxml = new FXMLLoader();
                 fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
                 try {
+                    deactivateAllThread();
+
                     main_content_pane.setContent(fxml.load());
                     serverMonitor = fxml.getController();
                     serverMonitor.listAllPanePropertyFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(event.getTarget().toString().contains("Service")){
+                try {
+                    deactivateAllThread();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(event.getTarget().toString().contains("YAY")){
+                try {
+                    deactivateAllThread();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -165,5 +175,13 @@ public class Controller{
 
     public void setStage(Stage stage) throws Exception{
         this.stage = stage;
+    }
+
+    private void deactivateAllThread() throws Exception{
+        try{
+            serverMonitor.stopThread();
+        }catch(Exception e){
+
+        }
     }
 }

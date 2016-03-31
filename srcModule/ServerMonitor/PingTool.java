@@ -8,10 +8,10 @@ import java.net.InetAddress;
 /**
  * Created by kienseng.koh on 3/24/2016.
  */
-public class PingTool {
+public class PingTool{
 
     public String[] ping(String serverAddress) throws Exception{
-        InputStream is = Runtime.getRuntime().exec("ping " + serverAddress + " -n 1").getInputStream();
+        InputStream is = Runtime.getRuntime().exec("ping " + serverAddress + " -n 1 -w 400").getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader buff = new BufferedReader (isr);
         int averagePing = -1;
@@ -20,8 +20,8 @@ public class PingTool {
         StringBuilder line2 = new StringBuilder();
         while((line = buff.readLine()) != null){
             line2.append(line + "\n");
-            System.out.println(line2);
         }
+        System.out.println(line2);
 
         String[] splittedString = line2.toString().split(" ");
         try{
