@@ -161,19 +161,17 @@ public class ServerMonitorController implements Initializable, Runnable{
                     Platform.runLater(() -> {
                         try {
 
-//                            startPing();
-                            Runnable worker = startPing();
-                            executor.submit(worker);
+                            startPing();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     });
 
                     if(!paneIsActive){
-                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        System.out.println("Application Stopped");
                         return null;
                     }
-                    Thread.sleep(15000);
+                    Thread.sleep(30000);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -183,7 +181,6 @@ public class ServerMonitorController implements Initializable, Runnable{
     };
 
     public static void stopThread() throws Exception{
-        System.out.println("HHHHHHHHHHHHHHHHH");
         paneIsActive = false;
 
     }

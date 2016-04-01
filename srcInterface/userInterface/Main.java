@@ -1,6 +1,6 @@
 package userInterface;
 
-import ServerMonitor.PingTool;
+import ServerMonitor.ServiceCheck;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,6 +11,8 @@ public class Main extends Application {
 
     public static void main(String[] args) throws Exception{
         launch(args);
+//        ServiceCheck svr = new ServiceCheck();
+//        svr.check("virgo", "ServerChat Dispatcher");
     }
 
     @Override
@@ -21,7 +23,7 @@ public class Main extends Application {
         controller.setStage(primaryStage);
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("StyleSheet.css").toExternalForm());
+//        scene.getStylesheets().add(getClass().getResource("StyleSheet.css").toExternalForm());
         primaryStage.setTitle("JSQA Dashboard");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1024);

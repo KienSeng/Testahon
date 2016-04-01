@@ -50,7 +50,7 @@ public class Controller{
         layout_mainVPane.setOrientation(Orientation.VERTICAL);
         layout_mainVPane.setColumnHalignment(HPos.CENTER);
         layout_mainVPane.setVgap(10);
-
+//        http://hydrus.jobstreet.com:8080/solr/applications/admin/ping
         layout_vbox.setAlignment(Pos.CENTER);
 
         container_content_hBox.setSpacing(20);
