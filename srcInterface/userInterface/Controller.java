@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -40,6 +41,8 @@ public class Controller{
     private int navigationBarFontSize = 15;
 
     ServerMonitorController serverMonitor;
+    SolrMonitorController serviceMonitor;
+    ServerChatMonitorController serverChatMonitor;
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
@@ -50,7 +53,6 @@ public class Controller{
         layout_mainVPane.setOrientation(Orientation.VERTICAL);
         layout_mainVPane.setColumnHalignment(HPos.CENTER);
         layout_mainVPane.setVgap(10);
-//        http://hydrus.jobstreet.com:8080/solr/applications/admin/ping
         layout_vbox.setAlignment(Pos.CENTER);
 
         container_content_hBox.setSpacing(20);
@@ -64,7 +66,7 @@ public class Controller{
         //Populate navigation bar
         PropertiesFileReader file = new PropertiesFileReader();
 
-        file.setFile("Layout.properties");
+        file.setFile("DashboardSettings.properties");
         file.loadAllPropertyToMap();
 
         //Get parent entry for side navigation bar, filter and get total number of entries
@@ -130,9 +132,10 @@ public class Controller{
     private EventHandler<ActionEvent> buttonEventHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-            if(event.getTarget().toString().contains("Server")){
+            if(event.getTarget().toString().contains("Server Status")){
                 FXMLLoader fxml = new FXMLLoader();
                 fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
+
                 try {
                     deactivateAllThread();
 
@@ -142,15 +145,29 @@ public class Controller{
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if(event.getTarget().toString().contains("Service")){
+            } else if(event.getTarget().toString().contains("SOLR")){
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/SolrMonitoring.fxml"));
+
                 try {
                     deactivateAllThread();
+
+                    main_content_pane.setContent(fxml.load());
+                    serviceMonitor = fxml.getController();
+                    serviceMonitor.showPane();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if(event.getTarget().toString().contains("YAY")){
+            } else if(event.getTarget().toString().contains("Serverchat")){
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/ServerChatMonitoring.fxml"));
+
                 try {
                     deactivateAllThread();
+
+                    main_content_pane.setContent(fxml.load());
+                    serverChatMonitor = fxml.getController();
+                    serverChatMonitor.showPane();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -180,6 +197,8 @@ public class Controller{
     private void deactivateAllThread() throws Exception{
         try{
             serverMonitor.stopThread();
+            serviceMonitor.stopThread();
+            serverChatMonitor.stopThread();
         }catch(Exception e){
 
         }

@@ -1,6 +1,7 @@
 package userInterface;
 
 
+import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.PingTool;
 import javafx.application.Platform;
@@ -11,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.FlowPane;
@@ -89,8 +91,6 @@ public class ServerMonitorController implements Initializable, Runnable{
             serverMonitor_vBox.setMinHeight(70);
             serverMonitor_vBox.setEffect(new DropShadow());
 
-            lbl_contents = (Label) serverMonitor_vBox.lookup("#lbl_ServerName_" + singleServer[i]);
-
             serverMonitor_FlowPane.getChildren().add(serverMonitor_vBox);
 
             executor = Executors.newFixedThreadPool(3);
@@ -115,15 +115,6 @@ public class ServerMonitorController implements Initializable, Runnable{
         return str.toString();
     }
 
-    private String getCurrentTime(String timeFormat) throws Exception{
-        SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
-
-        Date now = new Date();
-        String date = simpleDate.format(now);
-
-        return date;
-    }
-
     public Runnable startPing() throws Exception{
         PingTool svrMonitor = new PingTool();
 
@@ -134,7 +125,9 @@ public class ServerMonitorController implements Initializable, Runnable{
 
             serverName = singleServer[i];
             pingTime = String.valueOf(svrMonitor.ping(singleServer[i])[1]);
-            lastCheck = getCurrentTime("HH:mm:ss");
+
+            Time time = new Time();
+            lastCheck = time.getCurrentTime("HH:mm:ss");
 
             if(Integer.parseInt(pingTime) <= 0){
                 vBox.setStyle("-fx-background-color: #FF0000");
@@ -183,10 +176,6 @@ public class ServerMonitorController implements Initializable, Runnable{
     public static void stopThread() throws Exception{
         paneIsActive = false;
 
-    }
-
-    public static boolean isPaneActive() throws Exception{
-        return isPaneActive();
     }
 
     @Override
