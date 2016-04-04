@@ -148,24 +148,49 @@ public class ServerMonitorController implements Initializable, Runnable{
         @Override
         protected String call() throws Exception {
             while(true){
-                try {
-                    Platform.runLater(() -> {
-                        try {
+//                try {
+//                    Platform.runLater(() -> {
+//                        try {
+//
+//                            startPing();
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    });
+//
+//                    if(!paneIsActive){
+//                        System.out.println("Application Stopped");
+//                        return null;
+//                    }
+//                    Thread.sleep(30000);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    return null;
+//                }
+//                try {
+//
+//                    startPing();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                if(!paneIsActive){
+//                        System.out.println("Application Stopped");
+//                        return null;
+//                }
+//                Thread.sleep(30000);
 
-                            startPing();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
+                Platform.runLater(() -> {
+                    try {
+                        startPing();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
-                    if(!paneIsActive){
+                Thread.sleep(30000);
+                if(!paneIsActive){
                         System.out.println("Application Stopped");
                         return null;
-                    }
-                    Thread.sleep(30000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
                 }
             }
         }

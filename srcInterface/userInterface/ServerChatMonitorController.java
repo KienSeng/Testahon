@@ -109,10 +109,10 @@ public class ServerChatMonitorController implements Initializable {
             }
         }
 
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
+//        Thread thread = new Thread(task);
+//        thread.setDaemon(true);
+//        thread.setPriority(Thread.MIN_PRIORITY);
+//        thread.start();
     }
 
     private String updateServerDetailsLabel() throws Exception{
@@ -124,7 +124,6 @@ public class ServerChatMonitorController implements Initializable {
 
         str.append("Server: " + serverName + "\n");
         str.append("Service Name: " + serviceName + "\n");
-        str.append("Service Status: " + serviceStatus + "\n");
         str.append("Last Check: " + lastCheck + "\n");
 
         return str.toString();
@@ -142,7 +141,6 @@ public class ServerChatMonitorController implements Initializable {
 
             serverName = labelId[2];
             serviceName = labelId[3];
-            System.out.println(serverName + "     " + serviceName);
             serviceStatus = serviceMonitor.checkWindowService(labelId[2], labelId[3]);
 
             Time time = new Time();

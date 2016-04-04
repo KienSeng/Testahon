@@ -17,6 +17,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -39,6 +42,9 @@ public class SolrMonitorController implements Initializable {
     static boolean paneIsActive = false;
 
     String[] singleService;
+    HashMap<String, String> serverAndService;
+
+    int totalServiceToCheck;
 
 
     @Override
@@ -59,24 +65,32 @@ public class SolrMonitorController implements Initializable {
 
         singleService = serverList.split(",");
 
-        for (int i = 0; i < singleService.length; i++){
-            serverName = singleService[i].trim();
-            serverDisplayName = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Display_Name");
+        serverAndService = new HashMap<>();
 
-            String[] coreToCheck = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Core").split(",");
+        for (int i = 0; i < singleService.length; i++) {
+            String cores = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Solr_Core_Name");
+            serverAndService.put(singleService[i].trim(), cores);
+        }
 
-            for(int j = 0; j < coreToCheck.length; j++){
-                coreName = coreToCheck[j].trim();
+        Iterator it = serverAndService.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry pair = (Map.Entry)it.next();
+            serverName = pair.getKey().toString();
+            String[] listOfServiceName = pair.getValue().toString().split(",");
 
+            for(int i = 0; i < listOfServiceName.length; i++){
+                totalServiceToCheck++;
+
+                serverName = listOfServiceName[i].trim();
                 lbl_contents = new Label();
-                lbl_contents.setId("lbl_ServerName_" + serverName + "_" + coreName);
+                lbl_contents.setId("lbl_ServerName_" + serverName + "_" + serverName);
                 lbl_contents.setText(updateServerDetailsLabel());
                 lbl_contents.setFont(Font.font(contentsFontSize));
                 lbl_contents.setAlignment(Pos.CENTER_LEFT);
 
                 lbl_coreStatus = new Label();
                 lbl_coreStatus.setText(coreStatus);
-                lbl_coreStatus.setId("lbl_HealthStatus_" + serverName);
+                lbl_coreStatus.setId("lbl_HealthStatus_" + serverName + "_" + serverName);
                 lbl_coreStatus.setFont(Font.font(contentsFontSize + 10));
                 lbl_coreStatus.setAlignment(Pos.CENTER);
 
@@ -103,14 +117,12 @@ public class SolrMonitorController implements Initializable {
 
         str.append("Server: " + serverDisplayName + "\n");
         str.append("Server: " + coreName + "\n");
-        str.append("Core Status: " + coreStatus + "\n");
         str.append("Last Check: " + lastCheck + "\n");
 
         return str.toString();
     }
 
     public Runnable startCheck() throws Exception{
-
         ServiceCheck serviceMonitor = new ServiceCheck();
 
         for(int i = 0; i < singleService.length; i++){
@@ -119,7 +131,9 @@ public class SolrMonitorController implements Initializable {
             String[] labelId = vBox.getChildren().get(0).getId().split("_");
             Label healthLabel = (Label) vBox.getChildren().get(1);
 
-            serverName = singleService[i];
+            serverName = labelId[2];
+            coreName = labelId[3];
+
             coreStatus = serviceMonitor.checkSolrServices(labelId[1], labelId[2]);
 
             Time time = new Time();
