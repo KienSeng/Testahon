@@ -3,6 +3,8 @@ package userInterface;
 import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.ServiceCheck;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -17,6 +19,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -31,8 +36,6 @@ public class ServerChatMonitorController implements Initializable {
     int contentsFontSize = 13;
 
     String serverName = "NA";
-    String serverDisplayName = "NA";
-    String serviceDisplayName= "NA";
     String serviceName = "NA";
     String serviceStatus = "NA";
     String lastCheck = "NA";
@@ -40,6 +43,9 @@ public class ServerChatMonitorController implements Initializable {
     static boolean paneIsActive = false;
 
     String[] singleService;
+    HashMap<String, String> serverAndService;
+
+    int totalServiceToCheck;
 
 
     @Override
@@ -60,18 +66,24 @@ public class ServerChatMonitorController implements Initializable {
 
         singleService = serverList.split(",");
 
-        for (int i = 0; i < singleService.length; i++){
-            serverName = singleService[i].trim();
+        serverAndService = new HashMap<>();
 
-            serverDisplayName = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Display_Name");
-            String[] serviceDisplayNameList = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Serverchat_Display_Name").split(",");
+        for (int i = 0; i < singleService.length; i++) {
+            String service = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Service_Name");
+            serverAndService.put(singleService[i].trim(), service);
+        }
 
-            String[] serviceToCheck = propFile.readFromPropertyFile("DashboardSettings.properties", singleService[i] + "_Serverchat_Name").split(",");
+        Iterator it = serverAndService.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry pair = (Map.Entry)it.next();
 
-            for(int j = 0; j < serviceToCheck.length; j++){
-                serviceName = serviceToCheck[j].trim();
-                serviceDisplayName = serviceDisplayNameList[j].trim();
+            serverName = pair.getKey().toString();
+            String[] listOfServiceName = pair.getValue().toString().split(",");
 
+            for(int i = 0; i < listOfServiceName.length; i++){
+                totalServiceToCheck++;
+
+                serviceName = listOfServiceName[i].trim();
                 lbl_contents = new Label();
                 lbl_contents.setId("lbl_ServerName_" + serverName + "_" + serviceName);
                 lbl_contents.setText(updateServerDetailsLabel());
@@ -80,7 +92,7 @@ public class ServerChatMonitorController implements Initializable {
 
                 lbl_serviceStatus = new Label();
                 lbl_serviceStatus.setText(serviceStatus);
-                lbl_serviceStatus.setId("lbl_HealthStatus_" + serverName);
+                lbl_serviceStatus.setId("lbl_HealthStatus_" + serverName + "_" + serviceName);
                 lbl_serviceStatus.setFont(Font.font(contentsFontSize + 10));
                 lbl_serviceStatus.setAlignment(Pos.CENTER);
 
@@ -96,6 +108,11 @@ public class ServerChatMonitorController implements Initializable {
                 layout_MainFlowPane.getChildren().add(serviceMonitor_vbox);
             }
         }
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     private String updateServerDetailsLabel() throws Exception{
@@ -105,9 +122,9 @@ public class ServerChatMonitorController implements Initializable {
             serviceStatus = "NA";
         }
 
-        str.append("Server: " + serverDisplayName + "\n");
-        str.append("Server: " + serviceDisplayName + "\n");
-        str.append("Core Status: " + serviceStatus + "\n");
+        str.append("Server: " + serverName + "\n");
+        str.append("Service Name: " + serviceName + "\n");
+        str.append("Service Status: " + serviceStatus + "\n");
         str.append("Last Check: " + lastCheck + "\n");
 
         return str.toString();
@@ -117,14 +134,16 @@ public class ServerChatMonitorController implements Initializable {
 
         ServiceCheck serviceMonitor = new ServiceCheck();
 
-        for(int i = 0; i < singleService.length; i++){
+        for(int i = 0; i < totalServiceToCheck; i++){
             VBox vBox = (VBox) layout_MainFlowPane.getChildren().get(i);
             Label label = (Label) vBox.getChildren().get(0);
             String[] labelId = vBox.getChildren().get(0).getId().split("_");
             Label healthLabel = (Label) vBox.getChildren().get(1);
 
-            serverName = singleService[i];
-            serviceStatus = serviceMonitor.checkSolrServices(labelId[1], labelId[2]);
+            serverName = labelId[2];
+            serviceName = labelId[3];
+            System.out.println(serverName + "     " + serviceName);
+            serviceStatus = serviceMonitor.checkWindowService(labelId[2], labelId[3]);
 
             Time time = new Time();
             lastCheck = time.getCurrentTime("HH:mm:ss");
@@ -146,6 +165,33 @@ public class ServerChatMonitorController implements Initializable {
 
         return null;
     }
+
+    Task task = new Task<String>() {
+        @Override
+        protected String call() throws Exception {
+            while(true){
+                try {
+                    Platform.runLater(() -> {
+                        try {
+
+                            startCheck();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    if(!paneIsActive){
+                        System.out.println("Application Stopped");
+                        return null;
+                    }
+                    Thread.sleep(15000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
+    };
 
     public static void stopThread() throws Exception{
         paneIsActive = false;

@@ -44,7 +44,6 @@ public class ServerMonitorController implements Initializable, Runnable{
     String[] singleServer;
 
     static boolean paneIsActive = false;
-    ExecutorService executor;
 
 
     @Override
@@ -93,7 +92,6 @@ public class ServerMonitorController implements Initializable, Runnable{
 
             serverMonitor_FlowPane.getChildren().add(serverMonitor_vBox);
 
-            executor = Executors.newFixedThreadPool(3);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.setPriority(Thread.MIN_PRIORITY);
