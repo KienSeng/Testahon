@@ -16,6 +16,10 @@
     -fx-border-width: 0.3px;
 }
 
+.grid-pane{
+   -fx-border-color: black;
+}
+
 .vbox{
     -fx-alignment: center-left;
 }

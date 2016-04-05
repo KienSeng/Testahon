@@ -10,7 +10,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -43,6 +42,7 @@ public class Controller{
     ServerMonitorController serverMonitor;
     SolrMonitorController serviceMonitor;
     ServerChatMonitorController serverChatMonitor;
+    TAScenarioController TAController;
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
@@ -168,6 +168,18 @@ public class Controller{
                     main_content_pane.setContent(fxml.load());
                     serverChatMonitor = fxml.getController();
                     serverChatMonitor.showPane();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(event.getTarget().toString().contains("Add Test Scenario")){
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/TAScenarios.fxml"));
+
+                try {
+                    deactivateAllThread();
+                    main_content_pane.setContent(fxml.load());
+                    TAController = fxml.getController();
+                    TAController.showPane();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
