@@ -43,19 +43,14 @@ public class ServiceCheck {
 //        http://hydrus.jobstreet.com:8080/solr/applications/admin/ping
         URL url = new URL("http://" + solrServerName + ".jobstreet.com:8080/solr/" + coreName + "/admin/ping");
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.setRequestProperty("Authorization", "Basic anNhcGk6cTZ0UmFkYXQ=");
         connection.setRequestMethod("GET");
         connection.connect();
-        InputStream in = connection.getInputStream();
-
-        String body = in.toString();
-        System.out.println(body);
 
         int code = connection.getResponseCode();
 
         if(code == 200){
-
             return "RUNNING";
-
         } else{
             return "STOPPED";
         }
