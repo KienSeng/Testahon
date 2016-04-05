@@ -12,7 +12,7 @@ public class Main extends Application {
     public static void main(String[] args) throws Exception{
         launch(args);
 //        ServiceCheck svr = new ServiceCheck();
-//        svr.check("virgo", "ServerChat Dispatcher");
+//        svr.checkSolrServices("hydrus", "applications");
     }
 
     @Override

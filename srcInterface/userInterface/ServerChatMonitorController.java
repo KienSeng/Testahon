@@ -109,10 +109,10 @@ public class ServerChatMonitorController implements Initializable {
             }
         }
 
-//        Thread thread = new Thread(task);
-//        thread.setDaemon(true);
-//        thread.setPriority(Thread.MIN_PRIORITY);
-//        thread.start();
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     private String updateServerDetailsLabel() throws Exception{
@@ -157,10 +157,8 @@ public class ServerChatMonitorController implements Initializable {
                 label.setTextFill(Color.web("#000000"));
                 healthLabel.setText("RUNNING");
             }
-
             label.setText(updateServerDetailsLabel());
         }
-
         return null;
     }
 
@@ -171,7 +169,6 @@ public class ServerChatMonitorController implements Initializable {
                 try {
                     Platform.runLater(() -> {
                         try {
-
                             startCheck();
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -3,6 +3,8 @@ package userInterface;
 import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.ServiceCheck;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -76,21 +78,22 @@ public class SolrMonitorController implements Initializable {
         while(it.hasNext()){
             Map.Entry pair = (Map.Entry)it.next();
             serverName = pair.getKey().toString();
-            String[] listOfServiceName = pair.getValue().toString().split(",");
+            String[] listOfCoreName = pair.getValue().toString().split(",");
 
-            for(int i = 0; i < listOfServiceName.length; i++){
+            for(int i = 0; i < listOfCoreName.length; i++){
                 totalServiceToCheck++;
 
-                serverName = listOfServiceName[i].trim();
+                coreName = listOfCoreName[i].trim();
+                System.out.println(serverName + "\t\t" + coreName);
                 lbl_contents = new Label();
-                lbl_contents.setId("lbl_ServerName_" + serverName + "_" + serverName);
+                lbl_contents.setId("lbl_ServerName_" + serverName + "_" + coreName);
                 lbl_contents.setText(updateServerDetailsLabel());
                 lbl_contents.setFont(Font.font(contentsFontSize));
                 lbl_contents.setAlignment(Pos.CENTER_LEFT);
 
                 lbl_coreStatus = new Label();
                 lbl_coreStatus.setText(coreStatus);
-                lbl_coreStatus.setId("lbl_HealthStatus_" + serverName + "_" + serverName);
+                lbl_coreStatus.setId("lbl_HealthStatus_" + serverName + "_" + coreName);
                 lbl_coreStatus.setFont(Font.font(contentsFontSize + 10));
                 lbl_coreStatus.setAlignment(Pos.CENTER);
 
@@ -104,6 +107,11 @@ public class SolrMonitorController implements Initializable {
                 serviceMonitor_vbox.setEffect(new DropShadow());
 
                 layout_MainFlowPane.getChildren().add(serviceMonitor_vbox);
+
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.setPriority(Thread.MIN_PRIORITY);
+                thread.start();
             }
         }
     }
@@ -115,7 +123,7 @@ public class SolrMonitorController implements Initializable {
             coreStatus = "NA";
         }
 
-        str.append("Server: " + serverDisplayName + "\n");
+        str.append("Server: " + serverName + "\n");
         str.append("Server: " + coreName + "\n");
         str.append("Last Check: " + lastCheck + "\n");
 
@@ -125,7 +133,7 @@ public class SolrMonitorController implements Initializable {
     public Runnable startCheck() throws Exception{
         ServiceCheck serviceMonitor = new ServiceCheck();
 
-        for(int i = 0; i < singleService.length; i++){
+        for(int i = 0; i < totalServiceToCheck; i++){
             VBox vBox = (VBox) layout_MainFlowPane.getChildren().get(i);
             Label label = (Label) vBox.getChildren().get(0);
             String[] labelId = vBox.getChildren().get(0).getId().split("_");
@@ -134,7 +142,7 @@ public class SolrMonitorController implements Initializable {
             serverName = labelId[2];
             coreName = labelId[3];
 
-            coreStatus = serviceMonitor.checkSolrServices(labelId[1], labelId[2]);
+            coreStatus = serviceMonitor.checkSolrServices(serverName, coreName);
 
             Time time = new Time();
             lastCheck = time.getCurrentTime("HH:mm:ss");
@@ -153,9 +161,34 @@ public class SolrMonitorController implements Initializable {
 
             label.setText(updateServerDetailsLabel());
         }
-
         return null;
     }
+
+    Task task = new Task<String>() {
+        @Override
+        protected String call() throws Exception {
+            while(true){
+                try {
+                    Platform.runLater(() -> {
+                        try {
+                            startCheck();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    if(!paneIsActive){
+                        System.out.println("Application Stopped");
+                        return null;
+                    }
+                    Thread.sleep(15000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
+    };
 
     public static void stopThread() throws Exception{
         paneIsActive = false;
