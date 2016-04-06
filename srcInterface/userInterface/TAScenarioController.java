@@ -68,7 +68,25 @@ public class TAScenarioController implements Initializable {
     @FXML private Button btn_add;
 
     @FXML private FlowPane layout_flowPane_Review;
-//    @FXML private Label lbl_
+    @FXML private Label lbl_TestClassId_review;
+    @FXML private Label lbl_TestCaseId_review;
+    @FXML private Label lbl_TestSuiteId_review;
+    @FXML private Label lbl_TestMatrixId_review;
+    @FXML private Label lbl_LoginId_review;
+    @FXML private Label lbl_CaseDataId_review;
+    @FXML private Label lbl_TestClassId_review_data;
+    @FXML private Label lbl_TestCaseId_review_data;
+    @FXML private Label lbl_TestSuiteId_review_data;
+    @FXML private Label lbl_TestMatrixId_review_data;
+    @FXML private Label lbl_LoginId_review_data;
+    @FXML private Label lbl_CaseDataId_review_data;
+    @FXML private GridPane grd_review;
+
+    int testClassId = 0;
+    int testCaseId = 0;
+    int testSuiteId = 0;
+    int loginId = 0;
+    int caseDataId = 0;
 
     DbConnector db;
 
@@ -288,14 +306,40 @@ public class TAScenarioController implements Initializable {
         parameterArray.add("String|" + "@PageObjectTable" + "|" + pageObjectTable);
 
         db.executeStoredProc("{call sproc_insertTestDataToDb (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
-
     }
 
     private void generateReviewPane() throws Exception{
         layout_flowPane_Review.setPadding(new Insets(5,0,5,0));
-        layout_flowPane_Review.setStyle("-fx-border-color: grey");
+        layout_flowPane_Review.setStyle("-fx-border-color: red");
         layout_flowPane_Review.setOrientation(Orientation.VERTICAL);
 
+        lbl_TestClassId_review.setText("TestClassId: ");
+        lbl_TestCaseId_review.setText("TestCaseId: ");
+        lbl_TestSuiteId_review.setText("TestSuiteId: ");
+        lbl_TestMatrixId_review.setText("TestMatrixId: ");
+        lbl_LoginId_review.setText("LoginId: ");
+        lbl_CaseDataId_review.setText("CaseDataId: ");
+
+        lbl_TestClassId_review_data.setText(String.valueOf(testClassId));
+        lbl_TestCaseId_review_data.setText(String.valueOf(testCaseId));
+        lbl_TestSuiteId_review_data.setText(String.valueOf(testSuiteId));
+        lbl_TestMatrixId_review_data.setText(String.valueOf(testClassId));
+        lbl_LoginId_review_data.setText(String.valueOf(loginId));
+        lbl_CaseDataId_review_data.setText(String.valueOf(caseDataId));
+
+        grd_review.add(lbl_CaseDataId_review,1,1);
+        grd_review.add(lbl_TestClassId_review,1,2);
+        grd_review.add(lbl_TestCaseId_review,1,3);
+        grd_review.add(lbl_TestSuiteId_review,1,4);
+        grd_review.add(lbl_TestMatrixId_review,1,5);
+        grd_review.add(lbl_LoginId_review,1,6);
+
+        grd_review.add(lbl_CaseDataId_review_data,2,1);
+        grd_review.add(lbl_TestClassId_review_data,2,2);
+        grd_review.add(lbl_TestCaseId_review_data,2,3);
+        grd_review.add(lbl_TestSuiteId_review_data,2,4);
+        grd_review.add(lbl_TestMatrixId_review_data,2,5);
+        grd_review.add(lbl_LoginId_review_data,2,6);
     }
 
     private void connectToTADB() throws Exception{
@@ -326,6 +370,7 @@ public class TAScenarioController implements Initializable {
     EventHandler addButtonClicked = event -> {
         try {
             clearAllTextBox();
+            generateReviewPane();
         } catch (Exception e) {
             e.printStackTrace();
         }
