@@ -7,9 +7,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Created by kienseng.koh on 3/22/2016.
@@ -68,26 +66,24 @@ public class DbConnector {
         return rs;
     }
 
-    public ResultSet executeStoredProc(String storedProcQuery, HashMap<String, String> parameterMap) throws Exception{
+    public ResultSet executeStoredProc(String storedProcQuery, ArrayList<String> parameterArray) throws Exception{
         cs = Global.dbConnection.prepareCall(storedProcQuery);
 
-        int count = 1;
-        Iterator it = parameterMap.entrySet().iterator();
+        for(int i = 0; i < parameterArray.size(); i++){
+            String[] splittedString = parameterArray.get(i).split("|");
+            String parameterType = splittedString[0];
+            String parameterName = splittedString[1];
+            String parameterValue = splittedString[2];
 
-        while(it.hasNext()){
-            Map.Entry pair = (Map.Entry)it.next();
-
-            switch(pair.getKey().toString().toLowerCase()){
-                case "string":
-                    cs.setString(count, pair.getValue().toString());
+            switch(parameterType.toLowerCase()){
+                case "integer":
+                    cs.setInt(parameterName, Integer.parseInt(parameterValue));
                     break;
 
-                case "int":
-                    cs.setInt(count, Integer.parseInt(pair.getValue().toString()));
+                case "string":
+                    cs.setString(parameterName, parameterValue);
                     break;
             }
-
-            count++;
         }
 
         cs.executeUpdate();

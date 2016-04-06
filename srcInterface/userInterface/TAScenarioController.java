@@ -14,9 +14,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import sun.reflect.annotation.ExceptionProxy;
 
 import java.net.URL;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 /**
  * Created by Kien Seng on 05-Apr-16.
@@ -65,6 +67,9 @@ public class TAScenarioController implements Initializable {
     @FXML private Button btn_clearAll;
     @FXML private Button btn_add;
 
+    @FXML private FlowPane layout_flowPane_Review;
+//    @FXML private Label lbl_
+
     DbConnector db;
 
 
@@ -91,11 +96,12 @@ public class TAScenarioController implements Initializable {
         layout_mainFlowPane.setOrientation(Orientation.VERTICAL);
 
         layout_flowPane_ScenarioContainer.setOrientation(Orientation.VERTICAL);
-        layout_flowPane_ScenarioContainer.setStyle("-fx-border-color: black");
+        layout_flowPane_ScenarioContainer.setStyle("-fx-border-color: grey");
         layout_flowPane_ScenarioContainer.setMinHeight(500);
 
         layout_flowPane_ExistNew.setPadding(new Insets(5,0,5,0));
         layout_flowPane_TestType.setPadding(new Insets(5,0,5,0));
+
 
         lbl_testType.setMinWidth(standardLabelWidth);
         lbl_existNew.setMinWidth(standardLabelWidth);
@@ -266,6 +272,29 @@ public class TAScenarioController implements Initializable {
         String testPackage = txt_testPackage.getText();
         String testClass = txt_testClass.getText();
         String pageObjectTable = txt_pageObjectTable.getText();
+
+        ArrayList<String> parameterArray = new ArrayList<>();
+        parameterArray.add("integer|" + "@Existing_TestClassId" + "|" + existingTestClassId);
+        parameterArray.add("integer|" + "@Existing_TestCaseId" + "|" + existingTestCaseId);
+        parameterArray.add("integer|" + "@Existing_TestSuiteId" + "|" + existingTestSuiteId);
+        parameterArray.add("integer|" + "@Existing_TestMatrixId" + "|" + existingTestMatrixId);
+        parameterArray.add("integer|" + "@Existing_TestLoginId" + "|" + existingLoginId);
+        parameterArray.add("String|" + "@API_Key_DEV" + "|" + apiKeyDev);
+        parameterArray.add("String|" + "@API_Key_TA" + "|" + apiKeyTA);
+        parameterArray.add("String|" + "@TestCase_Description" + "|" + testCaseDescription);
+        parameterArray.add("String|" + "@CaseData_Description" + "|" + caseDataDescription);
+        parameterArray.add("String|" + "@TestPackage" + "|" + testPackage);
+        parameterArray.add("String|" + "@TestClass" + "|" + testClass);
+        parameterArray.add("String|" + "@PageObjectTable" + "|" + pageObjectTable);
+
+        db.executeStoredProc("{call sproc_insertTestDataToDb (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
+
+    }
+
+    private void generateReviewPane() throws Exception{
+        layout_flowPane_Review.setPadding(new Insets(5,0,5,0));
+        layout_flowPane_Review.setStyle("-fx-border-color: grey");
+        layout_flowPane_Review.setOrientation(Orientation.VERTICAL);
 
     }
 
