@@ -5,6 +5,7 @@ import sun.misc.IOUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -45,9 +46,15 @@ public class ServiceCheck {
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         connection.setRequestProperty("Authorization", "Basic anNhcGk6cTZ0UmFkYXQ=");
         connection.setRequestMethod("GET");
-        connection.connect();
 
-        int code = connection.getResponseCode();
+        int code = 0;
+
+        try{
+            connection.connect();
+            code = connection.getResponseCode();
+        }catch(ConnectException e){
+            return "STOPPED";
+        }
 
         if(code == 200){
             return "RUNNING";

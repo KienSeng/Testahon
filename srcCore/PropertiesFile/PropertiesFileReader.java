@@ -16,7 +16,7 @@ public class PropertiesFileReader {
     String filePath;
 
     public void loadAllPropertyToMap() throws Exception {
-        propertyFile = new FileInputStream(filePath);
+        propertyFile = ClassLoader.getSystemResourceAsStream(filePath);
         prop.load(propertyFile);
 
         Set<Object> keys = prop.keySet();

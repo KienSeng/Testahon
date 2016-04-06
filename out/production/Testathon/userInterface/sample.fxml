@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<FlowPane fx:id="layout_flowPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.Controller">
+<FlowPane fx:id="layout_mainVPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.Controller">
    <children>
       <VBox fx:id="layout_vbox" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT">
          <children>
@@ -20,13 +21,16 @@
             </ImageView>
          </children>
       </VBox>
-      <Accordion fx:id="side_nav_bar">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-         <FlowPane.margin>
-            <Insets />
-         </FlowPane.margin></Accordion>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" fx:id="main_content_pane"/>
+      <HBox fx:id="container_content_hBox" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Accordion fx:id="side_nav_bar">
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
+            </Accordion>
+            <ScrollPane fx:id="main_content_pane" fitToHeight="true" fitToWidth="true" />
+         </children>
+      </HBox>
+      <Button fx:id="btn_exit" mnemonicParsing="false" prefHeight="38.0" prefWidth="138.0" text="Exit" />
    </children>
 </FlowPane>
