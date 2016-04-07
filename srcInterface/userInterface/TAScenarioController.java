@@ -305,7 +305,7 @@ public class TAScenarioController implements Initializable {
         parameterArray.add("String|" + "@TestClass" + "|" + testClass);
         parameterArray.add("String|" + "@PageObjectTable" + "|" + pageObjectTable);
 
-        db.executeStoredProc("{call sproc_insertTestDataToDb (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
+//        db.executeStoredProc("{call sproc_insertTestDataToDb (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
     }
 
     private void generateReviewPane() throws Exception{
@@ -369,6 +369,7 @@ public class TAScenarioController implements Initializable {
 
     EventHandler addButtonClicked = event -> {
         try {
+            insertToDb();
             clearAllTextBox();
             generateReviewPane();
         } catch (Exception e) {
