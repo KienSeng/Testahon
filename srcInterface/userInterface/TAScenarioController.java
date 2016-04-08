@@ -278,11 +278,11 @@ public class TAScenarioController implements Initializable {
     }
 
     private void insertToDb() throws Exception{
-        Integer existingTestCaseId = Integer.parseInt(txt_existTestCaseId.getText());
-        Integer existingTestClassId = Integer.parseInt(txt_existTestClassId.getText());
-        Integer existingTestSuiteId = Integer.parseInt(cmb_existTestSuiteId.getSelectionModel().getSelectedItem().toString().split(" - ")[0]);
-        Integer existingTestMatrixId = Integer.parseInt(cmb_existTestMatrixId.getSelectionModel().getSelectedItem().toString().split(" - ")[0]);
-        Integer existingLoginId = Integer.parseInt(txt_existLoginId.getText());
+        String existingTestCaseId = txt_existTestCaseId.getText();
+        String existingTestClassId = txt_existTestClassId.getText();
+        String existingTestSuiteId = cmb_existTestSuiteId.getSelectionModel().getSelectedItem().toString().split(" - ")[0];
+        String existingTestMatrixId = cmb_existTestMatrixId.getSelectionModel().getSelectedItem().toString().split(" - ")[0];
+        String existingLoginId = txt_existLoginId.getText();
         String apiKeyDev = txt_apiKeyDev.getText();
         String apiKeyTA = txt_apiKeyTA.getText();
         String testCaseDescription = txt_testCaseDescription.getText();
@@ -291,24 +291,78 @@ public class TAScenarioController implements Initializable {
         String testClass = txt_testClass.getText();
         String pageObjectTable = txt_pageObjectTable.getText();
 
-        ArrayList<String> parameterArray = new ArrayList<>();
-        parameterArray.add("integer|" + "@Existing_TestClassId" + "|" + existingTestClassId);
-        parameterArray.add("integer|" + "@Existing_TestCaseId" + "|" + existingTestCaseId);
-        parameterArray.add("integer|" + "@Existing_TestSuiteId" + "|" + existingTestSuiteId);
-        parameterArray.add("integer|" + "@Existing_TestMatrixId" + "|" + existingTestMatrixId);
-        parameterArray.add("integer|" + "@Existing_TestLoginId" + "|" + existingLoginId);
-        parameterArray.add("String|" + "@API_Key_DEV" + "|" + apiKeyDev);
-        parameterArray.add("String|" + "@API_Key_TA" + "|" + apiKeyTA);
-        parameterArray.add("String|" + "@TestCase_Description" + "|" + testCaseDescription);
-        parameterArray.add("String|" + "@CaseData_Description" + "|" + caseDataDescription);
-        parameterArray.add("String|" + "@TestPackage" + "|" + testPackage);
-        parameterArray.add("String|" + "@TestClass" + "|" + testClass);
-        parameterArray.add("String|" + "@PageObjectTable" + "|" + pageObjectTable);
+        if(existingTestCaseId == null || existingTestCaseId.isEmpty()){
+            existingTestCaseId = "null";
+        }
+        if (existingTestClassId == null || existingTestClassId.isEmpty()){
+            existingTestClassId = "null";
+        }
+        if(existingTestSuiteId == null || existingTestSuiteId.isEmpty()){
+            existingTestSuiteId = "null";
+        }
+        if(existingTestMatrixId == null || existingTestMatrixId.isEmpty()){
+            existingTestMatrixId = "null";
+        }
+        if(existingLoginId == null || existingLoginId.isEmpty()){
+            existingLoginId = "null";
+        }
+        if(apiKeyDev == null || apiKeyDev.isEmpty()){
+            apiKeyDev = "null";
+        }
+        if(apiKeyTA == null && apiKeyTA.isEmpty()){
+            apiKeyTA = "null";
+        }
+        if(testCaseDescription == null || testCaseDescription.isEmpty()){
+            testCaseDescription = "null";
+        }
+        if(caseDataDescription == null || caseDataDescription.isEmpty()){
+            caseDataDescription = "null";
+        }
+        if(testPackage == null || testPackage.isEmpty()){
+            testPackage = "null";
+        }
+        if(testClass == null || testClass.isEmpty()){
+            testClass = "null";
+        }
+        if(pageObjectTable == null || pageObjectTable.isEmpty()){
+            pageObjectTable = "null";
+        }
 
-//        db.executeStoredProc("{call sproc_insertTestDataToDb (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
+
+        ArrayList<String> parameterArray = new ArrayList<>();
+        parameterArray.add("integer|" + "Existing_TestClassId" + "|" + existingTestClassId);
+        parameterArray.add("integer|" + "Existing_TestCaseId" + "|" + existingTestCaseId);
+        parameterArray.add("integer|" + "Existing_TestSuiteId" + "|" + existingTestSuiteId);
+        parameterArray.add("integer|" + "Existing_TestMatrixId" + "|" + existingTestMatrixId);
+        parameterArray.add("integer|" + "Existing_LoginId" + "|" + existingLoginId);
+        parameterArray.add("String|" + "API_Key_DEV" + "|" + apiKeyDev);
+        parameterArray.add("String|" + "API_Key_TA" + "|" + apiKeyTA);
+        parameterArray.add("String|" + "TestCaseDescription" + "|" + testCaseDescription);
+        parameterArray.add("String|" + "CaseDataDescription" + "|" + caseDataDescription);
+        parameterArray.add("String|" + "TestPackage" + "|" + testPackage);
+        parameterArray.add("String|" + "TestClass" + "|" + testClass);
+        parameterArray.add("String|" + "PageObjectTable" + "|" + pageObjectTable);
+
+        db.executeStoredProc("{call sproc_Template_InsertDataToMasterTable (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
     }
 
     private void generateReviewPane() throws Exception{
+        layout_flowPane_Review = new FlowPane();
+        grd_review = new GridPane();
+
+        lbl_TestClassId_review = new Label();
+        lbl_TestCaseId_review = new Label();
+        lbl_TestSuiteId_review = new Label();
+        lbl_TestMatrixId_review = new Label();
+        lbl_LoginId_review = new Label();
+        lbl_CaseDataId_review = new Label();
+        lbl_TestClassId_review_data = new Label();
+        lbl_TestCaseId_review_data = new Label();
+        lbl_TestSuiteId_review_data = new Label();
+        lbl_TestMatrixId_review_data = new Label();
+        lbl_LoginId_review_data = new Label();
+        lbl_CaseDataId_review_data = new Label();
+
         layout_flowPane_Review.setPadding(new Insets(5,0,5,0));
         layout_flowPane_Review.setStyle("-fx-border-color: red");
         layout_flowPane_Review.setOrientation(Orientation.VERTICAL);
@@ -340,6 +394,9 @@ public class TAScenarioController implements Initializable {
         grd_review.add(lbl_TestSuiteId_review_data,2,4);
         grd_review.add(lbl_TestMatrixId_review_data,2,5);
         grd_review.add(lbl_LoginId_review_data,2,6);
+
+        layout_flowPane_Review.getChildren().add(grd_review);
+        layout_mainFlowPane.getChildren().add(layout_flowPane_Review);
     }
 
     private void connectToTADB() throws Exception{

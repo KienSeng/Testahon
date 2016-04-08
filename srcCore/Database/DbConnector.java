@@ -7,6 +7,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 
 /**
@@ -70,23 +71,32 @@ public class DbConnector {
         cs = Global.dbConnection.prepareCall(storedProcQuery);
 
         for(int i = 0; i < parameterArray.size(); i++){
-            String[] splittedString = parameterArray.get(i).split("|");
+            System.out.println(parameterArray.get(i));
+            String[] splittedString = parameterArray.get(i).split("\\|");
             String parameterType = splittedString[0];
             String parameterName = splittedString[1];
             String parameterValue = splittedString[2];
 
             switch(parameterType.toLowerCase()){
                 case "integer":
-                    cs.setInt(parameterName, Integer.parseInt(parameterValue));
+                    if(parameterValue.equalsIgnoreCase("null")){
+                        cs.setNull(parameterName, Types.INTEGER);
+                    }else{
+                        cs.setInt(parameterName, Integer.parseInt(parameterValue));
+                    }
                     break;
 
                 case "string":
-                    cs.setString(parameterName, parameterValue);
+                    if(parameterValue.equalsIgnoreCase("null")){
+                        cs.setNull(parameterName, Types.NVARCHAR);
+                    }else{
+                        cs.setString(parameterName, parameterValue);
+                    }
                     break;
             }
         }
 
-        cs.executeUpdate();
+        rs = cs.executeQuery();
 
         return cs.getResultSet();
     }
