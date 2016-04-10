@@ -81,6 +81,18 @@ public class TAScenarioController implements Initializable {
     @FXML private Button btn_summaryOk;
     @FXML private FlowPane layout_flowPane_ReviewContainer;
 
+    @FXML private StackPane layout_stackPane_DeleteScenario;
+    @FXML private FlowPane layout_flowPane_DeleteScenario_Main;
+    @FXML private FlowPane layout_flowPane_DeleteScenario_LightBox;
+    @FXML private GridPane layout_gridPane_DeleteScenario_Content;
+    @FXML private Label lbl_deleteScenario_CaseDataId;
+    @FXML private Label lbl_deleteScenario_CaseDataDescription;
+    @FXML private TextField txt_deleteScenario_CaseDataId;
+    @FXML private Button btn_deleteScenario_ok;
+    @FXML private Button btn_deleteScenario_clear;
+    @FXML private Button btn_deleteScenario_cancel;
+    @FXML private Button btn_deleteScenario_confirm;
+
     int testClassId = 10000;
     int testCaseId = 10000;
     int testSuiteId = 10000;
@@ -186,6 +198,7 @@ public class TAScenarioController implements Initializable {
 
         layout_stackPane_MainContent.setMaxWidth(layout_flowPane_ScenarioContainer.getMaxWidth());
         layout_stackPane_MainContent.setMaxHeight(layout_flowPane_ScenarioContainer.getMinHeight());
+        generateDeleteScenarioPane();
 
 
         disableTextbox("all");
@@ -446,6 +459,37 @@ public class TAScenarioController implements Initializable {
 
         layout_flowPane_Review.getChildren().add(layout_flowPane_ReviewContainer);
         layout_stackPane_MainContent.getChildren().add(layout_flowPane_Review);
+    }
+
+    private void generateDeleteScenarioPane() throws Exception{
+        layout_flowPane_DeleteScenario_Main = new FlowPane();
+        layout_stackPane_DeleteScenario = new StackPane();
+        layout_gridPane_DeleteScenario_Content = new GridPane();
+        layout_flowPane_DeleteScenario_LightBox = new FlowPane();
+        lbl_deleteScenario_CaseDataId = new Label();
+        lbl_deleteScenario_CaseDataDescription = new Label();
+        txt_deleteScenario_CaseDataId = new TextField();
+        btn_deleteScenario_ok = new Button();
+        btn_deleteScenario_clear = new Button();
+        btn_deleteScenario_cancel = new Button();
+        btn_deleteScenario_confirm = new Button();
+
+        layout_flowPane_DeleteScenario_Main.setAlignment(Pos.CENTER);
+        layout_flowPane_DeleteScenario_Main.setOrientation(Orientation.VERTICAL);
+        layout_flowPane_DeleteScenario_Main.setMaxWidth(300);
+        layout_flowPane_DeleteScenario_Main.setMaxWidth(400);
+
+        lbl_deleteScenario_CaseDataId.setText("CaseDataId: ");
+        lbl_deleteScenario_CaseDataId.setMinWidth(standardLabelWidth);
+
+        txt_deleteScenario_CaseDataId.setMinWidth(standardTextBoxWidth);
+
+        layout_gridPane_DeleteScenario_Content.add(lbl_deleteScenario_CaseDataId, 1, 1);
+        layout_gridPane_DeleteScenario_Content.add(txt_deleteScenario_CaseDataId, 2, 1);
+
+
+        layout_stackPane_DeleteScenario.getChildren().add(layout_flowPane_DeleteScenario_Main);
+        layout_mainFlowPane.getChildren().add(layout_stackPane_DeleteScenario);
     }
 
     private void connectToTADB() throws Exception{
