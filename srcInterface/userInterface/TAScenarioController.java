@@ -2,19 +2,16 @@ package userInterface;
 
 import Database.DbConnector;
 import com.microsoft.sqlserver.jdbc.SQLServerResultSet;
+import javafx.beans.binding.DoubleExpression;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import sun.reflect.annotation.ExceptionProxy;
+import javafx.scene.layout.*;
+import javafx.stage.Popup;
 
 import java.net.URL;
 import java.sql.ResultSet;
@@ -24,7 +21,7 @@ import java.util.ArrayList;
  * Created by Kien Seng on 05-Apr-16.
  */
 public class TAScenarioController implements Initializable {
-
+    @FXML private StackPane layout_stackPane_MainContent;
     @FXML private FlowPane layout_mainFlowPane;
     @FXML private FlowPane layout_flowPane_ScenarioContainer;
     @FXML private FlowPane layout_flowPane_TestType;
@@ -68,25 +65,33 @@ public class TAScenarioController implements Initializable {
     @FXML private Button btn_add;
 
     @FXML private FlowPane layout_flowPane_Review;
-    @FXML private Label lbl_TestClassId_review;
-    @FXML private Label lbl_TestCaseId_review;
-    @FXML private Label lbl_TestSuiteId_review;
-    @FXML private Label lbl_TestMatrixId_review;
-    @FXML private Label lbl_LoginId_review;
-    @FXML private Label lbl_CaseDataId_review;
-    @FXML private Label lbl_TestClassId_review_data;
-    @FXML private Label lbl_TestCaseId_review_data;
-    @FXML private Label lbl_TestSuiteId_review_data;
-    @FXML private Label lbl_TestMatrixId_review_data;
-    @FXML private Label lbl_LoginId_review_data;
-    @FXML private Label lbl_CaseDataId_review_data;
+    @FXML private Label lbl_TestClassId_Summary;
+    @FXML private Label lbl_TestCaseId_Summary;
+    @FXML private Label lbl_TestSuiteId_Summary;
+    @FXML private Label lbl_TestMatrixId_Summary;
+    @FXML private Label lbl_LoginId_Summary;
+    @FXML private Label lbl_CaseDataId_Summary;
+    @FXML private Label lbl_TestClassId_Summary_data;
+    @FXML private Label lbl_TestCaseId_Summary_data;
+    @FXML private Label lbl_TestSuiteId_Summary_data;
+    @FXML private Label lbl_TestMatrixId_Summary_data;
+    @FXML private Label lbl_LoginId_Summary_data;
+    @FXML private Label lbl_CaseDataId_Summary_data;
     @FXML private GridPane grd_review;
+    @FXML private Button btn_summaryOk;
+    @FXML private FlowPane layout_flowPane_ReviewContainer;
 
-    int testClassId = 0;
-    int testCaseId = 0;
-    int testSuiteId = 0;
-    int loginId = 0;
-    int caseDataId = 0;
+    int testClassId = 10000;
+    int testCaseId = 10000;
+    int testSuiteId = 10000;
+    int testMatrixId = 10000;
+    int loginId = 10000;
+    int caseDataId = 10000;
+
+    Double radioButtonWidth = 100.0;
+    Double standardLabelWidth = 150.0;
+    Double standardTextBoxWidth = 200.0;
+    Double standardButtonWidth = 80.0;
 
     DbConnector db;
 
@@ -94,32 +99,27 @@ public class TAScenarioController implements Initializable {
     @Override
     public void initialize(URL location, java.util.ResourceBundle resources) {
         try{
-            connectToTADB();
+//            connectToTADB();
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
     public void showPane() throws Exception{
-        Double radioButtonWidth = 100.0;
-        Double standardLabelWidth = 150.0;
-        Double standardTextBoxWidth = 200.0;
-        Double standardButtonWidth = 80.0;
 
         layout_mainFlowPane.setHgap(15);
         layout_mainFlowPane.setVgap(15);
         layout_mainFlowPane.setPadding(new Insets(15,15,15,15));
-        layout_mainFlowPane.setStyle("-fx-background-color: #C0C0C0");
-        layout_mainFlowPane.setPrefWidth(Double.MAX_VALUE);
-        layout_mainFlowPane.setOrientation(Orientation.VERTICAL);
+        layout_mainFlowPane.setAlignment(Pos.TOP_LEFT);
+        layout_mainFlowPane.setMaxWidth(Double.MAX_VALUE);
 
         layout_flowPane_ScenarioContainer.setOrientation(Orientation.VERTICAL);
-        layout_flowPane_ScenarioContainer.setStyle("-fx-border-color: grey");
+        layout_flowPane_ScenarioContainer.setAlignment(Pos.CENTER);
         layout_flowPane_ScenarioContainer.setMinHeight(500);
+        layout_flowPane_ScenarioContainer.setMaxWidth(450);
 
         layout_flowPane_ExistNew.setPadding(new Insets(5,0,5,0));
         layout_flowPane_TestType.setPadding(new Insets(5,0,5,0));
-
 
         lbl_testType.setMinWidth(standardLabelWidth);
         lbl_existNew.setMinWidth(standardLabelWidth);
@@ -144,7 +144,6 @@ public class TAScenarioController implements Initializable {
 
         layout_separator_Scenario.setPadding(new Insets(5,0,5,0));
 
-        grd_content.setStyle("-fx-border-color: black");
         grd_content.setPadding(new Insets(5,0,5,0));
         grd_content.setVgap(5);
 
@@ -178,10 +177,16 @@ public class TAScenarioController implements Initializable {
         layout_flowPane_Confirmation.setVgap(10);
         layout_flowPane_Confirmation.setHgap(60);
 
+        btn_add.setId("btn_add");
+        btn_clearAll.setId("btn_clearAll");
         btn_add.setMinWidth(standardButtonWidth);
         btn_clearAll.setMinWidth(standardButtonWidth);
         btn_add.setOnAction(addButtonClicked);
         btn_clearAll.setOnAction(clearButtonClicked);
+
+        layout_stackPane_MainContent.setMaxWidth(layout_flowPane_ScenarioContainer.getMaxWidth());
+        layout_stackPane_MainContent.setMaxHeight(layout_flowPane_ScenarioContainer.getMinHeight());
+
 
         disableTextbox("all");
         populateTestMatrixIdComboBox();
@@ -349,54 +354,98 @@ public class TAScenarioController implements Initializable {
     private void generateReviewPane() throws Exception{
         layout_flowPane_Review = new FlowPane();
         grd_review = new GridPane();
+        layout_flowPane_ReviewContainer = new FlowPane();
+        btn_summaryOk = new Button();
+        lbl_TestClassId_Summary = new Label();
+        lbl_TestCaseId_Summary = new Label();
+        lbl_TestSuiteId_Summary = new Label();
+        lbl_TestMatrixId_Summary = new Label();
+        lbl_LoginId_Summary = new Label();
+        lbl_CaseDataId_Summary = new Label();
+        lbl_TestClassId_Summary_data = new Label();
+        lbl_TestCaseId_Summary_data = new Label();
+        lbl_TestSuiteId_Summary_data = new Label();
+        lbl_TestMatrixId_Summary_data = new Label();
+        lbl_LoginId_Summary_data = new Label();
+        lbl_CaseDataId_Summary_data = new Label();
 
-        lbl_TestClassId_review = new Label();
-        lbl_TestCaseId_review = new Label();
-        lbl_TestSuiteId_review = new Label();
-        lbl_TestMatrixId_review = new Label();
-        lbl_LoginId_review = new Label();
-        lbl_CaseDataId_review = new Label();
-        lbl_TestClassId_review_data = new Label();
-        lbl_TestCaseId_review_data = new Label();
-        lbl_TestSuiteId_review_data = new Label();
-        lbl_TestMatrixId_review_data = new Label();
-        lbl_LoginId_review_data = new Label();
-        lbl_CaseDataId_review_data = new Label();
+        lbl_TestClassId_Summary.setId("lbl_gridContent");
+        lbl_TestCaseId_Summary.setId("lbl_gridContent");
+        lbl_TestSuiteId_Summary.setId("lbl_gridContent");
+        lbl_TestMatrixId_Summary.setId("lbl_gridContent");
+        lbl_LoginId_Summary.setId("lbl_gridContent");
+        lbl_CaseDataId_Summary.setId("lbl_gridContent");
+        lbl_TestClassId_Summary_data.setId("lbl_gridContent");
+        lbl_TestCaseId_Summary_data.setId("lbl_gridContent");
+        lbl_TestSuiteId_Summary_data.setId("lbl_gridContent");
+        lbl_TestMatrixId_Summary_data.setId("lbl_gridContent");
+        lbl_LoginId_Summary_data.setId("lbl_gridContent");
+        lbl_CaseDataId_Summary_data.setId("lbl_gridContent");
 
-        layout_flowPane_Review.setPadding(new Insets(5,0,5,0));
-        layout_flowPane_Review.setStyle("-fx-border-color: red");
+        lbl_TestClassId_Summary.setText("TestClassId: ");
+        lbl_TestCaseId_Summary.setText("TestCaseId: ");
+        lbl_TestSuiteId_Summary.setText("TestSuiteId: ");
+        lbl_TestMatrixId_Summary.setText("TestMatrixId: ");
+        lbl_LoginId_Summary.setText("LoginId: ");
+        lbl_CaseDataId_Summary.setText("CaseDataId: ");
+
+        lbl_TestClassId_Summary_data.setText(String.valueOf(testClassId));
+        lbl_TestCaseId_Summary_data.setText(String.valueOf(testCaseId));
+        lbl_TestSuiteId_Summary_data.setText(String.valueOf(testSuiteId));
+        lbl_TestMatrixId_Summary_data.setText(String.valueOf(testMatrixId));
+        lbl_LoginId_Summary_data.setText(String.valueOf(loginId));
+        lbl_CaseDataId_Summary_data.setText(String.valueOf(caseDataId));
+
+        int reviewWidth = 100;
+        lbl_TestClassId_Summary.setMinWidth(reviewWidth);
+        lbl_TestCaseId_Summary.setMinWidth(reviewWidth);
+        lbl_TestSuiteId_Summary.setMinWidth(reviewWidth);
+        lbl_TestMatrixId_Summary.setMinWidth(reviewWidth);
+        lbl_LoginId_Summary.setMinWidth(reviewWidth);
+        lbl_CaseDataId_Summary.setMinWidth(reviewWidth);
+
+        btn_summaryOk.setId("btn_summaryOk");
+        btn_summaryOk.setText("OK");
+        btn_summaryOk.setMinWidth(standardButtonWidth);
+        btn_summaryOk.setOnAction(summaryButtonOkClicked);
+
+        grd_review.setId("grd_review");
+        grd_review.add(lbl_CaseDataId_Summary,1,1);
+        grd_review.add(lbl_TestClassId_Summary,1,2);
+        grd_review.add(lbl_TestCaseId_Summary,1,3);
+        grd_review.add(lbl_TestSuiteId_Summary,1,4);
+        grd_review.add(lbl_TestMatrixId_Summary,1,5);
+        grd_review.add(lbl_LoginId_Summary,1,6);
+
+        grd_review.add(lbl_CaseDataId_Summary_data,2,1);
+        grd_review.add(lbl_TestClassId_Summary_data,2,2);
+        grd_review.add(lbl_TestCaseId_Summary_data,2,3);
+        grd_review.add(lbl_TestSuiteId_Summary_data,2,4);
+        grd_review.add(lbl_TestMatrixId_Summary_data,2,5);
+        grd_review.add(lbl_LoginId_Summary_data,2,6);
+        grd_review.setHgap(10);
+        grd_review.setVgap(10);
+        grd_review.setMinWidth(170);
+
+        layout_flowPane_ReviewContainer.setId("layout_flowPane_ReviewContainer");
+        layout_flowPane_ReviewContainer.setPadding(new Insets(5,0,5,0));
+        layout_flowPane_ReviewContainer.setOrientation(Orientation.VERTICAL);
+        layout_flowPane_ReviewContainer.setRowValignment(VPos.CENTER);
+        layout_flowPane_ReviewContainer.setColumnHalignment(HPos.CENTER);
+        layout_flowPane_ReviewContainer.setVgap(10);
+        layout_flowPane_ReviewContainer.setMaxHeight(215);
+
+        layout_flowPane_ReviewContainer.getChildren().add(grd_review);
+        layout_flowPane_ReviewContainer.getChildren().add(btn_summaryOk);
+
+        layout_flowPane_Review.setId("layout_flowPane_Review");
+        layout_flowPane_Review.setVgap(5);
+        layout_flowPane_Review.setHgap(5);
         layout_flowPane_Review.setOrientation(Orientation.VERTICAL);
+        layout_flowPane_Review.setAlignment(Pos.CENTER);
 
-        lbl_TestClassId_review.setText("TestClassId: ");
-        lbl_TestCaseId_review.setText("TestCaseId: ");
-        lbl_TestSuiteId_review.setText("TestSuiteId: ");
-        lbl_TestMatrixId_review.setText("TestMatrixId: ");
-        lbl_LoginId_review.setText("LoginId: ");
-        lbl_CaseDataId_review.setText("CaseDataId: ");
-
-        lbl_TestClassId_review_data.setText(String.valueOf(testClassId));
-        lbl_TestCaseId_review_data.setText(String.valueOf(testCaseId));
-        lbl_TestSuiteId_review_data.setText(String.valueOf(testSuiteId));
-        lbl_TestMatrixId_review_data.setText(String.valueOf(testClassId));
-        lbl_LoginId_review_data.setText(String.valueOf(loginId));
-        lbl_CaseDataId_review_data.setText(String.valueOf(caseDataId));
-
-        grd_review.add(lbl_CaseDataId_review,1,1);
-        grd_review.add(lbl_TestClassId_review,1,2);
-        grd_review.add(lbl_TestCaseId_review,1,3);
-        grd_review.add(lbl_TestSuiteId_review,1,4);
-        grd_review.add(lbl_TestMatrixId_review,1,5);
-        grd_review.add(lbl_LoginId_review,1,6);
-
-        grd_review.add(lbl_CaseDataId_review_data,2,1);
-        grd_review.add(lbl_TestClassId_review_data,2,2);
-        grd_review.add(lbl_TestCaseId_review_data,2,3);
-        grd_review.add(lbl_TestSuiteId_review_data,2,4);
-        grd_review.add(lbl_TestMatrixId_review_data,2,5);
-        grd_review.add(lbl_LoginId_review_data,2,6);
-
-        layout_flowPane_Review.getChildren().add(grd_review);
-        layout_mainFlowPane.getChildren().add(layout_flowPane_Review);
+        layout_flowPane_Review.getChildren().add(layout_flowPane_ReviewContainer);
+        layout_stackPane_MainContent.getChildren().add(layout_flowPane_Review);
     }
 
     private void connectToTADB() throws Exception{
@@ -413,6 +462,8 @@ public class TAScenarioController implements Initializable {
     };
 
     EventHandler existNewRadioButtonActionEvent = event -> {
+//        Button btn = (Button) event.getSource();
+//        String id = btn.getId();
         try{
             if(rd_exist.isSelected()){
                 disableTextbox("exist");
@@ -426,7 +477,7 @@ public class TAScenarioController implements Initializable {
 
     EventHandler addButtonClicked = event -> {
         try {
-            insertToDb();
+//            insertToDb();
             clearAllTextBox();
             generateReviewPane();
         } catch (Exception e) {
@@ -437,6 +488,14 @@ public class TAScenarioController implements Initializable {
     EventHandler clearButtonClicked = event -> {
         try {
             clearAllTextBox();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    };
+
+    EventHandler summaryButtonOkClicked = event -> {
+        try {
+            layout_stackPane_MainContent.getChildren().remove(1);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,16 +1,17 @@
 .root{
-    -fx-background: white;
+    common_background_color: white;
+    -fx-background: common_background_color;
 }
 
 .titled-pane > .title {
-    -fx-background-color: white;
+    -fx-background-color: common_background_color;
     -fx-body-color: white;
     -fx-border-color: grey;
     -fx-border-width: 0.3px;
 }
 
 .titled-pane > .content {
-    -fx-background-color: white;
+    -fx-background-color: common_background_color;
     -fx-body-color: white;
     -fx-border-color: grey;
     -fx-border-width: 0.3px;
@@ -20,16 +21,16 @@
    -fx-border-color: black;
 }
 
-.vbox{
-    -fx-alignment: center-left;
-}
-
 .button{
-    -fx-background-color: white;
+    -fx-background-color: common_background_color;
 }
 
 #sidebarButton{
     -fx-alignment: center-left;
+}
+
+#sidebarButton:pressed{
+    -fx-text-fill: red;
 }
 
 #contentScrollPane{
@@ -49,8 +50,8 @@
 }
 
 .button:pressed{
-    -fx-background-color: #0066FF;
-    -fx-text-fill: white;
+    -fx-background-color: white;
+    -fx-text-fill: black;
 }
 
 .button:hover{
@@ -66,6 +67,19 @@
     -fx-border-color: red;
 }
 
+#layout_flowPane_Review{
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+#layout_flowPane_ReviewContainer{
+    -fx-background-color: common_background_color;
+    -fx-border-color: grey;
+}
+
+#layout_flowPane_ScenarioContainer{
+    -fx-border-color: grey;
+}
+
 #btnExit{
     -fx-background-color: white;
     -fx-border-width: 0.3px;
@@ -77,9 +91,48 @@
     -fx-background-color: #990000;
     -fx-font-size: 20;
     -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-border-width: 1px;
+    -fx-border-width: 0.3px;
 }
 
-#layout_flowPane_Review{
+#btn_summaryOk{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
     -fx-border-color: grey;
+    -fx-opacity: 1;
+}
+
+#btn_summaryOk:hover{
+    -fx-background-color: #990000;
+    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
+    -fx-border-width: 0.3px;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
+
+#btn_add{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+    -fx-opacity: 1;
+}
+
+#btn_add:hover{
+    -fx-background-color: #009933;
+    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
+    -fx-border-width: 0.3px;
+    -fx-opacity: 1;
+}
+
+#btn_clearAll{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+    -fx-opacity: 1;
+}
+
+#btn_clearAll:hover{
+    -fx-background-color: #990000;
+    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
+    -fx-border-width: 0.3px;
+    -fx-opacity: 1;
 }

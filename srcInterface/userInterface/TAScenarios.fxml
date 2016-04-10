@@ -10,79 +10,84 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 
 <FlowPane fx:id="layout_mainFlowPane" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.TAScenarioController">
    <children>
-      <FlowPane fx:id="layout_flowPane_ScenarioContainer">
+      <StackPane fx:id="layout_stackPane_MainContent" prefHeight="150.0" prefWidth="200.0">
          <children>
-            <FlowPane fx:id="layout_flowPane_TestType">
+            <FlowPane fx:id="layout_flowPane_ScenarioContainer">
                <children>
-                  <Label fx:id="lbl_testType" text="Select type of test: " />
-                  <RadioButton fx:id="rd_testType_API" mnemonicParsing="false" text="API" />
-                  <RadioButton fx:id="rd_testType_GUI" mnemonicParsing="false" text="GUI" />
-               </children>
-            </FlowPane>
-            <FlowPane fx:id="layout_flowPane_ExistNew">
-               <children>
-                  <Label fx:id="lbl_existNew" text="Existing/New test: " />
-                  <RadioButton fx:id="rd_exist" mnemonicParsing="false" text="Existing" />
-                  <RadioButton fx:id="rd_new" mnemonicParsing="false" text="New" />
-               </children>
-            </FlowPane>
-            <Separator fx:id="layout_separator_Scenario" />
-            <GridPane fx:id="grd_content">
-               <children>
-                  <Label fx:id="lbl_existTestClassId" text="\@Existing_TestClassId" />
-                  <Label fx:id="lbl_existTestCaseId" text="\@Existing_TestCaseId" GridPane.rowIndex="1" />
-                  <Label fx:id="lbl_existTestSuiteId" text="\@Existing_TestSuiteId" GridPane.rowIndex="2" />
-                  <Label fx:id="lbl_existTestMatrixId" text="\@Existing_TestMatrixId" GridPane.rowIndex="3" />
-                  <Label fx:id="lbl_existLoginId" text="\@Existing_LoginId" GridPane.rowIndex="4" />
-                  <TextField fx:id="txt_existTestClassId" GridPane.columnIndex="1" />
-                  <Label fx:id="lbl_testCaseDescription" text="TestCase_Description" GridPane.rowIndex="7" />
-                  <Label fx:id="lbl_caseDataDescription" text="CaseData_Description" GridPane.rowIndex="8" />
-                  <Label fx:id="lbl_testPackage" text="TestPackage" GridPane.rowIndex="9" />
-                  <Label fx:id="lbl_testClass" text="TestClass" GridPane.rowIndex="10" />
-                  <Label fx:id="lbl_pageObjectTable" text="PageObjectTable" GridPane.rowIndex="11" />
-                  <TextField fx:id="txt_existTestCaseId" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="txt_existLoginId" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <TextField fx:id="txt_testCaseDescription" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                  <TextField fx:id="txt_caseDataDescription" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                  <TextField fx:id="txt_testPackage" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                  <TextField fx:id="txt_testClass" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                  <TextField fx:id="txt_pageObjectTable" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                  <ComboBox fx:id="cmb_existTestSuiteId" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <ComboBox fx:id="cmb_existTestMatrixId" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label fx:id="lbl_apiKeyDev" text="\@API_Key_DEV" GridPane.rowIndex="5" />
-                  <Label fx:id="lbl_apiKeyTA" text="\@API_Key_TA" GridPane.rowIndex="6" />
-                  <TextField fx:id="txt_apiKeyDev" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="txt_apiKeyTA" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-               </children>
-               <columnConstraints>
-                  <ColumnConstraints />
-                  <ColumnConstraints />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-               </rowConstraints>
-            </GridPane>
-            <FlowPane fx:id="layout_flowPane_Confirmation">
-               <children>
-                  <Button fx:id="btn_clearAll" mnemonicParsing="false" text="Clear All" />
-                  <Button fx:id="btn_add" mnemonicParsing="false" text="Add" />
+                  <FlowPane fx:id="layout_flowPane_TestType">
+                     <children>
+                        <Label fx:id="lbl_testType" text="Select type of test: " />
+                        <RadioButton fx:id="rd_testType_API" mnemonicParsing="false" text="API" />
+                        <RadioButton fx:id="rd_testType_GUI" mnemonicParsing="false" text="GUI" />
+                     </children>
+                  </FlowPane>
+                  <FlowPane fx:id="layout_flowPane_ExistNew">
+                     <children>
+                        <Label fx:id="lbl_existNew" text="Existing/New test: " />
+                        <RadioButton fx:id="rd_exist" mnemonicParsing="false" text="Existing" />
+                        <RadioButton fx:id="rd_new" mnemonicParsing="false" text="New" />
+                     </children>
+                  </FlowPane>
+                  <Separator fx:id="layout_separator_Scenario" />
+                  <GridPane fx:id="grd_content">
+                     <children>
+                        <Label fx:id="lbl_existTestClassId" text="\@Existing_TestClassId" />
+                        <Label fx:id="lbl_existTestCaseId" text="\@Existing_TestCaseId" GridPane.rowIndex="1" />
+                        <Label fx:id="lbl_existTestSuiteId" text="\@Existing_TestSuiteId" GridPane.rowIndex="2" />
+                        <Label fx:id="lbl_existTestMatrixId" text="\@Existing_TestMatrixId" GridPane.rowIndex="3" />
+                        <Label fx:id="lbl_existLoginId" text="\@Existing_LoginId" GridPane.rowIndex="4" />
+                        <TextField fx:id="txt_existTestClassId" GridPane.columnIndex="1" />
+                        <Label fx:id="lbl_testCaseDescription" text="TestCase_Description" GridPane.rowIndex="7" />
+                        <Label fx:id="lbl_caseDataDescription" text="CaseData_Description" GridPane.rowIndex="8" />
+                        <Label fx:id="lbl_testPackage" text="TestPackage" GridPane.rowIndex="9" />
+                        <Label fx:id="lbl_testClass" text="TestClass" GridPane.rowIndex="10" />
+                        <Label fx:id="lbl_pageObjectTable" text="PageObjectTable" GridPane.rowIndex="11" />
+                        <TextField fx:id="txt_existTestCaseId" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txt_existLoginId" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="txt_testCaseDescription" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <TextField fx:id="txt_caseDataDescription" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <TextField fx:id="txt_testPackage" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <TextField fx:id="txt_testClass" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <TextField fx:id="txt_pageObjectTable" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <ComboBox fx:id="cmb_existTestSuiteId" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="cmb_existTestMatrixId" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="lbl_apiKeyDev" text="\@API_Key_DEV" GridPane.rowIndex="5" />
+                        <Label fx:id="lbl_apiKeyTA" text="\@API_Key_TA" GridPane.rowIndex="6" />
+                        <TextField fx:id="txt_apiKeyDev" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <TextField fx:id="txt_apiKeyTA" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                     </children>
+                     <columnConstraints>
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                     </rowConstraints>
+                  </GridPane>
+                  <FlowPane fx:id="layout_flowPane_Confirmation">
+                     <children>
+                        <Button fx:id="btn_clearAll" mnemonicParsing="false" text="Clear All" />
+                        <Button fx:id="btn_add" mnemonicParsing="false" text="Add" />
+                     </children>
+                  </FlowPane>
                </children>
             </FlowPane>
          </children>
-      </FlowPane>
+      </StackPane>
    </children>
 </FlowPane>
