@@ -67,16 +67,20 @@
     -fx-border-color: red;
 }
 
+.text-field:disabled{
+    -fx-background-color: grey;
+}
+
+.combo-box:disabled{
+    -fx-background-color: grey;
+}
+
 #layout_flowPane_Review{
     -fx-background-color: rgba(0, 0, 0, 0.8);
 }
 
 #layout_flowPane_ReviewContainer{
     -fx-background-color: common_background_color;
-    -fx-border-color: grey;
-}
-
-#layout_flowPane_ScenarioContainer{
     -fx-border-color: grey;
 }
 
@@ -114,7 +118,6 @@
     -fx-background-color: common_background_color;
     -fx-border-width: 0.3px;
     -fx-border-color: grey;
-    -fx-opacity: 1;
 }
 
 #btn_summaryOk:hover{
@@ -129,26 +132,66 @@
     -fx-background-color: common_background_color;
     -fx-border-width: 0.3px;
     -fx-border-color: grey;
-    -fx-opacity: 1;
 }
 
 #btn_add:hover{
     -fx-background-color: #009933;
     -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
     -fx-border-width: 0.3px;
-    -fx-opacity: 1;
 }
 
 #btn_clearAll{
     -fx-background-color: common_background_color;
     -fx-border-width: 0.3px;
     -fx-border-color: grey;
-    -fx-opacity: 1;
 }
 
 #btn_clearAll:hover{
     -fx-background-color: #990000;
     -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
     -fx-border-width: 0.3px;
-    -fx-opacity: 1;
+}
+
+#btn_deleteScenario_cancel{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+}
+
+#btn_deleteScenario_cancel:hover{
+    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
+    -fx-background-color: #009933;
+}
+
+#btn_deleteScenario_confirm{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+}
+
+#btn_deleteScenario_confirm:hover{
+    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
+    -fx-background-color: #990000;
+}
+
+#btn_deleteScenario_ok{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+}
+
+#btn_deleteScenario_clear{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+}
+
+#btn_deleteScenario_ok:hover{
+    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
+    -fx-background-color: #990000;
+}
+
+#btn_deleteScenario_clear:hover{
+    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
+    -fx-background-color: #009933;
 }

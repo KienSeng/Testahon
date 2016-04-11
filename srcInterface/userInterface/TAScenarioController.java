@@ -1,17 +1,14 @@
 package userInterface;
 
 import Database.DbConnector;
-import com.microsoft.sqlserver.jdbc.SQLServerResultSet;
-import javafx.beans.binding.DoubleExpression;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Popup;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 
 import java.net.URL;
 import java.sql.ResultSet;
@@ -63,6 +60,7 @@ public class TAScenarioController implements Initializable {
     @FXML private TextField txt_pageObjectTable;
     @FXML private Button btn_clearAll;
     @FXML private Button btn_add;
+    @FXML private Separator sp_verticalSeparator;
 
     @FXML private FlowPane layout_flowPane_Review;
     @FXML private Label lbl_TestClassId_Summary;
@@ -81,7 +79,6 @@ public class TAScenarioController implements Initializable {
     @FXML private Button btn_summaryOk;
     @FXML private FlowPane layout_flowPane_ReviewContainer;
 
-    @FXML private StackPane layout_stackPane_DeleteScenario;
     @FXML private FlowPane layout_flowPane_DeleteScenario_Main;
     @FXML private FlowPane layout_flowPane_DeleteScenario_LightBox_Background;
     @FXML private FlowPane layout_flowPane_DeleteScenario_LightBox_Content;
@@ -94,19 +91,19 @@ public class TAScenarioController implements Initializable {
     @FXML private Button btn_deleteScenario_cancel;
     @FXML private Button btn_deleteScenario_confirm;
 
-    int testClassId = 10000;
-    int testCaseId = 10000;
-    int testSuiteId = 10000;
-    int testMatrixId = 10000;
-    int loginId = 10000;
-    int caseDataId = 10000;
+    private int testClassId = 10000;
+    private int testCaseId = 10000;
+    private int testSuiteId = 10000;
+    private int testMatrixId = 10000;
+    private int loginId = 10000;
+    private int caseDataId = 10000;
 
-    Double radioButtonWidth = 100.0;
-    Double standardLabelWidth = 150.0;
-    Double standardTextBoxWidth = 200.0;
-    Double standardButtonWidth = 80.0;
+    private Double radioButtonWidth = 100.0;
+    private Double standardLabelWidth = 150.0;
+    private Double standardTextBoxWidth = 200.0;
+    private  Double standardButtonWidth = 80.0;
 
-    DbConnector db;
+    private DbConnector db;
 
 
     @Override
@@ -119,17 +116,18 @@ public class TAScenarioController implements Initializable {
     }
 
     public void showPane() throws Exception{
-        layout_mainFlowPane.setStyle("-fx-background-color: green");
         layout_mainFlowPane.setHgap(15);
         layout_mainFlowPane.setVgap(15);
         layout_mainFlowPane.setPadding(new Insets(15,15,15,15));
         layout_mainFlowPane.setAlignment(Pos.TOP_LEFT);
-//        layout_mainFlowPane.setMaxWidth(Double.MAX_VALUE);
+        layout_mainFlowPane.setOrientation(Orientation.HORIZONTAL);
 
+        layout_flowPane_ScenarioContainer.setId("layout_flowPane_ScenarioContainer");
         layout_flowPane_ScenarioContainer.setOrientation(Orientation.VERTICAL);
         layout_flowPane_ScenarioContainer.setAlignment(Pos.CENTER);
-        layout_flowPane_ScenarioContainer.setMinHeight(500);
-        layout_flowPane_ScenarioContainer.setMaxWidth(450);
+        layout_flowPane_ScenarioContainer.setMinHeight(600);
+        layout_flowPane_ScenarioContainer.setMaxWidth(300);
+        layout_flowPane_ScenarioContainer.setPadding(new Insets(5,0,5,0));
 
         layout_flowPane_ExistNew.setPadding(new Insets(5,0,5,0));
         layout_flowPane_TestType.setPadding(new Insets(5,0,5,0));
@@ -197,11 +195,17 @@ public class TAScenarioController implements Initializable {
         btn_add.setOnAction(addButtonClicked);
         btn_clearAll.setOnAction(clearButtonClicked);
 
+        layout_stackPane_MainContent.setAlignment(Pos.CENTER);
         layout_stackPane_MainContent.setMaxWidth(layout_flowPane_ScenarioContainer.getMaxWidth());
         layout_stackPane_MainContent.setMaxHeight(layout_flowPane_ScenarioContainer.getMinHeight());
+
+        sp_verticalSeparator = new Separator();
+        sp_verticalSeparator.setOrientation(Orientation.HORIZONTAL);
+        sp_verticalSeparator.setPadding(new Insets(8,0,5,0));
+
+        layout_flowPane_ScenarioContainer.getChildren().add(sp_verticalSeparator);
+
         generateDeleteScenarioPane();
-
-
         disableTextbox("all");
         populateTestMatrixIdComboBox();
     }
@@ -362,7 +366,17 @@ public class TAScenarioController implements Initializable {
         parameterArray.add("String|" + "TestClass" + "|" + testClass);
         parameterArray.add("String|" + "PageObjectTable" + "|" + pageObjectTable);
 
-        db.executeStoredProc("{call sproc_Template_InsertDataToMasterTable (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
+        ResultSet rs = db.executeStoredProc("{call sproc_Template_InsertDataToMasterTable (?,?,?,?,?,?,?,?,?,?,?,?)}", parameterArray);
+
+        while(rs.next()){
+            testClassId = rs.getInt("testClassId");
+            testCaseId = rs.getInt("testCaseId");
+            testSuiteId = rs.getInt("testSuiteId");
+            testMatrixId = rs.getInt("testMatrixId");
+            loginId = rs.getInt("loginId");
+            caseDataId = rs.getInt("caseDataId");
+        }
+        db.closeStatement();
     }
 
     private void generateReviewPane() throws Exception{
@@ -464,7 +478,6 @@ public class TAScenarioController implements Initializable {
 
     private void generateDeleteScenarioPane() throws Exception{
         layout_flowPane_DeleteScenario_Main = new FlowPane();
-        layout_stackPane_DeleteScenario = new StackPane();
         layout_gridPane_DeleteScenario_Content = new GridPane();
         lbl_deleteScenario_CaseDataId = new Label();
         lbl_deleteScenario_CaseDataDescription = new Label();
@@ -505,8 +518,7 @@ public class TAScenarioController implements Initializable {
         layout_flowPane_DeleteScenario_Main.getChildren().add(btn_deleteScenario_ok);
         layout_flowPane_DeleteScenario_Main.getChildren().add(btn_deleteScenario_clear);
 
-        layout_stackPane_DeleteScenario.getChildren().add(layout_flowPane_DeleteScenario_Main);
-        layout_mainFlowPane.getChildren().add(layout_stackPane_DeleteScenario);
+        layout_flowPane_ScenarioContainer.getChildren().add(layout_flowPane_DeleteScenario_Main);
     }
 
     private void generateDeleteScenarioConfirmationLightBox() throws Exception{
@@ -515,10 +527,6 @@ public class TAScenarioController implements Initializable {
         layout_flowPane_DeleteScenario_LightBox_Content = new FlowPane();
         btn_deleteScenario_cancel = new Button();
         btn_deleteScenario_confirm = new Button();
-
-        layout_stackPane_DeleteScenario.setId("layout_stackPane_DeleteScenario");
-        layout_stackPane_DeleteScenario.setMaxHeight(layout_flowPane_DeleteScenario_Main.getMaxHeight());
-        layout_stackPane_DeleteScenario.setMaxWidth(layout_flowPane_DeleteScenario_Main.getMaxWidth());
 
         layout_flowPane_DeleteScenario_LightBox_Background.setId("layout_flowPane_DeleteScenario_LightBox_Background");
         layout_flowPane_DeleteScenario_LightBox_Background.setAlignment(Pos.CENTER);
@@ -539,14 +547,14 @@ public class TAScenarioController implements Initializable {
         btn_deleteScenario_cancel.setOnAction(deleteScenarioEvent);
         btn_deleteScenario_confirm.setOnAction(deleteScenarioEvent);
 
-        lbl_deleteScenario_CaseDataDescription.setText("Confirm delete CaseDataID: " + txt_deleteScenario_CaseDataId.getText() + "10000");
+        lbl_deleteScenario_CaseDataDescription.setText("Confirm delete CaseDataID: " + txt_deleteScenario_CaseDataId.getText());
 
         layout_flowPane_DeleteScenario_LightBox_Content.getChildren().add(lbl_deleteScenario_CaseDataDescription);
         layout_flowPane_DeleteScenario_LightBox_Content.getChildren().add(btn_deleteScenario_cancel);
         layout_flowPane_DeleteScenario_LightBox_Content.getChildren().add(btn_deleteScenario_confirm);
 
         layout_flowPane_DeleteScenario_LightBox_Background.getChildren().add(layout_flowPane_DeleteScenario_LightBox_Content);
-        layout_stackPane_DeleteScenario.getChildren().add(layout_flowPane_DeleteScenario_LightBox_Background);
+        layout_stackPane_MainContent.getChildren().add(layout_flowPane_DeleteScenario_LightBox_Background);
     }
 
     private void connectToTADB() throws Exception{
@@ -554,7 +562,7 @@ public class TAScenarioController implements Initializable {
         db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA_Training");
     }
 
-    EventHandler testTypeRadioButtonActionEvent = event -> {
+    private EventHandler testTypeRadioButtonActionEvent = event -> {
         try{
             populateTestSuiteIdComboBox();
         }catch(Exception e){
@@ -562,7 +570,7 @@ public class TAScenarioController implements Initializable {
         }
     };
 
-    EventHandler existNewRadioButtonActionEvent = event -> {
+    private EventHandler existNewRadioButtonActionEvent = event -> {
         try{
             if(rd_exist.isSelected()){
                 disableTextbox("exist");
@@ -574,7 +582,7 @@ public class TAScenarioController implements Initializable {
         }
     };
 
-    EventHandler addButtonClicked = event -> {
+    private EventHandler addButtonClicked = event -> {
         try {
 //            insertToDb();
             clearAllTextBox();
@@ -584,7 +592,7 @@ public class TAScenarioController implements Initializable {
         }
     };
 
-    EventHandler clearButtonClicked = event -> {
+    private EventHandler clearButtonClicked = event -> {
         try {
             clearAllTextBox();
         } catch (Exception e) {
@@ -592,7 +600,7 @@ public class TAScenarioController implements Initializable {
         }
     };
 
-    EventHandler summaryButtonOkClicked = event -> {
+    private EventHandler summaryButtonOkClicked = event -> {
         try {
             layout_stackPane_MainContent.getChildren().remove(1);
         } catch (Exception e) {
@@ -600,7 +608,7 @@ public class TAScenarioController implements Initializable {
         }
     };
 
-    EventHandler deleteScenarioEvent = event -> {
+    private EventHandler deleteScenarioEvent = event -> {
         try{
             Button btn = (Button) event.getSource();
 
@@ -614,11 +622,11 @@ public class TAScenarioController implements Initializable {
                     break;
 
                 case "btn_deleteScenario_cancel":
-                    layout_stackPane_DeleteScenario.getChildren().remove(1);
+                    layout_stackPane_MainContent.getChildren().remove(1);
                     break;
 
                 case "btn_deleteScenario_confirm":
-                    layout_stackPane_DeleteScenario.getChildren().remove(1);
+                    layout_stackPane_MainContent.getChildren().remove(1);
                     break;
             }
         }catch (Exception e){

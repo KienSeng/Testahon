@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<FlowPane fx:id="layout_mainFlowPane" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.TAScenarioController">
+<FlowPane fx:id="layout_mainFlowPane" rowValignment="TOP" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.TAScenarioController">
    <children>
-      <StackPane fx:id="layout_stackPane_MainContent" prefHeight="150.0" prefWidth="200.0">
+      <StackPane fx:id="layout_stackPane_MainContent">
          <children>
             <FlowPane fx:id="layout_flowPane_ScenarioContainer">
                <children>
