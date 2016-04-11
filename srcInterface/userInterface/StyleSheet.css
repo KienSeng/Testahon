@@ -80,6 +80,22 @@
     -fx-border-color: grey;
 }
 
+#layout_flowPane_DeleteScenario_LightBox_Content{
+    -fx-background-color: common_background_color;
+    -fx-border-color: grey;
+    -fx-border-width: 0.3px;
+}
+
+#layout_flowPane_DeleteScenario_LightBox_Background{
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+#layout_flowPane_DeleteScenario_Main{
+    -fx-background-color: common_background_color;
+    -fx-border-color: grey;
+    -fx-border-width: 0.3px;
+}
+
 #btnExit{
     -fx-background-color: white;
     -fx-border-width: 0.3px;
