@@ -85,6 +85,7 @@ public class TAScenarioController implements Initializable {
     @FXML private GridPane layout_gridPane_DeleteScenario_Content;
     @FXML private Label lbl_deleteScenario_CaseDataId;
     @FXML private Label lbl_deleteScenario_CaseDataDescription;
+    @FXML private Label lbl_deleteScenario_Title;
     @FXML private TextField txt_deleteScenario_CaseDataId;
     @FXML private Button btn_deleteScenario_ok;
     @FXML private Button btn_deleteScenario_clear;
@@ -109,7 +110,7 @@ public class TAScenarioController implements Initializable {
     @Override
     public void initialize(URL location, java.util.ResourceBundle resources) {
         try{
-//            connectToTADB();
+            connectToTADB();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -300,7 +301,7 @@ public class TAScenarioController implements Initializable {
         db.closeStatement();
     }
 
-    private void insertToDb() throws Exception{
+    private boolean insertToDb() throws Exception{
         String existingTestCaseId = txt_existTestCaseId.getText();
         String existingTestClassId = txt_existTestClassId.getText();
         String existingTestSuiteId = cmb_existTestSuiteId.getSelectionModel().getSelectedItem().toString().split(" - ")[0];
@@ -373,10 +374,16 @@ public class TAScenarioController implements Initializable {
             testCaseId = rs.getInt("testCaseId");
             testSuiteId = rs.getInt("testSuiteId");
             testMatrixId = rs.getInt("testMatrixId");
-            loginId = rs.getInt("loginId");
+            loginId = rs.getInt("LoginTestDataId");
             caseDataId = rs.getInt("caseDataId");
         }
         db.closeStatement();
+
+        if(rs != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private void generateReviewPane() throws Exception{
@@ -481,6 +488,7 @@ public class TAScenarioController implements Initializable {
         layout_gridPane_DeleteScenario_Content = new GridPane();
         lbl_deleteScenario_CaseDataId = new Label();
         lbl_deleteScenario_CaseDataDescription = new Label();
+        lbl_deleteScenario_Title = new Label();
         txt_deleteScenario_CaseDataId = new TextField();
         btn_deleteScenario_ok = new Button();
         btn_deleteScenario_clear = new Button();
@@ -491,21 +499,23 @@ public class TAScenarioController implements Initializable {
         layout_flowPane_DeleteScenario_Main.setOrientation(Orientation.HORIZONTAL);
         layout_flowPane_DeleteScenario_Main.setVgap(10);
         layout_flowPane_DeleteScenario_Main.setHgap(10);
-        layout_flowPane_DeleteScenario_Main.setMaxWidth(200);
-        layout_flowPane_DeleteScenario_Main.setMaxHeight(200);
+        layout_flowPane_DeleteScenario_Main.setMaxWidth(150);
+        layout_flowPane_DeleteScenario_Main.setMaxHeight(130);
 
         lbl_deleteScenario_CaseDataId.setText("CaseDataId: ");
         lbl_deleteScenario_CaseDataId.setMinWidth(80);
-
         txt_deleteScenario_CaseDataId.setMinWidth(standardTextBoxWidth);
 
-        layout_gridPane_DeleteScenario_Content.add(lbl_deleteScenario_CaseDataId, 1, 1);
-        layout_gridPane_DeleteScenario_Content.add(txt_deleteScenario_CaseDataId, 2, 1);
+        lbl_deleteScenario_Title.setText("Delete Test Scenarios");
+
+        layout_gridPane_DeleteScenario_Content.add(lbl_deleteScenario_Title, 1, 1);
+        layout_gridPane_DeleteScenario_Content.add(lbl_deleteScenario_CaseDataId, 1, 2);
+        layout_gridPane_DeleteScenario_Content.add(txt_deleteScenario_CaseDataId, 2, 2);
 
         btn_deleteScenario_ok.setId("btn_deleteScenario_ok");
-        btn_deleteScenario_clear.setId("btn_deleteScenario_clear");
+        btn_deleteScenario_ok.setText("Delete");
 
-        btn_deleteScenario_ok.setText("OK");
+        btn_deleteScenario_clear.setId("btn_deleteScenario_clear");
         btn_deleteScenario_clear.setText("Clear");
 
         btn_deleteScenario_ok.setOnAction(deleteScenarioEvent);
@@ -514,6 +524,7 @@ public class TAScenarioController implements Initializable {
         btn_deleteScenario_ok.setMinWidth(standardButtonWidth);
         btn_deleteScenario_clear.setMinWidth(standardButtonWidth);
 
+        layout_flowPane_DeleteScenario_Main.getChildren().add(lbl_deleteScenario_Title);
         layout_flowPane_DeleteScenario_Main.getChildren().add(layout_gridPane_DeleteScenario_Content);
         layout_flowPane_DeleteScenario_Main.getChildren().add(btn_deleteScenario_ok);
         layout_flowPane_DeleteScenario_Main.getChildren().add(btn_deleteScenario_clear);
@@ -562,6 +573,18 @@ public class TAScenarioController implements Initializable {
         db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA_Training");
     }
 
+    private Integer getCaseDataIdToDelete() throws Exception{
+        Integer caseDataId = null;
+
+        try{
+            caseDataId = Integer.parseInt(txt_deleteScenario_CaseDataId.getText());
+        }catch(Exception e){
+            caseDataId = null;
+        }
+
+        return caseDataId;
+    }
+
     private EventHandler testTypeRadioButtonActionEvent = event -> {
         try{
             populateTestSuiteIdComboBox();
@@ -584,9 +607,16 @@ public class TAScenarioController implements Initializable {
 
     private EventHandler addButtonClicked = event -> {
         try {
-//            insertToDb();
-            clearAllTextBox();
-            generateReviewPane();
+            boolean insertSuccess = false;
+            insertSuccess = insertToDb();
+
+            if(insertSuccess){
+                clearAllTextBox();
+                generateReviewPane();
+            }else{
+
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -626,7 +656,10 @@ public class TAScenarioController implements Initializable {
                     break;
 
                 case "btn_deleteScenario_confirm":
+                    ArrayList<String> parameterArray = new ArrayList<>();
+                    parameterArray.add("integer|" + "CaseDataId" + "|" + txt_deleteScenario_CaseDataId.getText());
                     layout_stackPane_MainContent.getChildren().remove(1);
+                    db.executeStoredProc("{call sproc_Template_InsertDataToMasterTable (?)}", parameterArray);
                     break;
             }
         }catch (Exception e){
