@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import Global.Global;
 
 public class Controller{
     @FXML private VBox layout_vbox;
@@ -43,7 +44,7 @@ public class Controller{
     SolrMonitorController serviceMonitor;
     ServerChatMonitorController serverChatMonitor;
     TAScenarioController TAController;
-    TAScenariosReviewer ScenarioReviewerController;
+    TAScenariosReviewer scenarioReviewerController;
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
@@ -191,7 +192,8 @@ public class Controller{
                 try {
                     deactivateAllThread();
                     main_content_pane.setContent(fxml.load());
-                    ScenarioReviewerController = fxml.getController();
+                    scenarioReviewerController = fxml.getController();
+                    scenarioReviewerController.generatePane();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
