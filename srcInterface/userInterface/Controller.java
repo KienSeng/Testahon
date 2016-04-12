@@ -43,6 +43,7 @@ public class Controller{
     SolrMonitorController serviceMonitor;
     ServerChatMonitorController serverChatMonitor;
     TAScenarioController TAController;
+    TAScenariosReviewer ScenarioReviewerController;
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
@@ -180,6 +181,17 @@ public class Controller{
                     main_content_pane.setContent(fxml.load());
                     TAController = fxml.getController();
                     TAController.showPane();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(event.getTarget().toString().contains("Review Test Scenarios")){
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/TAScenariosReviewer.fxml"));
+
+                try {
+                    deactivateAllThread();
+                    main_content_pane.setContent(fxml.load());
+                    ScenarioReviewerController = fxml.getController();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import Global.Global;
 
 import java.net.URL;
 import java.sql.ResultSet;
@@ -99,10 +100,6 @@ public class TAScenarioController implements Initializable {
     private int loginId = 10000;
     private int caseDataId = 10000;
 
-    private Double radioButtonWidth = 100.0;
-    private Double standardLabelWidth = 150.0;
-    private Double standardTextBoxWidth = 200.0;
-    private  Double standardButtonWidth = 80.0;
 
     private DbConnector db;
 
@@ -133,8 +130,8 @@ public class TAScenarioController implements Initializable {
         layout_flowPane_ExistNew.setPadding(new Insets(5,0,5,0));
         layout_flowPane_TestType.setPadding(new Insets(5,0,5,0));
 
-        lbl_testType.setMinWidth(standardLabelWidth);
-        lbl_existNew.setMinWidth(standardLabelWidth);
+        lbl_testType.setMinWidth(Global.standardLabelWidth);
+        lbl_existNew.setMinWidth(Global.standardLabelWidth);
 
         grp_rd_testType = new ToggleGroup();
         rd_testType_API.setToggleGroup(grp_rd_testType);
@@ -144,10 +141,10 @@ public class TAScenarioController implements Initializable {
         rd_exist.setToggleGroup(grp_rd_existNew);
         rd_new.setToggleGroup(grp_rd_existNew);
 
-        rd_testType_API.setMinWidth(radioButtonWidth);
-        rd_testType_GUI.setMinWidth(radioButtonWidth);
-        rd_exist.setMinWidth(radioButtonWidth);
-        rd_new.setMinWidth(radioButtonWidth);
+        rd_testType_API.setMinWidth(Global.radioButtonWidth);
+        rd_testType_GUI.setMinWidth(Global.radioButtonWidth);
+        rd_exist.setMinWidth(Global.radioButtonWidth);
+        rd_new.setMinWidth(Global.radioButtonWidth);
 
         rd_testType_API.setOnAction(testTypeRadioButtonActionEvent);
         rd_testType_GUI.setOnAction(testTypeRadioButtonActionEvent);
@@ -159,31 +156,31 @@ public class TAScenarioController implements Initializable {
         grd_content.setPadding(new Insets(5,0,5,0));
         grd_content.setVgap(5);
 
-        lbl_existTestClassId.setMinWidth(standardLabelWidth);
-        lbl_existTestCaseId.setMinWidth(standardLabelWidth);
-        lbl_existTestSuiteId.setMinWidth(standardLabelWidth);
-        lbl_existTestMatrixId.setMinWidth(standardLabelWidth);
-        lbl_existLoginId.setMinWidth(standardLabelWidth);
-        lbl_apiKeyDev.setMinWidth(standardLabelWidth);
-        lbl_apiKeyTA.setMinWidth(standardLabelWidth);
-        lbl_testCaseDescription.setMinWidth(standardLabelWidth);
-        lbl_caseDataDescription.setMinWidth(standardLabelWidth);
-        lbl_testPackage.setMinWidth(standardLabelWidth);
-        lbl_testClass.setMinWidth(standardLabelWidth);
-        lbl_pageObjectTable.setMinWidth(standardLabelWidth);
+        lbl_existTestClassId.setMinWidth(Global.standardLabelWidth);
+        lbl_existTestCaseId.setMinWidth(Global.standardLabelWidth);
+        lbl_existTestSuiteId.setMinWidth(Global.standardLabelWidth);
+        lbl_existTestMatrixId.setMinWidth(Global.standardLabelWidth);
+        lbl_existLoginId.setMinWidth(Global.standardLabelWidth);
+        lbl_apiKeyDev.setMinWidth(Global.standardLabelWidth);
+        lbl_apiKeyTA.setMinWidth(Global.standardLabelWidth);
+        lbl_testCaseDescription.setMinWidth(Global.standardLabelWidth);
+        lbl_caseDataDescription.setMinWidth(Global.standardLabelWidth);
+        lbl_testPackage.setMinWidth(Global.standardLabelWidth);
+        lbl_testClass.setMinWidth(Global.standardLabelWidth);
+        lbl_pageObjectTable.setMinWidth(Global.standardLabelWidth);
 
-        txt_existTestClassId.setMinWidth(standardTextBoxWidth);
-        txt_existTestCaseId.setMinWidth(standardTextBoxWidth);
-        cmb_existTestSuiteId.setMinWidth(standardTextBoxWidth);
-        cmb_existTestMatrixId.setMinWidth(standardTextBoxWidth);
-        txt_existLoginId.setMinWidth(standardTextBoxWidth);
-        txt_apiKeyDev.setMinWidth(standardTextBoxWidth);
-        txt_apiKeyTA.setMinWidth(standardTextBoxWidth);
-        txt_testCaseDescription.setMinWidth(standardTextBoxWidth);
-        txt_caseDataDescription.setMinWidth(standardTextBoxWidth);
-        txt_testPackage.setMinWidth(standardTextBoxWidth);
-        txt_testClass.setMinWidth(standardTextBoxWidth);
-        txt_pageObjectTable.setMinWidth(standardTextBoxWidth);
+        txt_existTestClassId.setMinWidth(Global.standardTextBoxWidth);
+        txt_existTestCaseId.setMinWidth(Global.standardTextBoxWidth);
+        cmb_existTestSuiteId.setMinWidth(Global.standardTextBoxWidth);
+        cmb_existTestMatrixId.setMinWidth(Global.standardTextBoxWidth);
+        txt_existLoginId.setMinWidth(Global.standardTextBoxWidth);
+        txt_apiKeyDev.setMinWidth(Global.standardTextBoxWidth);
+        txt_apiKeyTA.setMinWidth(Global.standardTextBoxWidth);
+        txt_testCaseDescription.setMinWidth(Global.standardTextBoxWidth);
+        txt_caseDataDescription.setMinWidth(Global.standardTextBoxWidth);
+        txt_testPackage.setMinWidth(Global.standardTextBoxWidth);
+        txt_testClass.setMinWidth(Global.standardTextBoxWidth);
+        txt_pageObjectTable.setMinWidth(Global.standardTextBoxWidth);
 
         layout_flowPane_Confirmation.setAlignment(Pos.CENTER);
         layout_flowPane_Confirmation.setVgap(10);
@@ -191,8 +188,8 @@ public class TAScenarioController implements Initializable {
 
         btn_add.setId("btn_add");
         btn_clearAll.setId("btn_clearAll");
-        btn_add.setMinWidth(standardButtonWidth);
-        btn_clearAll.setMinWidth(standardButtonWidth);
+        btn_add.setMinWidth(Global.standardButtonWidth);
+        btn_clearAll.setMinWidth(Global.standardButtonWidth);
         btn_add.setOnAction(addButtonClicked);
         btn_clearAll.setOnAction(clearButtonClicked);
 
@@ -441,7 +438,7 @@ public class TAScenarioController implements Initializable {
 
         btn_summaryOk.setId("btn_summaryOk");
         btn_summaryOk.setText("OK");
-        btn_summaryOk.setMinWidth(standardButtonWidth);
+        btn_summaryOk.setMinWidth(Global.standardButtonWidth);
         btn_summaryOk.setOnAction(summaryButtonOkClicked);
 
         grd_review.setId("grd_review");
@@ -504,7 +501,7 @@ public class TAScenarioController implements Initializable {
 
         lbl_deleteScenario_CaseDataId.setText("CaseDataId: ");
         lbl_deleteScenario_CaseDataId.setMinWidth(80);
-        txt_deleteScenario_CaseDataId.setMinWidth(standardTextBoxWidth);
+        txt_deleteScenario_CaseDataId.setMinWidth(Global.standardTextBoxWidth);
 
         lbl_deleteScenario_Title.setText("Delete Test Scenarios");
 
@@ -521,8 +518,8 @@ public class TAScenarioController implements Initializable {
         btn_deleteScenario_ok.setOnAction(deleteScenarioEvent);
         btn_deleteScenario_clear.setOnAction(deleteScenarioEvent);
 
-        btn_deleteScenario_ok.setMinWidth(standardButtonWidth);
-        btn_deleteScenario_clear.setMinWidth(standardButtonWidth);
+        btn_deleteScenario_ok.setMinWidth(Global.standardButtonWidth);
+        btn_deleteScenario_clear.setMinWidth(Global.standardButtonWidth);
 
         layout_flowPane_DeleteScenario_Main.getChildren().add(lbl_deleteScenario_Title);
         layout_flowPane_DeleteScenario_Main.getChildren().add(layout_gridPane_DeleteScenario_Content);
@@ -575,7 +572,6 @@ public class TAScenarioController implements Initializable {
 
     private Integer getCaseDataIdToDelete() throws Exception{
         Integer caseDataId = null;
-
         try{
             caseDataId = Integer.parseInt(txt_deleteScenario_CaseDataId.getText());
         }catch(Exception e){
@@ -657,9 +653,10 @@ public class TAScenarioController implements Initializable {
 
                 case "btn_deleteScenario_confirm":
                     ArrayList<String> parameterArray = new ArrayList<>();
-                    parameterArray.add("integer|" + "CaseDataId" + "|" + txt_deleteScenario_CaseDataId.getText());
-                    layout_stackPane_MainContent.getChildren().remove(1);
+                    parameterArray.add("integer|" + "CaseDataId" + "|" + getCaseDataIdToDelete());
+
                     db.executeStoredProc("{call sproc_Template_InsertDataToMasterTable (?)}", parameterArray);
+                    layout_stackPane_MainContent.getChildren().remove(1);
                     break;
             }
         }catch (Exception e){
