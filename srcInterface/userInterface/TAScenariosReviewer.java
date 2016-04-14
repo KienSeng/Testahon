@@ -1,15 +1,23 @@
 package userInterface;
 
+import Database.DbConnector;
 import Global.Global;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Callback;
 
 import java.net.URL;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -17,19 +25,40 @@ import java.util.ResourceBundle;
  */
 public class TAScenariosReviewer implements Initializable {
     @FXML private FlowPane layout_FlowPane_Main;
-    @FXML private FlowPane layout_FlowPane_SearchSection;
-    @FXML private HBox layout_Hbox_SearchContentList;
-    @FXML private HBox layout_Hbox_SearchContentTextBox;
+    private FlowPane layout_FlowPane_SearchSection;
+    private HBox layout_Hbox_SearchContentList;
+    private HBox layout_Hbox_SearchContentTextBox;
+    private ComboBox cmb_searchFromList;
+    private TextField txt_searchByTestClass;
+    private Label lbl_searchFromList;
+    private Label lbl_searchByTestClass;
+    private Label lbl_testType;
+    private Button btn_reviewOk;
+    private Button btn_search;
+    private Button btn_clear;
+    private RadioButton rd_api;
+    private RadioButton rd_gui;
+    private ToggleGroup grp_testType;
 
-    @FXML private ComboBox cmb_searchFromList;
-    @FXML private TextField txt_searchByTestClass;
+    String inputTestClass = "";
+    int testClassId = 0;
+    int testCaseId = 0;
+    int caseDataId = 0;
+    int caseDataDescription = 0;
+    int loginTestData = 0;
+    String testClass = "";
+    String testCaseDescription = "";
+    String selectedTestClass = "";
 
-    @FXML private Label lbl_searchFromList;
-    @FXML private Label lbl_searchByTestClass;
+    DbConnector db;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+//        db = new DbConnector();
+//        db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA_Training");
+
 //            generatePane();
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,10 +73,15 @@ public class TAScenariosReviewer implements Initializable {
         txt_searchByTestClass = new TextField();
         lbl_searchFromList = new Label();
         lbl_searchByTestClass = new Label();
+        lbl_testType = new Label();
         Separator spr_SearchContent = new Separator();
         HBox layout_Hbox_SearchButton = new HBox();
-        Button btn_search = new Button();
-        Button btn_clear = new Button();
+        HBox layout_Hbox_TestType = new HBox();
+        btn_search = new Button();
+        btn_clear = new Button();
+        rd_api = new RadioButton();
+        rd_gui = new RadioButton();
+        grp_testType = new ToggleGroup();
 
         layout_FlowPane_Main.setPadding(new Insets(15,15,15,15));
         layout_FlowPane_Main.setRowValignment(VPos.TOP);
@@ -58,11 +92,17 @@ public class TAScenariosReviewer implements Initializable {
         layout_FlowPane_SearchSection.setHgap(350);
         layout_FlowPane_SearchSection.setVgap(20);
 
+        layout_Hbox_SearchContentList.setPadding(new Insets(15,0,15,0));
         layout_Hbox_SearchContentList.setSpacing(20);
         layout_Hbox_SearchContentList.setMinWidth(Global.standardLabelWidth + Global.standardTextBoxWidth);
 
+        layout_Hbox_SearchContentTextBox.setPadding(new Insets(15,0,15,0));
         layout_Hbox_SearchContentTextBox.setSpacing(20);
         layout_Hbox_SearchContentTextBox.setMinWidth(Global.standardLabelWidth + Global.standardTextBoxWidth);
+
+        layout_Hbox_TestType.setPadding(new Insets(15,0,15,0));
+        layout_Hbox_TestType.setSpacing(20);
+        layout_Hbox_TestType.setMinWidth(Global.standardLabelWidth + Global.standardTextBoxWidth);
 
         layout_Hbox_SearchButton.setPadding(new Insets(15,0,15,0));
         layout_Hbox_SearchButton.spacingProperty().bind(layout_FlowPane_Main.widthProperty().divide(6));
@@ -71,36 +111,179 @@ public class TAScenariosReviewer implements Initializable {
 
         lbl_searchFromList.setText("Search from list:");
         lbl_searchByTestClass.setText("Search by Test Class:");
+        lbl_testType.setText("Test Type:");
+
+        cmb_searchFromList.setId("cmb_searchFromList");
+        txt_searchByTestClass.setId("txt_searchByTestClass");
 
         lbl_searchFromList.setPrefWidth(Global.standardLabelWidth + 50);
         lbl_searchByTestClass.setPrefWidth(Global.standardLabelWidth + 50);
+        lbl_testType.setPrefWidth(Global.standardLabelWidth + 50);
         cmb_searchFromList.setPrefWidth(Global.standardTextBoxWidth + 50);
         txt_searchByTestClass.setPrefWidth(Global.standardTextBoxWidth + 50);
+
+        rd_api.setText("API");
+        rd_api.setToggleGroup(grp_testType);
+        rd_api.setMinWidth(Global.radioButtonWidth);
+        rd_api.setOnAction(radioButtonClickedEvent);
+
+        rd_gui.setText("GUI");
+        rd_gui.setToggleGroup(grp_testType);
+        rd_gui.setMinWidth(Global.radioButtonWidth);
+        rd_gui.setOnAction(radioButtonClickedEvent);
 
         btn_search.setId("btn_search");
         btn_search.setText("Search");
         btn_search.setMinWidth(Global.standardButtonWidth);
         btn_search.setAlignment(Pos.CENTER);
+        btn_search.setOnAction(buttonClickedEvent);
 
         btn_clear.setId("btn_clear");
         btn_clear.setText("Clear");
         btn_clear.setMinWidth(Global.standardButtonWidth);
         btn_clear.setAlignment(Pos.CENTER);
+        btn_clear.setOnAction(buttonClickedEvent);
 
         spr_SearchContent.setOrientation(Orientation.HORIZONTAL);
-        spr_SearchContent.setPadding(new Insets(0,30,0,0));
+        spr_SearchContent.setPadding(new Insets(0,30,15,0));
         spr_SearchContent.minWidthProperty().bind(layout_FlowPane_Main.widthProperty());
 
+        layout_Hbox_TestType.getChildren().addAll(lbl_testType, rd_api, rd_gui);
         layout_Hbox_SearchContentList.getChildren().addAll(lbl_searchFromList, cmb_searchFromList);
         layout_Hbox_SearchContentTextBox.getChildren().addAll(lbl_searchByTestClass, txt_searchByTestClass);
         layout_Hbox_SearchButton.getChildren().addAll(btn_search, btn_clear);
         layout_FlowPane_SearchSection.getChildren().addAll(layout_Hbox_SearchContentList, layout_Hbox_SearchContentTextBox);
-        layout_FlowPane_Main.getChildren().add(0, layout_FlowPane_SearchSection);
-        layout_FlowPane_Main.getChildren().add(1, layout_Hbox_SearchButton);
-        layout_FlowPane_Main.getChildren().add(2, spr_SearchContent);
+        layout_FlowPane_Main.getChildren().add(0, layout_Hbox_TestType);
+        layout_FlowPane_Main.getChildren().add(1, layout_FlowPane_SearchSection);
+        layout_FlowPane_Main.getChildren().add(2, layout_Hbox_SearchButton);
+        layout_FlowPane_Main.getChildren().add(3, spr_SearchContent);
+//        populateSearchResults();
     }
 
-    private void getAllTestClassFromDb() throws Exception{
+    private void populateSearchResults() throws Exception{
+        TableView layout_TableView_result = new TableView();
+        ScrollPane layout_ScrollPane_ResultScrollPane = new ScrollPane();
+        ObservableList<ObservableList> data = FXCollections.observableArrayList();
+
+        TableColumn column1 = new TableColumn("CaseDataId");
+        TableColumn column2 = new TableColumn("Test Module");
+        TableColumn column3 = new TableColumn("Test Class");
+        TableColumn column4 = new TableColumn("Test Name & Expected Result");
+        TableColumn column5 = new TableColumn("Test Case Description");
+        TableColumn column6 = new TableColumn("Login Details");
+        TableColumn column7 = new TableColumn("Login TestDataId");
+        TableColumn column8 = new TableColumn("TestClassId");
+        TableColumn column9 = new TableColumn("TestCaseId");
+
+        layout_ScrollPane_ResultScrollPane.setPadding(new Insets(0,30,15,0));
+        layout_ScrollPane_ResultScrollPane.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
+        layout_ScrollPane_ResultScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        layout_ScrollPane_ResultScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        layout_ScrollPane_ResultScrollPane.setContent(layout_TableView_result);
+
+        layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
+        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
+
+        layout_FlowPane_Main.getChildren().add(3, layout_ScrollPane_ResultScrollPane);
+
+        ArrayList<String> parameterMap = new ArrayList<>();
+        parameterMap.add("string|TestClass|" + inputTestClass);
+
+        ResultSet rs = db.executeStoredProc("", parameterMap);
+
+        for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+            TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
+
+            final int j = i;
+            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
+                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                    return new SimpleStringProperty(param.getValue().get(j).toString());
+                }
+            });
+
+            layout_TableView_result.getColumns().add(column);
+        }
+
+        while(rs.next()){
+            ObservableList<String> row = FXCollections.observableArrayList();
+
+            for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++){
+                row.add(rs.getString(i));
+
+                btn_reviewOk = new Button();
+                btn_reviewOk.setId("btn_reviewOk_" + rs.getString("CaseDataId"));
+                btn_reviewOk.setText("Review OK");
+                btn_reviewOk.setOnAction(buttonClickedEvent);
+                System.out.println("btn_reviewOk_" + rs.getString("CaseDataId"));
+            }
+
+            data.add(row);
+        }
+
+        layout_TableView_result.setItems(data);
+        rs.close();
+    }
+
+    private void confirmedReviewOk(int CaseDataId) throws Exception{
 
     }
+
+    private void getAllTestClassFromDb(String testType) throws Exception{
+        ResultSet rsTestClass = db.executeStatement("SELECT TestClass FROM Master_TestClass WITH (NOLOCK) WHERE TestPackage LIKE (\\'test" + testType.toLowerCase() + "%\\')");
+
+        cmb_searchFromList.getItems().clear();
+        cmb_searchFromList.getItems().add("");
+
+        while(rsTestClass.next()){
+            cmb_searchFromList.getItems().add(rsTestClass.getString(0));
+        }
+
+        rsTestClass.close();
+    }
+
+    private EventHandler buttonClickedEvent = event -> {
+        try{
+            Button btn = (Button) event.getSource();
+
+            switch(btn.getId()){
+                case "btn_search":
+                    if(cmb_searchFromList.getSelectionModel().getSelectedIndex() != 0){
+                        inputTestClass = cmb_searchFromList.getSelectionModel().getSelectedItem().toString();
+                        populateSearchResults();
+                    }
+
+                    if(!txt_searchByTestClass.getText().isEmpty()){
+                        inputTestClass = txt_searchByTestClass.getText();
+                        populateSearchResults();
+                    }
+                    break;
+
+                case "btn_clear":
+                    cmb_searchFromList.getSelectionModel().selectFirst();
+                    txt_searchByTestClass.clear();
+                    break;
+
+                default:
+                    try{
+                        String arrCaseDataId = btn.getId().split("_")[2];
+                        confirmedReviewOk(Integer.parseInt(arrCaseDataId));
+                    }catch(Exception e){
+
+                    }
+                    break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    };
+
+    private EventHandler radioButtonClickedEvent = event -> {
+        RadioButton rd = (RadioButton) event.getSource();
+
+        try {
+            getAllTestClassFromDb(rd.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    };
 }
