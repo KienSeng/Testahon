@@ -193,7 +193,6 @@ public class Controller{
                     deactivateAllThread();
                     main_content_pane.setContent(fxml.load());
                     scenarioReviewerController = fxml.getController();
-                    scenarioReviewerController.generatePane();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

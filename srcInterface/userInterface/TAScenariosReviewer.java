@@ -56,10 +56,10 @@ public class TAScenariosReviewer implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-//        db = new DbConnector();
-//        db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA_Training");
+            db = new DbConnector();
+            db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA_Training");
 
-//            generatePane();
+            generatePane();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,14 +182,14 @@ public class TAScenariosReviewer implements Initializable {
         layout_ScrollPane_ResultScrollPane.setContent(layout_TableView_result);
 
         layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
-        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
+//        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
 
         layout_FlowPane_Main.getChildren().add(3, layout_ScrollPane_ResultScrollPane);
 
         ArrayList<String> parameterMap = new ArrayList<>();
         parameterMap.add("string|TestClass|" + inputTestClass);
 
-        ResultSet rs = db.executeStoredProc("", parameterMap);
+        ResultSet rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
 
         for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
             TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
@@ -209,13 +209,11 @@ public class TAScenariosReviewer implements Initializable {
 
             for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++){
                 row.add(rs.getString(i));
-
-                btn_reviewOk = new Button();
-                btn_reviewOk.setId("btn_reviewOk_" + rs.getString("CaseDataId"));
-                btn_reviewOk.setText("Review OK");
-                btn_reviewOk.setOnAction(buttonClickedEvent);
-                System.out.println("btn_reviewOk_" + rs.getString("CaseDataId"));
             }
+            btn_reviewOk = new Button();
+            btn_reviewOk.setId("btn_reviewOk_" + rs.getString("CaseDataId"));
+            btn_reviewOk.setText("Review OK");
+            btn_reviewOk.setOnAction(buttonClickedEvent);
 
             data.add(row);
         }
@@ -226,16 +224,18 @@ public class TAScenariosReviewer implements Initializable {
 
     private void confirmedReviewOk(int CaseDataId) throws Exception{
 
+        db.executeStatement("UPDATE Master_CaseData SET ReviewStatus = 1 WHERE CaseDataId = " + CaseDataId);
     }
 
     private void getAllTestClassFromDb(String testType) throws Exception{
-        ResultSet rsTestClass = db.executeStatement("SELECT TestClass FROM Master_TestClass WITH (NOLOCK) WHERE TestPackage LIKE (\\'test" + testType.toLowerCase() + "%\\')");
+        String query = "SELECT TestClass FROM Master_TestClass WITH (NOLOCK) WHERE TestPackage LIKE ('test" + testType.toLowerCase() + "%')";
+        ResultSet rsTestClass = db.executeStatement(query);
 
         cmb_searchFromList.getItems().clear();
         cmb_searchFromList.getItems().add("");
 
         while(rsTestClass.next()){
-            cmb_searchFromList.getItems().add(rsTestClass.getString(0));
+            cmb_searchFromList.getItems().add(rsTestClass.getString(1));
         }
 
         rsTestClass.close();
@@ -247,7 +247,7 @@ public class TAScenariosReviewer implements Initializable {
 
             switch(btn.getId()){
                 case "btn_search":
-                    if(cmb_searchFromList.getSelectionModel().getSelectedIndex() != 0){
+                    if(cmb_searchFromList.getSelectionModel().getSelectedIndex() >= 1){
                         inputTestClass = cmb_searchFromList.getSelectionModel().getSelectedItem().toString();
                         populateSearchResults();
                     }
@@ -256,6 +256,7 @@ public class TAScenariosReviewer implements Initializable {
                         inputTestClass = txt_searchByTestClass.getText();
                         populateSearchResults();
                     }
+                    System.out.println("                 "+inputTestClass);
                     break;
 
                 case "btn_clear":
@@ -268,7 +269,7 @@ public class TAScenariosReviewer implements Initializable {
                         String arrCaseDataId = btn.getId().split("_")[2];
                         confirmedReviewOk(Integer.parseInt(arrCaseDataId));
                     }catch(Exception e){
-
+                        e.printStackTrace();
                     }
                     break;
             }
