@@ -8,7 +8,16 @@ import java.util.Date;
  */
 public class Time {
 
-    public String getCurrentTime(String timeFormat) throws Exception{
+//    public String getCurrentTime(String timeFormat) throws Exception{
+//        SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
+//
+//        Date now = new Date();
+//        String date = simpleDate.format(now);
+//
+//        return date;
+//    }
+
+    public static String getCurrentTime(String timeFormat) {
         SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
 
         Date now = new Date();

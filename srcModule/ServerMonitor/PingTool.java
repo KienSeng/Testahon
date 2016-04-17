@@ -3,7 +3,6 @@ package ServerMonitor;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 
 /**
  * Created by kienseng.koh on 3/24/2016.
@@ -21,7 +20,6 @@ public class PingTool{
         while((line = buff.readLine()) != null){
             line2.append(line + "\n");
         }
-        System.out.println(line2);
 
         String[] splittedString = line2.toString().split(" ");
         try{

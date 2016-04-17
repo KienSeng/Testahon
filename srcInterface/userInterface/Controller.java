@@ -25,7 +25,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import Global.Global;
 
 public class Controller{
     @FXML private VBox layout_vbox;
@@ -143,7 +142,6 @@ public class Controller{
 
                     main_content_pane.setContent(fxml.load());
                     serverMonitor = fxml.getController();
-                    serverMonitor.listAllPanePropertyFile();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
