@@ -175,10 +175,10 @@ public class ServerMonitorController implements Initializable{
 
                                 if(pingInt > pingThreshold){
                                     healthStatus.set("WARNING");
-                                    styleProperty.set("-fx-background-color: #FF9900;");
-                                } else if(pingInt == 0){
+                                    styleProperty.set("-fx-background-color: #FFFF66;");
+                                } else if(pingInt <= 0){
                                     healthStatus.set("OFFLINE");
-                                    styleProperty.set("-fx-background-color: #CC3300;");
+                                    styleProperty.set("-fx-background-color: #FF6633;");
                                 } else if(pingInt <= pingThreshold && pingInt > 0){
                                     healthStatus.set("ONLINE");
                                     styleProperty.set("-fx-background-color: #33CC00;");

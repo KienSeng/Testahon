@@ -4,6 +4,8 @@ import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.ServiceCheck;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -105,14 +107,34 @@ public class ServerChatMonitorController implements Initializable {
                 serviceMonitor_vbox.setMinHeight(70);
                 serviceMonitor_vbox.setEffect(new DropShadow());
 
+                SimpleStringProperty healthStatus = new SimpleStringProperty();
+                healthStatus = (SimpleStringProperty) lbl_serviceStatus.textProperty();
+                healthStatus.addListener((observable, oldValue, newValue) -> {
+                    lbl_serviceStatus.setText(newValue);
+                });
+
+                SimpleStringProperty stringProp = new SimpleStringProperty();
+                stringProp = (SimpleStringProperty) lbl_contents.textProperty();
+                stringProp.addListener((observable, oldValue, newValue) -> {
+                    lbl_contents.setText(newValue);
+                });
+
+                StringProperty styleProperty = new SimpleStringProperty();
+                styleProperty = serviceMonitor_vbox.styleProperty();
+                styleProperty.addListener((observable, oldValue, newValue) -> {
+                    serviceMonitor_vbox.setStyle(newValue);
+                });
+
                 layout_MainFlowPane.getChildren().add(serviceMonitor_vbox);
+
+                lbl_contents = new Label();
+                lbl_serviceStatus = new Label();
+                serviceMonitor_vbox = new VBox();
+
+                Thread t = createThread(stringProp, healthStatus, styleProperty);
+                t.start();
             }
         }
-
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
     }
 
     private String updateServerDetailsLabel() throws Exception{
@@ -129,64 +151,50 @@ public class ServerChatMonitorController implements Initializable {
         return str.toString();
     }
 
-    public Runnable startCheck() throws Exception{
-
-        ServiceCheck serviceMonitor = new ServiceCheck();
-
-        for(int i = 0; i < totalServiceToCheck; i++){
-            VBox vBox = (VBox) layout_MainFlowPane.getChildren().get(i);
-            Label label = (Label) vBox.getChildren().get(0);
-            String[] labelId = vBox.getChildren().get(0).getId().split("_");
-            Label healthLabel = (Label) vBox.getChildren().get(1);
-
-            serverName = labelId[2];
-            serviceName = labelId[3];
-            serviceStatus = serviceMonitor.checkWindowService(labelId[2], labelId[3]);
-
-            Time time = new Time();
-            lastCheck = time.getCurrentTime("HH:mm:ss");
-
-            if(serviceStatus.equalsIgnoreCase("STOPPED")){
-                vBox.setStyle("-fx-background-color: #FF0000");
-                healthLabel.setTextFill(Color.web("#FFFFFF"));
-                label.setTextFill(Color.web("#FFFFFF"));
-                healthLabel.setText("STOPPED");
-            } else if(serviceStatus.equalsIgnoreCase("RUNNING")){
-                vBox.setStyle("-fx-background-color: #00FF00");
-                healthLabel.setTextFill(Color.web("#000000"));
-                label.setTextFill(Color.web("#000000"));
-                healthLabel.setText("RUNNING");
-            }
-            label.setText(updateServerDetailsLabel());
-        }
-        return null;
-    }
-
-    Task task = new Task<String>() {
-        @Override
-        protected String call() throws Exception {
-            while(true){
-                try {
-                    Platform.runLater(() -> {
-                        try {
-                            startCheck();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+    private Thread createThread(SimpleStringProperty holder, SimpleStringProperty healthStatus, StringProperty styleProperty){
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    while(true){
+                        if(!paneIsActive){
+                            break;
                         }
-                    });
+                        ServiceCheck serviceMonitor = new ServiceCheck();
+                        String serverName = holder.get().split(":")[1].trim().split("\n")[0];
+                        String serviceName = holder.get().split(":")[2].trim().split("\n")[0];
+                        String serviceStatus = serviceMonitor.checkWindowService(serverName, serviceName);
 
-                    if(!paneIsActive){
-                        System.out.println("Application Stopped");
-                        return null;
+                        StringBuilder str = new StringBuilder();
+                        str.append("Server: " + serverName + "\n");
+                        str.append("Service Name: " + serviceName + "\n");
+                        str.append("Last Check: " + Time.getCurrentTime("HH:mm:ss"));
+
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.set(str.toString());
+
+                                if(serviceStatus.equals("STOPPED")){
+                                    healthStatus.set("STOPPED");
+                                    styleProperty.set("-fx-background-color: #FF6633;");
+                                } else if(serviceStatus.equals("RUNNING")){
+                                    healthStatus.set("RUNNING");
+                                    styleProperty.set("-fx-background-color: #33CC00;");
+                                }
+                            }
+                        });
+                        Thread.sleep(10000);
                     }
-                    Thread.sleep(15000);
-                } catch (Exception e) {
+                }catch(Exception e){
                     e.printStackTrace();
-                    return null;
                 }
             }
-        }
-    };
+        };
+
+        thread.setDaemon(true);
+        return thread;
+    }
 
     public static void stopThread() throws Exception{
         paneIsActive = false;

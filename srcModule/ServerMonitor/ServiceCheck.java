@@ -15,8 +15,6 @@ import java.net.URL;
 public class ServiceCheck {
 
     public String checkWindowService(String serverAddress, String serviceName) throws Exception{
-
-        System.out.println("sc \\\\" + serverAddress + " query \"" + serviceName + "\"");
         InputStream is = Runtime.getRuntime().exec("sc \\\\" + serverAddress + " query \"" + serviceName + "\"").getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader buff = new BufferedReader (isr);
@@ -41,7 +39,6 @@ public class ServiceCheck {
     }
 
     public String checkSolrServices(String solrServerName, String coreName) throws Exception{
-//        http://hydrus.jobstreet.com:8080/solr/applications/admin/ping
         URL url = new URL("http://" + solrServerName + ".jobstreet.com:8080/solr/" + coreName + "/admin/ping");
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         connection.setRequestProperty("Authorization", "Basic anNhcGk6cTZ0UmFkYXQ=");

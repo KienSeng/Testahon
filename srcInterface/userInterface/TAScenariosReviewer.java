@@ -33,7 +33,6 @@ public class TAScenariosReviewer implements Initializable {
     private Label lbl_searchFromList;
     private Label lbl_searchByTestClass;
     private Label lbl_testType;
-    private Button btn_reviewOk;
     private Button btn_search;
     private Button btn_clear;
     private RadioButton rd_api;
@@ -184,7 +183,7 @@ public class TAScenariosReviewer implements Initializable {
         layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
 //        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
 
-        layout_FlowPane_Main.getChildren().add(3, layout_ScrollPane_ResultScrollPane);
+//        layout_FlowPane_Main.getChildren().add(3, layout_ScrollPane_ResultScrollPane);
 
         ArrayList<String> parameterMap = new ArrayList<>();
         parameterMap.add("string|TestClass|" + inputTestClass);
@@ -210,20 +209,15 @@ public class TAScenariosReviewer implements Initializable {
             for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++){
                 row.add(rs.getString(i));
             }
-            btn_reviewOk = new Button();
-            btn_reviewOk.setId("btn_reviewOk_" + rs.getString("CaseDataId"));
-            btn_reviewOk.setText("Review OK");
-            btn_reviewOk.setOnAction(buttonClickedEvent);
 
             data.add(row);
         }
-
+        layout_FlowPane_Main.getChildren().add(3, layout_TableView_result);
         layout_TableView_result.setItems(data);
         rs.close();
     }
 
     private void confirmedReviewOk(int CaseDataId) throws Exception{
-
         db.executeStatement("UPDATE Master_CaseData SET ReviewStatus = 1 WHERE CaseDataId = " + CaseDataId);
     }
 
@@ -247,6 +241,7 @@ public class TAScenariosReviewer implements Initializable {
 
             switch(btn.getId()){
                 case "btn_search":
+                    btn_search.setDisable(true);
                     if(cmb_searchFromList.getSelectionModel().getSelectedIndex() >= 1){
                         inputTestClass = cmb_searchFromList.getSelectionModel().getSelectedItem().toString();
                         populateSearchResults();
@@ -256,7 +251,7 @@ public class TAScenariosReviewer implements Initializable {
                         inputTestClass = txt_searchByTestClass.getText();
                         populateSearchResults();
                     }
-                    System.out.println("                 "+inputTestClass);
+                    btn_search.setDisable(false);
                     break;
 
                 case "btn_clear":

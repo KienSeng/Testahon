@@ -154,7 +154,6 @@ public class Controller{
 
                     main_content_pane.setContent(fxml.load());
                     serviceMonitor = fxml.getController();
-                    serviceMonitor.showPane();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -4,6 +4,8 @@ import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.ServiceCheck;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,7 +38,6 @@ public class SolrMonitorController implements Initializable {
     int contentsFontSize = 13;
 
     String serverName = "NA";
-    String serverDisplayName = "NA";
     String coreName = "NA";
     String coreStatus = "NA";
     String lastCheck = "NA";
@@ -46,12 +47,14 @@ public class SolrMonitorController implements Initializable {
     String[] singleService;
     HashMap<String, String> serverAndService;
 
-    int totalServiceToCheck;
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         paneIsActive = true;
+        try {
+            showPane();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showPane() throws Exception{
@@ -81,10 +84,7 @@ public class SolrMonitorController implements Initializable {
             String[] listOfCoreName = pair.getValue().toString().split(",");
 
             for(int i = 0; i < listOfCoreName.length; i++){
-                totalServiceToCheck++;
-
                 coreName = listOfCoreName[i].trim();
-                System.out.println(serverName + "\t\t" + coreName);
                 lbl_contents = new Label();
                 lbl_contents.setId("lbl_ServerName_" + serverName + "_" + coreName);
                 lbl_contents.setText(updateServerDetailsLabel());
@@ -106,12 +106,32 @@ public class SolrMonitorController implements Initializable {
                 serviceMonitor_vbox.setMinHeight(70);
                 serviceMonitor_vbox.setEffect(new DropShadow());
 
+                SimpleStringProperty healthStatus = new SimpleStringProperty();
+                healthStatus = (SimpleStringProperty) lbl_coreStatus.textProperty();
+                healthStatus.addListener((observable, oldValue, newValue) -> {
+                    lbl_coreStatus.setText(newValue);
+                });
+
+                SimpleStringProperty stringProp = new SimpleStringProperty();
+                stringProp = (SimpleStringProperty) lbl_contents.textProperty();
+                stringProp.addListener((observable, oldValue, newValue) -> {
+                    lbl_contents.setText(newValue);
+                });
+
+                StringProperty styleProperty = new SimpleStringProperty();
+                styleProperty = serviceMonitor_vbox.styleProperty();
+                styleProperty.addListener((observable, oldValue, newValue) -> {
+                    serviceMonitor_vbox.setStyle(newValue);
+                });
+
                 layout_MainFlowPane.getChildren().add(serviceMonitor_vbox);
 
-                Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.setPriority(Thread.MIN_PRIORITY);
-                thread.start();
+                lbl_contents = new Label();
+                lbl_coreStatus = new Label();
+                serviceMonitor_vbox = new VBox();
+
+                Thread t = createThread(stringProp, healthStatus, styleProperty);
+                t.start();
             }
         }
     }
@@ -119,76 +139,57 @@ public class SolrMonitorController implements Initializable {
     private String updateServerDetailsLabel() throws Exception{
         StringBuilder str = new StringBuilder();
 
-        if(coreStatus.equals("-1")){
-            coreStatus = "NA";
-        }
-
         str.append("Server: " + serverName + "\n");
-        str.append("Server: " + coreName + "\n");
-        str.append("Last Check: " + lastCheck + "\n");
+        str.append("Core: " + coreName + "\n");
+        str.append("Last Check: " + lastCheck);
 
         return str.toString();
     }
 
-    public Runnable startCheck() throws Exception{
-        ServiceCheck serviceMonitor = new ServiceCheck();
-
-        for(int i = 0; i < totalServiceToCheck; i++){
-            VBox vBox = (VBox) layout_MainFlowPane.getChildren().get(i);
-            Label label = (Label) vBox.getChildren().get(0);
-            String[] labelId = vBox.getChildren().get(0).getId().split("_");
-            Label healthLabel = (Label) vBox.getChildren().get(1);
-
-            serverName = labelId[2];
-            coreName = labelId[3];
-
-            coreStatus = serviceMonitor.checkSolrServices(serverName, coreName);
-
-            Time time = new Time();
-            lastCheck = time.getCurrentTime("HH:mm:ss");
-
-            if(coreStatus.equalsIgnoreCase("STOPPED")){
-                vBox.setStyle("-fx-background-color: #FF0000");
-                healthLabel.setTextFill(Color.web("#FFFFFF"));
-                label.setTextFill(Color.web("#FFFFFF"));
-                healthLabel.setText("STOPPED");
-            } else if(coreStatus.equalsIgnoreCase("RUNNING")){
-                vBox.setStyle("-fx-background-color: #00FF00");
-                healthLabel.setTextFill(Color.web("#000000"));
-                label.setTextFill(Color.web("#000000"));
-                healthLabel.setText("RUNNING");
-            }
-
-            label.setText(updateServerDetailsLabel());
-        }
-        return null;
-    }
-
-    Task task = new Task<String>() {
-        @Override
-        protected String call() throws Exception {
-            while(true){
-                try {
-                    Platform.runLater(() -> {
-                        try {
-                            startCheck();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+    private Thread createThread(SimpleStringProperty holder, SimpleStringProperty healthStatus, StringProperty styleProperty){
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    while(true){
+                        if(!paneIsActive){
+                            break;
                         }
-                    });
+                        ServiceCheck serviceMonitor = new ServiceCheck();
+                        String serverName = holder.get().split(":")[1].trim().split("\n")[0];
+                        String coreName = holder.get().split(":")[2].trim().split("\n")[0];
+                        String coreStatus = serviceMonitor.checkSolrServices(serverName, coreName);
 
-                    if(!paneIsActive){
-                        System.out.println("Application Stopped");
-                        return null;
+                        StringBuilder str = new StringBuilder();
+                        str.append("Server: " + serverName + "\n");
+                        str.append("Core: " + coreName + "\n");
+                        str.append("Last Check: " + Time.getCurrentTime("HH:mm:ss"));
+
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.set(str.toString());
+
+                                if(coreStatus.equals("STOPPED")){
+                                    healthStatus.set("STOPPED");
+                                    styleProperty.set("-fx-background-color: #FF6633;");
+                                } else if(coreStatus.equals("RUNNING")){
+                                    healthStatus.set("RUNNING");
+                                    styleProperty.set("-fx-background-color: #33CC00;");
+                                }
+                            }
+                        });
+                        Thread.sleep(10000);
                     }
-                    Thread.sleep(15000);
-                } catch (Exception e) {
+                }catch(Exception e){
                     e.printStackTrace();
-                    return null;
                 }
             }
-        }
-    };
+        };
+
+        thread.setDaemon(true);
+        return thread;
+    }
 
     public static void stopThread() throws Exception{
         paneIsActive = false;
