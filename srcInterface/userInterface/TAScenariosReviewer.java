@@ -181,6 +181,8 @@ public class TAScenariosReviewer implements Initializable {
         layout_ScrollPane_ResultScrollPane.setContent(layout_TableView_result);
 
         layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
+        layout_TableView_result.setPrefHeight(250);
+        layout_FlowPane_Main.getChildren().add(3, layout_TableView_result);
 //        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
 
 //        layout_FlowPane_Main.getChildren().add(3, layout_ScrollPane_ResultScrollPane);
@@ -212,7 +214,6 @@ public class TAScenariosReviewer implements Initializable {
 
             data.add(row);
         }
-        layout_FlowPane_Main.getChildren().add(3, layout_TableView_result);
         layout_TableView_result.setItems(data);
         rs.close();
     }
