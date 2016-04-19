@@ -38,6 +38,8 @@ public class TAScenariosReviewer implements Initializable {
     private RadioButton rd_api;
     private RadioButton rd_gui;
     private ToggleGroup grp_testType;
+    TableView layout_TableView_result = new TableView();
+    StackPane layout_TableView_Container;
 
     String inputTestClass = "";
     int testClassId = 0;
@@ -56,7 +58,7 @@ public class TAScenariosReviewer implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             db = new DbConnector();
-            db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA_Training");
+            db.connectDb("dbadmin_ta", "admin2tA", "orion.jobstreet.com", 1433, "TA");
 
             generatePane();
         } catch (Exception e) {
@@ -156,53 +158,42 @@ public class TAScenariosReviewer implements Initializable {
         layout_FlowPane_Main.getChildren().add(1, layout_FlowPane_SearchSection);
         layout_FlowPane_Main.getChildren().add(2, layout_Hbox_SearchButton);
         layout_FlowPane_Main.getChildren().add(3, spr_SearchContent);
-//        populateSearchResults();
     }
 
-    private void populateSearchResults() throws Exception{
-        TableView layout_TableView_result = new TableView();
-        ScrollPane layout_ScrollPane_ResultScrollPane = new ScrollPane();
-        ObservableList<ObservableList> data = FXCollections.observableArrayList();
-
-        TableColumn column1 = new TableColumn("CaseDataId");
-        TableColumn column2 = new TableColumn("Test Module");
-        TableColumn column3 = new TableColumn("Test Class");
-        TableColumn column4 = new TableColumn("Test Name & Expected Result");
-        TableColumn column5 = new TableColumn("Test Case Description");
-        TableColumn column6 = new TableColumn("Login Details");
-        TableColumn column7 = new TableColumn("Login TestDataId");
-        TableColumn column8 = new TableColumn("TestClassId");
-        TableColumn column9 = new TableColumn("TestCaseId");
-
-        layout_ScrollPane_ResultScrollPane.setPadding(new Insets(0,30,15,0));
-        layout_ScrollPane_ResultScrollPane.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
-        layout_ScrollPane_ResultScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        layout_ScrollPane_ResultScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        layout_ScrollPane_ResultScrollPane.setContent(layout_TableView_result);
-
-        layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
-        layout_TableView_result.setPrefHeight(250);
-        layout_FlowPane_Main.getChildren().add(3, layout_TableView_result);
-//        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
-
-//        layout_FlowPane_Main.getChildren().add(3, layout_ScrollPane_ResultScrollPane);
-
+    private void populateSearchResults(boolean isExist) throws Exception{
         ArrayList<String> parameterMap = new ArrayList<>();
         parameterMap.add("string|TestClass|" + inputTestClass);
 
-        ResultSet rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
+        System.out.println("string|TestClass|" + inputTestClass);
+        ObservableList<ObservableList> data = FXCollections.observableArrayList();
+        ResultSet rs = null;
 
-        for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-            TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
+        if(!isExist){
+            layout_TableView_Container = new StackPane();
+            layout_TableView_result = new TableView();
+            layout_FlowPane_Main.getChildren().add(3, layout_TableView_Container);
 
-            final int j = i;
-            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(param.getValue().get(j).toString());
-                }
-            });
+            rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
 
-            layout_TableView_result.getColumns().add(column);
+            for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+                TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
+
+                final int j = i;
+                column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(j).toString());
+                    }
+                });
+                column.setPrefWidth(250);
+                column.setEditable(false);
+                layout_TableView_result.getColumns().add(column);
+            }
+
+            layout_TableView_Container.getChildren().add(layout_TableView_result);
+            layout_TableView_Container.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
+            layout_TableView_result.prefWidthProperty().bind(layout_TableView_Container.widthProperty());
+        } else {
+            rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
         }
 
         while(rs.next()){
@@ -211,11 +202,55 @@ public class TAScenariosReviewer implements Initializable {
             for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++){
                 row.add(rs.getString(i));
             }
-
             data.add(row);
         }
+
         layout_TableView_result.setItems(data);
         rs.close();
+
+//        TableColumn column1 = new TableColumn("CaseDataId");
+//        TableColumn column2 = new TableColumn("Test Module");
+//        TableColumn column3 = new TableColumn("Test Class");
+//        TableColumn column4 = new TableColumn("Test Name & Expected Result");
+//        TableColumn column5 = new TableColumn("Test Case Description");
+//        TableColumn column6 = new TableColumn("Login Details");
+//        TableColumn column7 = new TableColumn("Login TestDataId");
+//        TableColumn column8 = new TableColumn("TestClassId");
+//        TableColumn column9 = new TableColumn("TestCaseId");
+
+//        layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
+//        layout_TableView_result.setMinHeight(80);
+//        layout_TableView_result.setPrefHeight(200);
+//        layout_TableView_result.setMaxHeight(500);
+//
+////        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
+//
+//        ArrayList<String> parameterMap = new ArrayList<>();
+//        parameterMap.add("string|TestClass|" + inputTestClass);
+//
+//        ResultSet rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
+//
+//        for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+//            TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
+//
+//            final int j = i;
+//            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
+//                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+//                    return new SimpleStringProperty(param.getValue().get(j).toString());
+//                }
+//            });
+//
+//            layout_TableView_result.getColumns().add(column);
+//        }
+//
+//        while(rs.next()){
+//            ObservableList<String> row = FXCollections.observableArrayList();
+//
+//            for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++){
+//                row.add(rs.getString(i));
+//            }
+//        }
+//        rs.close();
     }
 
     private void confirmedReviewOk(int CaseDataId) throws Exception{
@@ -245,13 +280,20 @@ public class TAScenariosReviewer implements Initializable {
                     btn_search.setDisable(true);
                     if(cmb_searchFromList.getSelectionModel().getSelectedIndex() >= 1){
                         inputTestClass = cmb_searchFromList.getSelectionModel().getSelectedItem().toString();
-                        populateSearchResults();
                     }
 
                     if(!txt_searchByTestClass.getText().isEmpty()){
                         inputTestClass = txt_searchByTestClass.getText();
-                        populateSearchResults();
                     }
+
+                    if(layout_FlowPane_Main.getChildren().contains(layout_TableView_Container)){
+                        System.out.println("true");
+                        populateSearchResults(true);
+                    } else {
+                        System.out.println("false");
+                        populateSearchResults(false);
+                    }
+
                     btn_search.setDisable(false);
                     break;
 
