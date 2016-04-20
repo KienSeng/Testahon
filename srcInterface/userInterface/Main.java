@@ -1,5 +1,6 @@
 package userInterface;
 
+import JenkinsDeployment.FromJenkinsApi;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,8 +11,9 @@ public class Main extends Application {
 
     public static void main(String[] args) throws Exception{
         launch(args);
-//        ServiceCheck svr = new ServiceCheck();
-//        svr.checkSolrServices("hydrus", "applications");
+//        FromJenkinsApi jenkins = new FromJenkinsApi();
+//        jenkins.getResponseFromUrl("http://jenkins.jobstreet.com/view/SiVA_DEV/job/SIVA_SAND_UNIT_TEST/1338/api/json", "GET");
+//        jenkins.getLatestBuildInfo();
     }
 
     @Override

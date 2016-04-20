@@ -1,9 +1,8 @@
 package userInterface;
 
-import Database.DbConnector;
+import Common.DbConnector;
 import Global.Global;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -207,50 +206,6 @@ public class TAScenariosReviewer implements Initializable {
 
         layout_TableView_result.setItems(data);
         rs.close();
-
-//        TableColumn column1 = new TableColumn("CaseDataId");
-//        TableColumn column2 = new TableColumn("Test Module");
-//        TableColumn column3 = new TableColumn("Test Class");
-//        TableColumn column4 = new TableColumn("Test Name & Expected Result");
-//        TableColumn column5 = new TableColumn("Test Case Description");
-//        TableColumn column6 = new TableColumn("Login Details");
-//        TableColumn column7 = new TableColumn("Login TestDataId");
-//        TableColumn column8 = new TableColumn("TestClassId");
-//        TableColumn column9 = new TableColumn("TestCaseId");
-
-//        layout_TableView_result.minWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
-//        layout_TableView_result.setMinHeight(80);
-//        layout_TableView_result.setPrefHeight(200);
-//        layout_TableView_result.setMaxHeight(500);
-//
-////        layout_TableView_result.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9);
-//
-//        ArrayList<String> parameterMap = new ArrayList<>();
-//        parameterMap.add("string|TestClass|" + inputTestClass);
-//
-//        ResultSet rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
-//
-//        for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-//            TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
-//
-//            final int j = i;
-//            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
-//                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-//                    return new SimpleStringProperty(param.getValue().get(j).toString());
-//                }
-//            });
-//
-//            layout_TableView_result.getColumns().add(column);
-//        }
-//
-//        while(rs.next()){
-//            ObservableList<String> row = FXCollections.observableArrayList();
-//
-//            for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++){
-//                row.add(rs.getString(i));
-//            }
-//        }
-//        rs.close();
     }
 
     private void confirmedReviewOk(int CaseDataId) throws Exception{

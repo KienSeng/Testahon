@@ -195,3 +195,26 @@
     -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
     -fx-background-color: #009933;
 }
+
+#btn_search{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+}
+
+#btn_search:hover{
+    -fx-background-color: #009933;
+    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
+    -fx-border-width: 0.3px;
+}
+
+#btn_clear{
+    -fx-background-color: common_background_color;
+    -fx-border-width: 0.3px;
+    -fx-border-color: grey;
+}
+
+#btn_clear:hover{
+    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
+    -fx-background-color: #990000;
+}

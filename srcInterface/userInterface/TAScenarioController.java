@@ -1,6 +1,6 @@
 package userInterface;
 
-import Database.DbConnector;
+import Common.DbConnector;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

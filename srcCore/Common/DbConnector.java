@@ -1,4 +1,4 @@
-package Database;
+package Common;
 
 import Debugger.Logger;
 import Global.Global;
