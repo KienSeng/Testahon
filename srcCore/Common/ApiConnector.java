@@ -18,7 +18,7 @@ public class ApiConnector {
         path = url + "/api/json";
     }
 
-    public void perform(String action) throws Exception{
+    public Response perform(String action) throws Exception{
         RequestSpecification requestCompiler = requestBuilder.build();
 
         switch(action.toUpperCase()){
@@ -35,10 +35,17 @@ public class ApiConnector {
                 response = given().spec(requestCompiler).when().delete(path);
                 break;
         }
+        return response;
     }
 
-    public String getValueFromResponse(String jsonPath) throws Exception{
-        return response.then().extract().path(path).toString();
+    public String getValueFromResponse(Response response, String jsonPath) throws Exception{
+        String value = null;
+        try{
+            value = response.then().extract().path(path).toString();
+        }catch(Exception e){
+            value = null;
+        }
+        return value;
     }
 
     public void setParameter(String paramType, String key, String value) throws Exception{
