@@ -44,6 +44,7 @@ public class Controller{
     ServerChatMonitorController serverChatMonitor;
     TAScenarioController TAController;
     TAScenariosReviewer scenarioReviewerController;
+    ManualDeploymentController manualDeploymentController;
 
     @FXML public void initialize() throws Exception{
         //Add listener to auto resize header image
@@ -190,6 +191,17 @@ public class Controller{
                     deactivateAllThread();
                     main_content_pane.setContent(fxml.load());
                     scenarioReviewerController = fxml.getController();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(event.getTarget().toString().contains("Manual Deploy")){
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
+
+                try {
+                    deactivateAllThread();
+                    main_content_pane.setContent(fxml.load());
+                    manualDeploymentController = fxml.getController();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
