@@ -11,6 +11,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
 import java.util.EventListener;
@@ -76,6 +77,16 @@ public class ManualDeploymentController implements Initializable {
         btn_deployQA.setId("btn_deployQA");
         btn_deployRCJbos.setId("btn_deployRCJbos");
         btn_deployTA.setId("btn_deployTA");
+
+        btn_deployDev.setWrapText(true);
+        btn_deployQA.setWrapText(true);
+        btn_deployRCJbos.setWrapText(true);
+        btn_deployTA.setWrapText(true);
+
+        btn_deployDev.textAlignmentProperty().set(TextAlignment.CENTER);
+        btn_deployQA.textAlignmentProperty().set(TextAlignment.CENTER);
+        btn_deployRCJbos.textAlignmentProperty().set(TextAlignment.CENTER);
+        btn_deployTA.textAlignmentProperty().set(TextAlignment.CENTER);
 
         btn_deployDev.setPrefSize(buttonWidth, buttonHeight);
         btn_deployQA.setPrefSize(buttonWidth, buttonHeight);
