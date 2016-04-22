@@ -1,5 +1,6 @@
 package userInterface;
 
+import JenkinsDeployment.JenkinsApi;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,7 +15,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 /**
@@ -23,6 +26,9 @@ import java.util.ResourceBundle;
 public class ManualDeploymentController implements Initializable {
     @FXML
     private FlowPane layout_FlowPane_Main;
+    private FlowPane layout_FlowPane_MainBuildContainer;
+
+    ArrayList<String> downstreamBuild = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -35,6 +41,7 @@ public class ManualDeploymentController implements Initializable {
 
     private void generatePane() throws Exception {
         VBox layout_Vbox_SivaDev = new VBox();
+
         TilePane layout_TilePane_DeployButton = new TilePane();
         Separator spr_separator = new Separator();
         FlowPane layout_FlowPane_ButtonContainer = new FlowPane();
@@ -98,6 +105,22 @@ public class ManualDeploymentController implements Initializable {
         layout_Vbox_SivaDev.getChildren().add(layout_FlowPane_BuildContainer);
 
         layout_FlowPane_Main.getChildren().add(0, layout_Vbox_SivaDev);
+    }
+
+    public void getParentDownstreamBuild(String url) throws Exception{
+        JenkinsApi jenkins = new JenkinsApi();
+
+        jenkins.getResponseFromJenkins(url, "GET");
+        downstreamBuild = jenkins.getDownstreamBuild();
+    }
+
+
+    private void populateLatestBuildPane() throws Exception{
+
+    }
+
+    private void populateSubsequentBuildPane() throws Exception{
+
     }
 
     private EventHandler<ActionEvent> buttonEventHandler = event -> {

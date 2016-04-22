@@ -15,7 +15,7 @@ public class ApiConnector {
     private Response response;
 
     public void setPath(String url) throws Exception{
-        path = url + "/api/json";
+        path = url;
     }
 
     public Response perform(String action) throws Exception{
@@ -41,8 +41,9 @@ public class ApiConnector {
     public String getValueFromResponse(Response response, String jsonPath) throws Exception{
         String value = null;
         try{
-            value = response.then().extract().path(path).toString();
+            value = response.then().extract().path(jsonPath).toString();
         }catch(Exception e){
+            e.printStackTrace();
             value = null;
         }
         return value;
