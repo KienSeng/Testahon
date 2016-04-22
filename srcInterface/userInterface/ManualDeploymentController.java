@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 public class ManualDeploymentController implements Initializable {
     @FXML
     private FlowPane layout_FlowPane_Main;
-    private FlowPane layout_FlowPane_MainBuildContainer;
+    FlowPane layout_FlowPane_SubBuildContainer;
 
     ArrayList<String> downstreamBuild = new ArrayList<>();
 
@@ -40,87 +40,117 @@ public class ManualDeploymentController implements Initializable {
     }
 
     private void generatePane() throws Exception {
-        VBox layout_Vbox_SivaDev = new VBox();
-
-        TilePane layout_TilePane_DeployButton = new TilePane();
-        Separator spr_separator = new Separator();
-        FlowPane layout_FlowPane_ButtonContainer = new FlowPane();
-        FlowPane layout_FlowPane_BuildContainer = new FlowPane();
-
-        Label lbl_devStartedBy = new Label("Started By:");
-        Label lbl_devBuildNumber = new Label("Build Number:");
-        Label lbl_devBuildName = new Label();
-        Label lbl_devBuildDate = new Label("Date Started:");
-        Label lbl_devStartDescription = new Label();
-
-        Button btn_deployDev = new Button("Deploy to DEV");
-        Button btn_deployQA = new Button("Deploy to QA");
-        Button btn_deployRCJbos = new Button("Deploy to Siva RC JBOS");
-        Button btn_deployTA = new Button("Deploy to TA");
-
-        Double vBoxWidth = 300.0;
-        Double buttonWidth = 100.0;
-        Double buttonHeight = 80.0;
-
-        layout_Vbox_SivaDev.setId("layout_Vbox_SivaDev");
-        layout_Vbox_SivaDev.setPadding(new Insets(15, 15, 15, 15));
-        layout_Vbox_SivaDev.setMaxWidth(vBoxWidth);
-        layout_Vbox_SivaDev.setAlignment(Pos.TOP_CENTER);
-
-        layout_FlowPane_Main.setPadding(new Insets(10,10,10,10));
-        layout_FlowPane_Main.setRowValignment(VPos.TOP);
-
-        layout_FlowPane_ButtonContainer.setAlignment(Pos.TOP_CENTER);
-        layout_FlowPane_ButtonContainer.setHgap(20);
-        layout_FlowPane_ButtonContainer.setVgap(20);
-        layout_FlowPane_ButtonContainer.getChildren().addAll(btn_deployDev, btn_deployQA, btn_deployRCJbos, btn_deployTA);
-
-        layout_FlowPane_BuildContainer.setOrientation(Orientation.VERTICAL);
-        layout_FlowPane_BuildContainer.setPadding(new Insets(10, 0, 10, 0));
-
-        spr_separator.setPadding(new Insets(10,10,10,10));
-
-        btn_deployDev.setId("btn_deployDev");
-        btn_deployQA.setId("btn_deployQA");
-        btn_deployRCJbos.setId("btn_deployRCJbos");
-        btn_deployTA.setId("btn_deployTA");
-
-        btn_deployDev.setWrapText(true);
-        btn_deployQA.setWrapText(true);
-        btn_deployRCJbos.setWrapText(true);
-        btn_deployTA.setWrapText(true);
-
-        btn_deployDev.textAlignmentProperty().set(TextAlignment.CENTER);
-        btn_deployQA.textAlignmentProperty().set(TextAlignment.CENTER);
-        btn_deployRCJbos.textAlignmentProperty().set(TextAlignment.CENTER);
-        btn_deployTA.textAlignmentProperty().set(TextAlignment.CENTER);
-
-        btn_deployDev.setPrefSize(buttonWidth, buttonHeight);
-        btn_deployQA.setPrefSize(buttonWidth, buttonHeight);
-        btn_deployRCJbos.setPrefSize(buttonWidth, buttonHeight);
-        btn_deployTA.setPrefSize(buttonWidth, buttonHeight);
-
-        layout_Vbox_SivaDev.getChildren().add(layout_FlowPane_ButtonContainer);
-        layout_Vbox_SivaDev.getChildren().add(spr_separator);
-        layout_Vbox_SivaDev.getChildren().add(layout_FlowPane_BuildContainer);
-
-        layout_FlowPane_Main.getChildren().add(0, layout_Vbox_SivaDev);
+        layout_FlowPane_Main.setHgap(20);
     }
 
     public void getParentDownstreamBuild(String url) throws Exception{
+        FlowPane layout_FlowPane_MainBuildContainer = new FlowPane();
+
+        layout_FlowPane_MainBuildContainer.setHgap(0);
+        layout_FlowPane_MainBuildContainer.setPadding(new Insets(10,10,10,10));
+
         JenkinsApi jenkins = new JenkinsApi();
 
         jenkins.getResponseFromJenkins(url, "GET");
         downstreamBuild = jenkins.getDownstreamBuild();
+
+        for(int i = 0; i < downstreamBuild.size(); i++){
+            Separator spr_splitLatestAndSub = new Separator();
+            FlowPane layout_FlowPane_LatestBuildContainer;
+
+            String[] splittedString = downstreamBuild.get(i).split("\\|");
+            String buildName = splittedString[0];
+            String buildUrl = splittedString[1];
+            HashMap<String, String> buildInfo;
+
+            jenkins.getResponseFromJenkins(buildUrl,"GET");
+            buildInfo = jenkins.getBuildInfo();
+            String triggerTime = buildInfo.get("TriggerDateTime").replace("+0800", "").trim();
+
+            layout_FlowPane_MainBuildContainer.setOrientation(Orientation.VERTICAL);
+            layout_FlowPane_MainBuildContainer.setVgap(10);
+            layout_FlowPane_MainBuildContainer.setAlignment(Pos.TOP_CENTER);
+
+            layout_FlowPane_LatestBuildContainer = populateLatestBuildPane(buildName, buildInfo.get("TriggerBy"), triggerTime, false);
+            /*
+            map.put("BuildName", api.getValueFromResponse(response, "number"));
+            map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName"));
+            map.put("Result", api.getValueFromResponse(response, "result"));
+            map.put("URL", api.getValueFromResponse(response, "url"));
+            map.put("TriggerBy", api.getValueFromResponse(response, "culprits.fullName").replace("[","").replace("]",""));
+             */
+
+            spr_splitLatestAndSub.setPadding(new Insets(10,10,10,10));
+
+            layout_FlowPane_SubBuildContainer = new FlowPane();
+            layout_FlowPane_SubBuildContainer.setId("layout_FlowPane_SubBuildContainer_" + buildName);
+            layout_FlowPane_SubBuildContainer.setHgap(15);
+            layout_FlowPane_SubBuildContainer.setAlignment(Pos.CENTER);
+            layout_FlowPane_SubBuildContainer.setOrientation(Orientation.VERTICAL);
+            layout_FlowPane_SubBuildContainer.setPadding(new Insets(10,10,10,10));
+
+            layout_FlowPane_MainBuildContainer.getChildren().addAll(layout_FlowPane_LatestBuildContainer, spr_splitLatestAndSub, layout_FlowPane_SubBuildContainer);
+            layout_FlowPane_Main.getChildren().add(layout_FlowPane_MainBuildContainer);
+        }
     }
 
 
-    private void populateLatestBuildPane() throws Exception{
+    private FlowPane populateLatestBuildPane(String buildName, String triggerBy, String triggerDateTime, boolean deployable) throws Exception{
+        FlowPane layout_FlowPane_BuildContainer = new FlowPane();
+        FlowPane layout_FlowPane_ButtonContainer = new FlowPane();
+        VBox layout_Vbox_BuildTitleContainer = new VBox();
 
+        Label lbl_buildName = new Label(buildName);
+        Label lbl_triggerBy = new Label(triggerBy);
+        Label lbl_triggerDateTime = new Label(triggerDateTime);
+
+        layout_Vbox_BuildTitleContainer.setAlignment(Pos.CENTER);
+        layout_Vbox_BuildTitleContainer.setPadding(new Insets(5,5,5,5));
+        layout_Vbox_BuildTitleContainer.getChildren().add(lbl_buildName);
+
+        layout_FlowPane_BuildContainer.setPadding(new Insets(10,10,10,10));
+
+        if(deployable){
+            Button btn_deploy = new Button("Deploy");
+            layout_FlowPane_ButtonContainer.setAlignment(Pos.CENTER);
+            layout_FlowPane_ButtonContainer.setPadding(new Insets(10,0,10,0));
+            layout_FlowPane_ButtonContainer.getChildren().add(btn_deploy);
+
+            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime, layout_FlowPane_ButtonContainer);
+        } else{
+            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime);
+        }
+
+        return layout_FlowPane_BuildContainer;
     }
 
-    private void populateSubsequentBuildPane() throws Exception{
+    private FlowPane populateSubsequentBuildPane(String buildNumber, String triggerBy, String triggerDateTime, boolean deployable) throws Exception{
+        FlowPane layout_FlowPane_BuildContainer = new FlowPane();
+        FlowPane layout_FlowPane_ButtonContainer = new FlowPane();
+        VBox layout_Vbox_BuildTitleContainer = new VBox();
 
+        Label lbl_buildName = new Label(buildNumber);
+        Label lbl_triggerBy = new Label(triggerBy);
+        Label lbl_triggerDateTime = new Label(triggerDateTime);
+
+        layout_Vbox_BuildTitleContainer.setAlignment(Pos.CENTER);
+        layout_Vbox_BuildTitleContainer.setPadding(new Insets(5,5,5,5));
+        layout_Vbox_BuildTitleContainer.getChildren().add(lbl_buildName);
+
+        layout_FlowPane_BuildContainer.setPadding(new Insets(10,10,10,10));
+
+        if(deployable){
+            Button btn_deploy = new Button("Deploy");
+            layout_FlowPane_ButtonContainer.setAlignment(Pos.CENTER);
+            layout_FlowPane_ButtonContainer.setPadding(new Insets(10,0,10,0));
+            layout_FlowPane_ButtonContainer.getChildren().add(btn_deploy);
+
+            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime, layout_FlowPane_ButtonContainer);
+        } else{
+            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime);
+        }
+
+        return layout_FlowPane_BuildContainer;
     }
 
     private EventHandler<ActionEvent> buttonEventHandler = event -> {
