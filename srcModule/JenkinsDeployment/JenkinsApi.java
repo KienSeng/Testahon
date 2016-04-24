@@ -17,7 +17,7 @@ public class JenkinsApi {
     public HashMap<String, String> getBuildInfo() throws Exception{
         HashMap<String, String> map = new HashMap<>();
 
-        map.put("BuildName", api.getValueFromResponse(response, "number"));
+        map.put("BuildNumber", api.getValueFromResponse(response, "number"));
         map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName"));
         map.put("Result", api.getValueFromResponse(response, "result"));
         map.put("URL", api.getValueFromResponse(response, "url"));
@@ -31,14 +31,14 @@ public class JenkinsApi {
         return map;
     }
 
-    public HashMap<String, String> getLastBuildNumber(int numberOfLastBuild) throws Exception{
-        HashMap<String, String> map = new HashMap<>();
+    public ArrayList<String> getLastBuildNumberExcludeLatest(int numberOfLastBuild) throws Exception{
+        ArrayList<String> buildArray = new ArrayList<>();
 
-        for(int i = 0; i < numberOfLastBuild; i++){
-            map.put("Build" + i, api.getValueFromResponse(response, "builds[" + i + "].number") + "|" + api.getValueFromResponse(response, "builds[" + i + "].url"));
+        for(int i = 1; i <= numberOfLastBuild; i++){
+            buildArray.add(api.getValueFromResponse(response, "builds[" + i + "].number") + "|" + api.getValueFromResponse(response, "builds[" + i + "].url"));
         }
 
-        return map;
+        return buildArray;
     }
 
     public ArrayList<String> getDownstreamBuild() throws Exception{
