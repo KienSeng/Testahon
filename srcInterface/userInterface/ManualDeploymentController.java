@@ -1,6 +1,8 @@
 package userInterface;
 
+import Global.Global;
 import JenkinsDeployment.JenkinsApi;
+import PropertiesFile.PropertiesFileReader;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -47,57 +49,14 @@ public class ManualDeploymentController implements Initializable {
         layout_FlowPane_Main.setHgap(20);
     }
 
-    public void getParentDownstreamBuild(String url) throws Exception{
-        layout_FlowPane_MainBuildContainer = new FlowPane();
-        layout_FlowPane_MainBuildContainer.setVgap(10);
-        layout_FlowPane_MainBuildContainer.setPadding(new Insets(10,10,10,10));
-        layout_FlowPane_MainBuildContainer.setOrientation(Orientation.VERTICAL);
-        layout_FlowPane_MainBuildContainer.setAlignment(Pos.TOP_CENTER);
+    public void getBuildListFromPropertyMap() throws Exception{
+        String mainBuildName = Global.propertyMap.get("Siva_Dev_Build_List");
+        String url = "http://jenkins.jobstreet.com:8080/view/SiVA_DEV/job/" + mainBuildName + "/api/json";
 
         JenkinsApi jenkins = new JenkinsApi();
-
         jenkins.getResponseFromJenkins(url, "GET");
-        downstreamBuild = jenkins.getDownstreamBuild();
-
-        for(int i = 0; i < downstreamBuild.size(); i++){
-            Separator spr_splitLatestAndSub = new Separator();
-            FlowPane layout_FlowPane_LatestBuildContainer;
-
-            String[] splittedString = downstreamBuild.get(i).split("\\|");
-            String buildName = splittedString[0];
-            String buildUrl = splittedString[1];
-
-            HashMap<String, String> buildInfo;
-
-            jenkins.getResponseFromJenkins(buildUrl,"GET");
-            buildInfo = jenkins.getBuildInfo();
-            String triggerTime = buildInfo.get("TriggerDateTime").replace("+0800", "").trim();
 
 
-            layout_FlowPane_LatestBuildContainer = populateLatestBuildPane(buildName, buildInfo.get("TriggerBy"), triggerTime, false);
-            /*
-            map.put("BuildNumber", api.getValueFromResponse(response, "number"));
-            map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName"));
-            map.put("Result", api.getValueFromResponse(response, "result"));
-            map.put("URL", api.getValueFromResponse(response, "url"));
-            map.put("TriggerBy", api.getValueFromResponse(response, "culprits.fullName").replace("[","").replace("]",""));
-            map.put("TriggerDateTime", api.getValueFromResponse(response, "date"));
-             */
-
-            spr_splitLatestAndSub.setPadding(new Insets(10,10,10,10));
-
-            layout_FlowPane_SubBuildContainer = new FlowPane();
-            layout_FlowPane_SubBuildContainer.setId("layout_FlowPane_SubBuildContainer_" + buildName);
-            layout_FlowPane_SubBuildContainer.setHgap(15);
-            layout_FlowPane_SubBuildContainer.setAlignment(Pos.CENTER);
-            layout_FlowPane_SubBuildContainer.setOrientation(Orientation.VERTICAL);
-            layout_FlowPane_SubBuildContainer.setPadding(new Insets(10,10,10,10));
-
-            layout_FlowPane_MainBuildContainer.getChildren().addAll(layout_FlowPane_LatestBuildContainer, spr_splitLatestAndSub, layout_FlowPane_SubBuildContainer);
-            layout_FlowPane_Main.getChildren().add(layout_FlowPane_MainBuildContainer);
-
-
-        }
     }
 
     private ArrayList<FlowPane> generateJobLastBuildList(String url) throws Exception{
