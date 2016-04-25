@@ -30,10 +30,7 @@ import java.util.ResourceBundle;
 public class ManualDeploymentController implements Initializable {
     @FXML
     private FlowPane layout_FlowPane_Main;
-    FlowPane layout_FlowPane_SubBuildContainer;
-    FlowPane layout_FlowPane_MainBuildContainer;
 
-    ArrayList<String> downstreamBuild = new ArrayList<>();
     boolean paneIsActive = false;
 
     @Override
@@ -47,102 +44,63 @@ public class ManualDeploymentController implements Initializable {
 
     private void generatePane() throws Exception {
         layout_FlowPane_Main.setHgap(20);
+        layout_FlowPane_Main.setPadding(new Insets(10,10,10,10));
     }
 
     public void getBuildListFromPropertyMap() throws Exception{
-        String mainBuildName = Global.propertyMap.get("Siva_Dev_Build_List");
-        String url = "http://jenkins.jobstreet.com:8080/view/SiVA_DEV/job/" + mainBuildName + "/api/json";
+        String[] allBuildName = Global.propertyMap.get("Siva_Dev_Build_List").split(",");
 
-        JenkinsApi jenkins = new JenkinsApi();
-        jenkins.getResponseFromJenkins(url, "GET");
+        //loop main job list
+        for(int i = 0; i < allBuildName.length; i++){
+            //populate container of main job
+            FlowPane layout_FlowPane_MainJobContainer = new FlowPane();
+            layout_FlowPane_MainJobContainer.setPadding(new Insets(5,5,5,5));
+            layout_FlowPane_MainJobContainer.setOrientation(Orientation.VERTICAL);
+            layout_FlowPane_MainJobContainer.setVgap(10);
 
+            Separator spr_buildInfoSeparator = new Separator();
+            spr_buildInfoSeparator.setOrientation(Orientation.HORIZONTAL);
+            spr_buildInfoSeparator.setPadding(new Insets(5,5,5,5));
 
+            //connect to main job to get info
+            String mainBuildName = allBuildName[i];
+            String url = "http://jenkins.jobstreet.com:8080/view/SiVA_DEV/job/" + mainBuildName + "/api/json";
+            JenkinsApi jenkins = new JenkinsApi();
+            jenkins.getResponseFromJenkins(url, "GET");
+
+            HashMap<String, String>  mainJobBuildInfo = jenkins.getMainJobBuildInfo();
+            String latestBuildNumber = mainJobBuildInfo.get("LatestBuild");
+            ArrayList<String> buildList = jenkins.getLastBuildNumberExcludeLatest(5);
+
+            //get latest build info
+            jenkins.getResponseFromJenkins(mainJobBuildInfo.get("Url"), "GET");
+            FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "SUCCESSFUL", true);
+            //assign a thread
+            layout_FlowPane_MainJobContainer.getChildren().addAll(flowPane_LatestBuildInfoContainer, spr_buildInfoSeparator);
+
+            //loop last N build of main job
+            //to be move to thread
+            for(int j = 0; j < buildList.size(); j++){
+                FlowPane flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "SUCCESSFUL", false);
+                layout_FlowPane_MainJobContainer.getChildren().add(flowPane_buildInfoContainer);
+            }
+        }
     }
 
-    private ArrayList<FlowPane> generateJobLastBuildList(String url) throws Exception{
-        JenkinsApi jenkins = new JenkinsApi();
-        jenkins.getResponseFromJenkins(url, "GET");
+    private FlowPane generateBuildInfoFlowPaneLatest(String buildNumber, String triggerTime, String triggerBy, String buildStatus, boolean isLatest) throws Exception{
+        FlowPane layout_FlowPane_buildInfoContainer = new FlowPane(Orientation.VERTICAL);
+        Label buildInfo = new Label("Build Number:  " + buildNumber + "\n" +
+                                    "Trigger Time:  " + triggerTime + "\n" +
+                                    "Trigger By  :  " + triggerBy + "\n" +
+                                    "Build Status:  " + buildStatus);
 
-        ArrayList<String> buildArray = jenkins.getLastBuildNumberExcludeLatest(5);
-        ArrayList<FlowPane> buildPaneList = new ArrayList<>();
+        if(isLatest){
 
-        for(int i = 0; i < buildArray.size(); i++){
-            String[] urlInfo = buildArray.get(i).split("\\|");
-            JenkinsApi jenkins2 = new JenkinsApi();
-            jenkins2.getResponseFromJenkins(urlInfo[1], "GET");
-            HashMap<String, String> buildInfo = jenkins2.getBuildInfo();
+        }else{
 
-            layout_FlowPane_SubBuildContainer = new FlowPane();
-            layout_FlowPane_SubBuildContainer.setPadding(new Insets(5,5,5,5));
-            layout_FlowPane_SubBuildContainer.setOrientation(Orientation.VERTICAL);
-
-            Label lbl_buildNumber = new Label("Build Number: " + buildInfo.get("BuildNumber"));
-            Label lbl_buildTime = new Label("Triggered Time: " + buildInfo.get("TriggerDateTime").replace("+0800","").trim());
-            Label lbl_buildStatus = new Label("Build Results: " + buildInfo.get("Result").toUpperCase());
-
-            layout_FlowPane_SubBuildContainer.getChildren().addAll(lbl_buildNumber, lbl_buildTime, lbl_buildStatus);
-            buildPaneList.add(layout_FlowPane_SubBuildContainer);
         }
 
-        return buildPaneList;
-    }
-
-    private FlowPane populateLatestBuildPane(String buildName, String triggerBy, String triggerDateTime, boolean deployable) throws Exception{
-        FlowPane layout_FlowPane_BuildContainer = new FlowPane();
-        FlowPane layout_FlowPane_ButtonContainer = new FlowPane();
-        VBox layout_Vbox_BuildTitleContainer = new VBox();
-
-        Label lbl_buildName = new Label(buildName);
-        Label lbl_triggerBy = new Label(triggerBy);
-        Label lbl_triggerDateTime = new Label(triggerDateTime);
-
-        layout_Vbox_BuildTitleContainer.setAlignment(Pos.CENTER);
-        layout_Vbox_BuildTitleContainer.setPadding(new Insets(5,5,5,5));
-        layout_Vbox_BuildTitleContainer.getChildren().add(lbl_buildName);
-
-        layout_FlowPane_BuildContainer.setPadding(new Insets(10,10,10,10));
-
-        if(deployable){
-            Button btn_deploy = new Button("Deploy");
-            layout_FlowPane_ButtonContainer.setAlignment(Pos.CENTER);
-            layout_FlowPane_ButtonContainer.setPadding(new Insets(10,0,10,0));
-            layout_FlowPane_ButtonContainer.getChildren().add(btn_deploy);
-
-            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime, layout_FlowPane_ButtonContainer);
-        } else{
-            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime);
-        }
-
-        return layout_FlowPane_BuildContainer;
-    }
-
-    private FlowPane populateSubsequentBuildPane(String buildNumber, String triggerBy, String triggerDateTime, boolean deployable) throws Exception{
-        FlowPane layout_FlowPane_BuildContainer = new FlowPane();
-        FlowPane layout_FlowPane_ButtonContainer = new FlowPane();
-        VBox layout_Vbox_BuildTitleContainer = new VBox();
-
-        Label lbl_buildName = new Label(buildNumber);
-        Label lbl_triggerBy = new Label(triggerBy);
-        Label lbl_triggerDateTime = new Label(triggerDateTime);
-
-        layout_Vbox_BuildTitleContainer.setAlignment(Pos.CENTER);
-        layout_Vbox_BuildTitleContainer.setPadding(new Insets(5,5,5,5));
-        layout_Vbox_BuildTitleContainer.getChildren().add(lbl_buildName);
-
-        layout_FlowPane_BuildContainer.setPadding(new Insets(10,10,10,10));
-
-        if(deployable){
-            Button btn_deploy = new Button("Deploy");
-            layout_FlowPane_ButtonContainer.setAlignment(Pos.CENTER);
-            layout_FlowPane_ButtonContainer.setPadding(new Insets(10,0,10,0));
-            layout_FlowPane_ButtonContainer.getChildren().add(btn_deploy);
-
-            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime, layout_FlowPane_ButtonContainer);
-        } else{
-            layout_FlowPane_BuildContainer.getChildren().addAll(layout_Vbox_BuildTitleContainer, lbl_triggerBy, lbl_triggerDateTime);
-        }
-
-        return layout_FlowPane_BuildContainer;
+        return layout_FlowPane_buildInfoContainer;
     }
 
     private EventHandler<ActionEvent> buttonEventHandler = event -> {
@@ -167,55 +125,7 @@ public class ManualDeploymentController implements Initializable {
                             break;
                         }
 
-                        JenkinsApi jenkins = new JenkinsApi();
-                        jenkins.getResponseFromJenkins(url, "GET");
-                        HashMap<String, String> buildInfo = jenkins.getBuildInfo();
 
-                            /*
-                        map.put("BuildNumber", api.getValueFromResponse(response, "number"));
-                        map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName"));
-                        map.put("Result", api.getValueFromResponse(response, "result"));
-                        map.put("URL", api.getValueFromResponse(response, "url"));
-                        map.put("TriggerBy", api.getValueFromResponse(response, "culprits.fullName").replace("[","").replace("]",""));
-                        map.put("TriggerDateTime", api.getValueFromResponse(response, "date"));
-                             */
-
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    FlowPane layout_FlowPane_LatestBuildContainer = populateLatestBuildPane(buildInfo.get("FullDisplayName"), buildInfo.get("TriggerBy"), buildInfo.get("TriggerDateTime").replace("+0800", "").trim(), false);
-                                    //layout_FlowPane_MainBuildContainer
-                                    layout_FlowPane_MainBuildContainer.getChildren().remove(0);
-                                    layout_FlowPane_MainBuildContainer.getChildren().add(0, layout_FlowPane_LatestBuildContainer);
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-                        ArrayList<String> lastBuildList = jenkins.getLastBuildNumberExcludeLatest(5);
-                        for(int i = 0; i < lastBuildList.size(); i++){
-                            String[] lastBuildUrl = lastBuildList.get(i).split("\\|");
-                            jenkins.getResponseFromJenkins(lastBuildUrl[1], "GET");
-                            HashMap<String, String> lastBuildInfo = jenkins.getBuildInfo();
-
-                            final int j = i;
-
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try{
-                                        FlowPane flowPane_BuildList = populateSubsequentBuildPane(lastBuildInfo.get("BuildNumber"), lastBuildInfo.get("TriggerBy"), lastBuildInfo.get("TriggerDateTime").replace("+0800", "").trim(), false);
-                                        layout_FlowPane_MainBuildContainer.getChildren().remove(j + 2);
-                                        layout_FlowPane_MainBuildContainer.getChildren().add(j + 2, flowPane_BuildList);
-                                    }catch(Exception e){
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
                         Thread.sleep(10000);
                     }
                 }catch(Exception e){

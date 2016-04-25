@@ -19,6 +19,7 @@ public class JenkinsApi {
 
         map.put("DisplayName", api.getValueFromResponse(response, "displayName"));
         map.put("Url", api.getValueFromResponse(response, "url"));
+        map.put("LatestBuild", api.getValueFromResponse(response, "builds[0].number"));
 
         return map;
     }
