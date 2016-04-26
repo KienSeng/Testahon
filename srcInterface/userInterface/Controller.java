@@ -233,8 +233,9 @@ public class Controller{
             serverMonitor.stopThread();
             serviceMonitor.stopThread();
             serverChatMonitor.stopThread();
+            manualDeploymentController.stopThread();
         }catch(Exception e){
-
+            e.printStackTrace();
         }
     }
 }
