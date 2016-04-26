@@ -1,6 +1,7 @@
 package JenkinsDeployment;
 
 import Common.ApiConnector;
+import Global.Time;
 import com.jayway.restassured.response.Response;
 
 import java.lang.reflect.Array;
@@ -19,7 +20,8 @@ public class JenkinsApi {
 
         map.put("DisplayName", api.getValueFromResponse(response, "displayName"));
         map.put("Url", api.getValueFromResponse(response, "url"));
-        map.put("LatestBuild", api.getValueFromResponse(response, "builds[0].number"));
+        map.put("LatestBuildNumber", api.getValueFromResponse(response, "builds[0].number"));
+        map.put("LatestBuildUrl", api.getValueFromResponse(response, "builds[0].url"));
 
         return map;
     }
@@ -31,13 +33,13 @@ public class JenkinsApi {
         map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName"));
         map.put("Result", api.getValueFromResponse(response, "result"));
         map.put("Url", api.getValueFromResponse(response, "url"));
-        map.put("TriggerBy", api.getValueFromResponse(response, "culprits.fullName").replace("[","").replace("]",""));
-        map.put("TriggerDateTime", api.getValueFromResponse(response, "date"));
-        System.out.println(map.get("BuildName"));
-        System.out.println(map.get("FullDisplayName"));
-        System.out.println(map.get("Result"));
-        System.out.println(map.get("URL"));
-        System.out.println(map.get("TriggerBy"));
+        map.put("TriggerBy", api.getValueFromResponse(response, "actions.causes.shortDescription").replace("[","").replace("]","").split(",")[0].trim());
+        map.put("TriggerDateTime", Time.convertTimestamp(Long.parseLong(api.getValueFromResponse(response, "timestamp")), "HH:mm:ss dd-MMM-YYYY"));
+//        System.out.println(map.get("BuildName"));
+//        System.out.println(map.get("FullDisplayName"));
+//        System.out.println(map.get("Result"));
+//        System.out.println(map.get("URL"));
+//        System.out.println(map.get("TriggerBy"));
         return map;
     }
 

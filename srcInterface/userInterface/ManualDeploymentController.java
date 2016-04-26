@@ -28,14 +28,15 @@ import java.util.ResourceBundle;
  * Created by kienseng on 4/19/2016.
  */
 public class ManualDeploymentController implements Initializable {
-    @FXML
-    private FlowPane layout_FlowPane_Main;
+    @FXML private FlowPane layout_FlowPane_Main;
 
-    boolean paneIsActive = false;
+    static boolean paneIsActive = false;
+    int listOfSubBuild = 5;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+            paneIsActive = true;
             generatePane();
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,9 +46,11 @@ public class ManualDeploymentController implements Initializable {
     private void generatePane() throws Exception {
         layout_FlowPane_Main.setHgap(20);
         layout_FlowPane_Main.setPadding(new Insets(10,10,10,10));
+
+        populateDummyBuildPane();
     }
 
-    public void getBuildListFromPropertyMap() throws Exception{
+    public void populateDummyBuildPane() throws Exception{
         String[] allBuildName = Global.propertyMap.get("Siva_Dev_Build_List").split(",");
 
         //loop main job list
@@ -57,33 +60,27 @@ public class ManualDeploymentController implements Initializable {
             layout_FlowPane_MainJobContainer.setPadding(new Insets(5,5,5,5));
             layout_FlowPane_MainJobContainer.setOrientation(Orientation.VERTICAL);
             layout_FlowPane_MainJobContainer.setVgap(10);
+            layout_FlowPane_MainJobContainer.setMinHeight(650);
+            layout_FlowPane_MainJobContainer.setStyle("-fx-border-color: black");
 
             Separator spr_buildInfoSeparator = new Separator();
             spr_buildInfoSeparator.setOrientation(Orientation.HORIZONTAL);
             spr_buildInfoSeparator.setPadding(new Insets(5,5,5,5));
 
-            //connect to main job to get info
-            String mainBuildName = allBuildName[i];
-            String url = "http://jenkins.jobstreet.com:8080/view/SiVA_DEV/job/" + mainBuildName + "/api/json";
-            JenkinsApi jenkins = new JenkinsApi();
-            jenkins.getResponseFromJenkins(url, "GET");
-
-            HashMap<String, String>  mainJobBuildInfo = jenkins.getMainJobBuildInfo();
-            String latestBuildNumber = mainJobBuildInfo.get("LatestBuild");
-            ArrayList<String> buildList = jenkins.getLastBuildNumberExcludeLatest(5);
-
-            //get latest build info
-            jenkins.getResponseFromJenkins(mainJobBuildInfo.get("Url"), "GET");
             FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "SUCCESSFUL", true);
-            //assign a thread
             layout_FlowPane_MainJobContainer.getChildren().addAll(flowPane_LatestBuildInfoContainer, spr_buildInfoSeparator);
 
             //loop last N build of main job
             //to be move to thread
-            for(int j = 0; j < buildList.size(); j++){
-                FlowPane flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "SUCCESSFUL", false);
+            for(int j = 0; j < listOfSubBuild; j++){
+                FlowPane flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "NA", false);
                 layout_FlowPane_MainJobContainer.getChildren().add(flowPane_buildInfoContainer);
             }
+            Thread t = createThread(String.valueOf(i), allBuildName[i]);
+            t.start();
+
+            layout_FlowPane_Main.getChildren().add(layout_FlowPane_MainJobContainer);
+
         }
     }
 
@@ -93,6 +90,10 @@ public class ManualDeploymentController implements Initializable {
                                     "Trigger Time:  " + triggerTime + "\n" +
                                     "Trigger By  :  " + triggerBy + "\n" +
                                     "Build Status:  " + buildStatus);
+
+        layout_FlowPane_buildInfoContainer.getChildren().add(buildInfo);
+        layout_FlowPane_buildInfoContainer.setMaxHeight(70);
+        layout_FlowPane_buildInfoContainer.setStyle("-fx-border-color: grey;");
 
         if(isLatest){
 
@@ -115,7 +116,7 @@ public class ManualDeploymentController implements Initializable {
         }
     };
 
-    private Thread createParentJobsThread(String url){
+    private Thread createThread(String threadNumber, String mainBuildJobName){
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -125,7 +126,57 @@ public class ManualDeploymentController implements Initializable {
                             break;
                         }
 
+                        final int threadNum = Integer.parseInt(threadNumber);
 
+                        JenkinsApi jenkins = new JenkinsApi();
+
+                        jenkins.getResponseFromJenkins("http://jenkins.jobstreet.com:8080/view/SiVA_DEV/job/" + mainBuildJobName + "/api/json", "GET");
+                        HashMap<String, String> mainJobBuildInfo = jenkins.getMainJobBuildInfo();
+                        ArrayList<String> buildList = jenkins.getLastBuildNumberExcludeLatest(listOfSubBuild);
+
+                        //get latest build info
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try{
+                                    FlowPane mainbuild_FlowPane = (FlowPane) layout_FlowPane_Main.getChildren().get(threadNum);
+
+                                    mainbuild_FlowPane.getChildren().remove(0);
+                                    FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(mainJobBuildInfo.get("DisplayName"), mainJobBuildInfo.get("TriggerDateTime"), mainJobBuildInfo.get("TriggerBy"), mainJobBuildInfo.get("Result"), true);
+                                    mainbuild_FlowPane.getChildren().add(0, flowPane_LatestBuildInfoContainer);
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        //get sub build info
+
+                        for(int i = 0; i < buildList.size(); i++){
+                            if(!paneIsActive){
+                                break;
+                            }
+
+                            final int j = i;
+                            String url = buildList.get(i).split("\\|")[1] + "api/json";
+                            jenkins.getResponseFromJenkins(url, "GET");
+                            HashMap<String, String> buildInfo = jenkins.getBuildInfo();
+
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try{
+                                        FlowPane mainbuild_FlowPane = (FlowPane) layout_FlowPane_Main.getChildren().get(threadNum);
+
+                                        mainbuild_FlowPane.getChildren().remove(j + 2);
+                                        FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(buildInfo.get("BuildNumber"), buildInfo.get("TriggerDateTime"), buildInfo.get("TriggerBy"), buildInfo.get("Result"), true);
+                                        mainbuild_FlowPane.getChildren().add(j + 2, flowPane_LatestBuildInfoContainer);
+                                    }catch(Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
                         Thread.sleep(10000);
                     }
                 }catch(Exception e){
@@ -136,5 +187,10 @@ public class ManualDeploymentController implements Initializable {
 
         thread.setDaemon(true);
         return thread;
+    }
+
+    public static void stopThread() throws Exception{
+        paneIsActive = false;
+
     }
 }

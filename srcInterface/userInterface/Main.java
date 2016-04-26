@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static void main(String[] args) throws Exception{
-//        launch(args);
+        launch(args);
 //        ManualDeploymentController controller = new ManualDeploymentController();
 //        controller.getParentDownstreamBuild("http://jenkins.jobstreet.com/view/SiVA_DEV/job/SIVA_SAND_UNIT_TEST/api/json");
 

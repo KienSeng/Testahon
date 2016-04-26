@@ -25,4 +25,12 @@ public class Time {
 
         return date;
     }
+
+    public static String convertTimestamp(Long timestamp, String timeFormat) throws Exception{
+        SimpleDateFormat simpleDate = new SimpleDateFormat(timeFormat);
+
+        Date date = new Date(timestamp);
+
+        return simpleDate.format(date);
+    }
 }
