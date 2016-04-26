@@ -13,6 +13,7 @@ import javafx.geometry.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
@@ -62,6 +63,13 @@ public class ManualDeploymentController implements Initializable {
         for(int i = 0; i < allBuildName.length; i++){
             //populate container of main job
             FlowPane layout_FlowPane_MainJobContainer = new FlowPane();
+            TitledPane layout_TitledPane_MainJobContainer = new TitledPane();
+            layout_TitledPane_MainJobContainer.setText(allBuildName[i]);
+            layout_TitledPane_MainJobContainer.setAnimated(false);
+            layout_TitledPane_MainJobContainer.setCollapsible(false);
+            layout_TitledPane_MainJobContainer.setExpanded(true);
+            layout_TitledPane_MainJobContainer.setAlignment(Pos.TOP_CENTER);
+
             layout_FlowPane_MainJobContainer.setPadding(new Insets(5,5,5,5));
             layout_FlowPane_MainJobContainer.setOrientation(Orientation.VERTICAL);
             layout_FlowPane_MainJobContainer.setVgap(10);
@@ -83,11 +91,12 @@ public class ManualDeploymentController implements Initializable {
             for(int j = 0; j < listOfSubBuild; j++){
                 FlowPane flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "NA", false);
                 layout_FlowPane_MainJobContainer.getChildren().add(flowPane_buildInfoContainer);
+                layout_TitledPane_MainJobContainer.setContent(layout_FlowPane_MainJobContainer);
             }
 //            Thread t = createThread(String.valueOf(i), allBuildName[i]);
 //            t.start();
 
-            layout_FlowPane_Main.getChildren().add(layout_FlowPane_MainJobContainer);
+            layout_FlowPane_Main.getChildren().add(layout_TitledPane_MainJobContainer);
 
         }
     }
