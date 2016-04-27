@@ -108,7 +108,8 @@ public class Controller{
             //Loop child content array to populate pane
             for(int j = 0; j < childItems.length; j++){
                 Button button = new Button();
-                button.setText("  " + childItems[j]);
+                button.setId("btn_" + childItems[j].trim());
+                button.setText("  " + childItems[j].trim());
                 button.setFont(Font.font(navigationBarFontSize));
                 button.setOnAction(buttonEventHandler);
                 button.setMinWidth(180);
@@ -151,6 +152,16 @@ public class Controller{
     private EventHandler<ActionEvent> buttonEventHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
+            try{
+                Button btn = (Button) event.getSource();
+
+                switch(btn.getId().toLowerCase()){
+//                    case "btn_"
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
             if(event.getTarget().toString().contains("Server Status")){
                 FXMLLoader fxml = new FXMLLoader();
                 fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
@@ -219,6 +230,18 @@ public class Controller{
                     deactivateAllThread();
                     main_content_pane.setContent(fxml.load());
                     manualDeploymentController = fxml.getController();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(event.getTarget().toString().contains("siva")){
+                FXMLLoader fxml = new FXMLLoader();
+                fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
+
+                try {
+                    deactivateAllThread();
+                    main_content_pane.setContent(fxml.load());
+                    manualDeploymentController = fxml.getController();
+                    manualDeploymentController.setProduct("SiVA");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
