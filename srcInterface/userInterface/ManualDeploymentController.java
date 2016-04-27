@@ -34,7 +34,7 @@ public class ManualDeploymentController implements Initializable {
 
     static boolean paneIsActive = false;
     int listOfSubBuild = 5;
-    int buildListHeight = 120;
+    int buildListHeight = 130;
     int buildListWidth = 150;
 
 
@@ -56,79 +56,80 @@ public class ManualDeploymentController implements Initializable {
         populateDummyBuildPane();
     }
 
-    public void populateDummyBuildPane() throws Exception{
+    private void populateDummyBuildPane() throws Exception{
         String[] allBuildName = Global.propertyMap.get("Siva_Dev_Build_List").split(",");
 
         //loop main job list
         for(int i = 0; i < allBuildName.length; i++){
             //populate container of main job
-            FlowPane layout_FlowPane_MainJobContainer = new FlowPane();
-            TitledPane layout_TitledPane_MainJobContainer = new TitledPane();
-            layout_TitledPane_MainJobContainer.setText(allBuildName[i]);
-            layout_TitledPane_MainJobContainer.setAnimated(false);
-            layout_TitledPane_MainJobContainer.setCollapsible(false);
-            layout_TitledPane_MainJobContainer.setExpanded(true);
-            layout_TitledPane_MainJobContainer.setAlignment(Pos.TOP_CENTER);
+            VBox layout_FlowPane_MainJobContainer = new VBox();
 
             layout_FlowPane_MainJobContainer.setPadding(new Insets(5,5,5,5));
-            layout_FlowPane_MainJobContainer.setOrientation(Orientation.VERTICAL);
-            layout_FlowPane_MainJobContainer.setVgap(10);
+//            layout_FlowPane_MainJobContainer.setOrientation(Orientation.VERTICAL);
+//            layout_FlowPane_MainJobContainer.setVgap(10);
+            layout_FlowPane_MainJobContainer.setSpacing(10);
             layout_FlowPane_MainJobContainer.setAlignment(Pos.TOP_LEFT);
-            layout_FlowPane_MainJobContainer.setMinWidth(0);
-            layout_FlowPane_MainJobContainer.setPrefHeight((buildListHeight) * 7);
-            layout_FlowPane_MainJobContainer.setPrefWidth(buildListWidth + 35);
+            layout_FlowPane_MainJobContainer.setPrefWidth(buildListWidth);
             layout_FlowPane_MainJobContainer.setStyle("-fx-border-color: grey;");
 
             Separator spr_buildInfoSeparator = new Separator();
             spr_buildInfoSeparator.setOrientation(Orientation.HORIZONTAL);
             spr_buildInfoSeparator.setPrefWidth(buildListWidth);
 
-            FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "SUCCESSFUL", true);
+            VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "SUCCESSFUL", true);
             layout_FlowPane_MainJobContainer.getChildren().addAll(flowPane_LatestBuildInfoContainer, spr_buildInfoSeparator);
 
             //loop last N build of main job
             //to be move to thread
             for(int j = 0; j < listOfSubBuild; j++){
-                FlowPane flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "NA", false);
+                VBox flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "NA", "NA", "NA", false);
                 layout_FlowPane_MainJobContainer.getChildren().add(flowPane_buildInfoContainer);
-                layout_TitledPane_MainJobContainer.setContent(layout_FlowPane_MainJobContainer);
             }
-//            Thread t = createThread(String.valueOf(i), allBuildName[i]);
-//            t.start();
+            Thread t = createThread(String.valueOf(i), allBuildName[i]);
+            t.start();
 
-            layout_FlowPane_Main.getChildren().add(layout_TitledPane_MainJobContainer);
+            //get total height required to resize
+//            layout_FlowPane_MainJobContainer.setPrefHeight((buildListHeight + 60) * 7);
+            layout_FlowPane_MainJobContainer.setMinHeight(buildListHeight * 7);
+            layout_FlowPane_MainJobContainer.setMinWidth(buildListWidth + 20);
+            layout_FlowPane_Main.getChildren().add(layout_FlowPane_MainJobContainer);
 
         }
     }
 
-    private FlowPane generateBuildInfoFlowPaneLatest(String buildNumber, String triggerTime, String triggerBy, String buildStatus, boolean isLatest) throws Exception{
-        FlowPane layout_FlowPane_buildInfoContainer = new FlowPane(Orientation.VERTICAL);
+    private VBox generateBuildInfoFlowPaneLatest(String buildNumber, String triggerTime, String triggerBy, String buildStatus, boolean isLatest) throws Exception{
+        VBox layout_Vbox_buildInfoContainer = new VBox();
         FlowPane flowPane_buildNumberContainer = new FlowPane();
         FlowPane flowPane_buildStatusContainer = new FlowPane();
 
         Label lbl_buildNumber = new Label(buildNumber);
-        Label lbl_buildInfo = new Label(triggerBy + "\n\n" +
-                                    "Trigger Time: " + triggerBy + "\n");
+        Label lbl_buildInfo = new Label(triggerBy + "\n" +
+                                    "Trigger Time: " + triggerTime + "\n");
         Label lbl_buildStatus = new Label("buildStatus");
 
-        layout_FlowPane_buildInfoContainer.setVgap(10);
-        layout_FlowPane_buildInfoContainer.setAlignment(Pos.CENTER);
+//        layout_FlowPane_buildInfoContainer.setVgap(10);
+        layout_Vbox_buildInfoContainer.setAlignment(Pos.CENTER);
+        layout_Vbox_buildInfoContainer.setMinHeight(buildListHeight);
+        layout_Vbox_buildInfoContainer.setMinWidth(buildListWidth);
+        layout_Vbox_buildInfoContainer.setSpacing(10);
 
         flowPane_buildNumberContainer.setAlignment(Pos.CENTER);
-        flowPane_buildNumberContainer.setPrefWidth(buildListWidth);
+//        flowPane_buildNumberContainer.setPrefWidth(buildListWidth);
         flowPane_buildNumberContainer.setStyle("-fx-background-color: grey;");
         flowPane_buildStatusContainer.setAlignment(Pos.CENTER);
-        flowPane_buildStatusContainer.setPrefWidth(buildListWidth);
+//        flowPane_buildStatusContainer.setPrefWidth(buildListWidth);
         flowPane_buildStatusContainer.setStyle("-fx-background-color: grey;");
         lbl_buildInfo.setWrapText(true);
-        lbl_buildInfo.setPrefWidth(buildListWidth);
+//        lbl_buildInfo.setPrefWidth(buildListWidth);
+//        lbl_buildInfo.setPrefHeight(buildListHeight);
+//        flowPane_buildNumberContainer.setPrefHeight(30);
+//        flowPane_buildStatusContainer.setPrefHeight(30);
 
         flowPane_buildNumberContainer.getChildren().add(lbl_buildNumber);
         flowPane_buildStatusContainer.getChildren().add(lbl_buildStatus);
 
-        layout_FlowPane_buildInfoContainer.getChildren().addAll(flowPane_buildNumberContainer, lbl_buildInfo, flowPane_buildStatusContainer);
-        layout_FlowPane_buildInfoContainer.setPrefSize(buildListWidth + 20, buildListHeight);
-        layout_FlowPane_buildInfoContainer.setStyle("-fx-border-color: grey;");
+        layout_Vbox_buildInfoContainer.getChildren().addAll(flowPane_buildNumberContainer, lbl_buildInfo, flowPane_buildStatusContainer);
+        layout_Vbox_buildInfoContainer.setStyle("-fx-border-color: red;");
 
         if(isLatest){
 
@@ -136,7 +137,7 @@ public class ManualDeploymentController implements Initializable {
 
         }
 
-        return layout_FlowPane_buildInfoContainer;
+        return layout_Vbox_buildInfoContainer;
     }
 
     private EventHandler<ActionEvent> buttonEventHandler = event -> {
@@ -174,10 +175,10 @@ public class ManualDeploymentController implements Initializable {
                             @Override
                             public void run() {
                                 try{
-                                    FlowPane mainbuild_FlowPane = (FlowPane) layout_FlowPane_Main.getChildren().get(threadNum);
+                                    VBox mainbuild_FlowPane = (VBox) layout_FlowPane_Main.getChildren().get(threadNum);
 
                                     mainbuild_FlowPane.getChildren().remove(0);
-                                    FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(mainJobBuildInfo.get("DisplayName"), mainJobBuildInfo.get("TriggerDateTime"), mainJobBuildInfo.get("TriggerBy"), mainJobBuildInfo.get("Result"), true);
+                                    VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(mainJobBuildInfo.get("DisplayName"), mainJobBuildInfo.get("TriggerDateTime"), mainJobBuildInfo.get("TriggerBy"), mainJobBuildInfo.get("Result"), true);
                                     mainbuild_FlowPane.getChildren().add(0, flowPane_LatestBuildInfoContainer);
                                 }catch(Exception e){
                                     e.printStackTrace();
@@ -186,7 +187,6 @@ public class ManualDeploymentController implements Initializable {
                         });
 
                         //get sub build info
-
                         for(int i = 0; i < buildList.size(); i++){
                             if(!paneIsActive){
                                 break;
@@ -201,10 +201,10 @@ public class ManualDeploymentController implements Initializable {
                                 @Override
                                 public void run() {
                                     try{
-                                        FlowPane mainbuild_FlowPane = (FlowPane) layout_FlowPane_Main.getChildren().get(threadNum);
+                                        VBox mainbuild_FlowPane = (VBox) layout_FlowPane_Main.getChildren().get(threadNum);
 
                                         mainbuild_FlowPane.getChildren().remove(j + 2);
-                                        FlowPane flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(buildInfo.get("BuildNumber"), buildInfo.get("TriggerDateTime"), buildInfo.get("TriggerBy"), buildInfo.get("Result"), true);
+                                        VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(buildInfo.get("BuildNumber"), buildInfo.get("TriggerDateTime"), buildInfo.get("TriggerBy"), buildInfo.get("Result"), true);
                                         mainbuild_FlowPane.getChildren().add(j + 2, flowPane_LatestBuildInfoContainer);
                                     }catch(Exception e){
                                         e.printStackTrace();

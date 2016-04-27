@@ -1,6 +1,10 @@
 package userInterface;
 
 import PropertiesFile.PropertiesFileReader;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -21,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.HashMap;
@@ -61,9 +66,12 @@ public class Controller{
         container_content_hBox.setMinHeight(400);
 
         //Set Header image
-        File imageFile = new File("/../../img_header.jpg");
+        File imageFile = new File("/../../Image/Headers/img_header.jpg");
         Image headerImage = new Image(imageFile.toURI().toString());
+
         img_header.setImage(headerImage);
+
+//        SequentialTransition headerAnimation = new SequentialTransition();
 
         //Populate navigation bar
         PropertiesFileReader file = new PropertiesFileReader();
@@ -128,7 +136,16 @@ public class Controller{
         }
     }
 
+    private FadeTransition fade(ImageView image, Double start, Double end) throws Exception{
+        FadeTransition fade = new FadeTransition();
+        fade.setNode(img_header);
+        fade.setDuration(new Duration(1500));
+        fade.setFromValue(start);
+        fade.setToValue(end);
+        fade.setAutoReverse(false);
 
+        return fade;
+    }
 
     @FXML
     private EventHandler<ActionEvent> buttonEventHandler = new EventHandler<ActionEvent>() {
