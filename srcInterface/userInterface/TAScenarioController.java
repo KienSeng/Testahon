@@ -192,6 +192,8 @@ public class TAScenarioController implements Initializable {
         btn_clearAll.setMinWidth(Global.standardButtonWidth);
         btn_add.setOnAction(addButtonClicked);
         btn_clearAll.setOnAction(clearButtonClicked);
+        btn_add.getStyleClass().addAll("button_standard", "button_standard_positive");
+        btn_clearAll.getStyleClass().addAll("button_standard", "button_standard_positive");
 
         layout_stackPane_MainContent.setAlignment(Pos.CENTER);
         layout_stackPane_MainContent.setMaxWidth(layout_flowPane_ScenarioContainer.getMaxWidth());
@@ -440,6 +442,7 @@ public class TAScenarioController implements Initializable {
         btn_summaryOk.setText("OK");
         btn_summaryOk.setMinWidth(Global.standardButtonWidth);
         btn_summaryOk.setOnAction(summaryButtonOkClicked);
+        btn_summaryOk.getStyleClass().add("button_standard_positive");
 
         grd_review.setId("grd_review");
         grd_review.add(lbl_CaseDataId_Summary,1,1);
@@ -511,9 +514,11 @@ public class TAScenarioController implements Initializable {
 
         btn_deleteScenario_ok.setId("btn_deleteScenario_ok");
         btn_deleteScenario_ok.setText("Delete");
+        btn_deleteScenario_ok.getStyleClass().addAll("button_standard", "button_standard_negative");
 
         btn_deleteScenario_clear.setId("btn_deleteScenario_clear");
         btn_deleteScenario_clear.setText("Clear");
+        btn_deleteScenario_clear.getStyleClass().addAll("button_standard", "button_standard_positive");
 
         btn_deleteScenario_ok.setOnAction(deleteScenarioEvent);
         btn_deleteScenario_clear.setOnAction(deleteScenarioEvent);
@@ -554,6 +559,8 @@ public class TAScenarioController implements Initializable {
         btn_deleteScenario_confirm.setText("Confirm");
         btn_deleteScenario_cancel.setOnAction(deleteScenarioEvent);
         btn_deleteScenario_confirm.setOnAction(deleteScenarioEvent);
+        btn_deleteScenario_cancel.getStyleClass().addAll("button_standard", "button_standard_positive");
+        btn_deleteScenario_confirm.getStyleClass().addAll("button_standard", "button_standard_negative");
 
         lbl_deleteScenario_CaseDataDescription.setText("Confirm delete CaseDataID: " + txt_deleteScenario_CaseDataId.getText());
 

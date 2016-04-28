@@ -1,6 +1,33 @@
 .root{
     common_background_color: white;
     -fx-background: common_background_color;
+
+    background_fail_color: #FF3300;
+    background_fail_text_color: white;
+
+    background_warning_color: #FFFF66;
+    background_warning_text_color: black;
+
+    background_ok_color: #00CC33;
+    background_ok_text_color: black;
+
+    background_idle_color: #888888;
+    background_idle_text_color: black;
+
+    button_positive_hover_background_color: #00CC00;
+    button_positive_hover_text_color: black;
+    button_positive_hover_effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
+
+    button_negative_hover_background_color: #CC3300;
+    button_negative_hover_text_color: white;
+    button_negative_hover_effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
+
+    button_normal_hover_color: #00CCFF;
+    button_normal_text_color: black;
+    button_normal_border_color: grey;
+    button_normal_border_width: 0.3px;
+
+    lightBox_background_color: rgba(0, 0, 0, 0.8);
 }
 
 .titled-pane > .title {
@@ -24,6 +51,7 @@
 .button{
     -fx-background-color: common_background_color;
 }
+
 
 #sidebarButton{
     -fx-alignment: center-left;
@@ -76,7 +104,7 @@
 }
 
 #layout_flowPane_Review{
-    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-color: lightBox_background_color;
 }
 
 #layout_flowPane_ReviewContainer{
@@ -102,125 +130,69 @@
 
 #layout_Vbox_SivaDev{
     -fx-background-color: common_background_color;
-    -fx-border-color: grey;
-    -fx-border-width: 0.3px;
+    -fx-border-color: button_normal_border_color;
+    -fx-border-width: button_normal_border_wwidth;
 }
 
-#btnExit{
-    -fx-background-color: white;
-    -fx-border-width: 0.3px;
-    -fx-font-size: 18;
-    -fx-border-color: grey;
-}
-
-#btnExit:hover{
-    -fx-background-color: #990000;
-    -fx-font-size: 20;
-    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-border-width: 0.3px;
-}
-
-#btn_summaryOk{
+.button_standard{
     -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
+    -fx-text-fill: button_normal_text_color;
+    -fx-border-color: button_normal_border_color;
+    -fx-border-width: 0.3;
 }
 
-#btn_summaryOk:hover{
-    -fx-background-color: #990000;
-    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-border-width: 0.3px;
-    -fx-text-fill: white;
-    -fx-opacity: 1;
+.button_standard_positive:hover{
+    -fx-background-color: button_positive_hover_background_color;
+    -fx-text-fill: button_positive_hover_text_color;
+    -fx-effect: button_positive_hover_effect;
+    -fx-border-color: button_normal_border_color;
 }
 
-#btn_add{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
+.button_standard_negative:hover{
+    -fx-background-color: button_negative_hover_background_color;
+    -fx-text-fill: button_negative_hover_text_color;
+    -fx-effect: button_negative_hover_effect;
+    -fx-border-color: button_normal_border_color;
 }
 
-#btn_add:hover{
-    -fx-background-color: #009933;
-    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
-    -fx-border-width: 0.3px;
+.deployment_buildInfo_idle{
+    -fx-background-color: background_idle_color;
+    -fx-text-fill: background_idle_text_color;
+    -fx-font-weight: normal;
+    -fx-font-size: 11;
 }
 
-#btn_clearAll{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
+.deployment_buildInfo_ok{
+    -fx-background-color: background_ok_color;
+    -fx-text-fill: background_ok_text_color;
+    -fx-font-weight: normal;
+    -fx-font-size: 11;
 }
 
-#btn_clearAll:hover{
-    -fx-background-color: #990000;
-    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-border-width: 0.3px;
+.deployment_buildInfo_fail{
+    -fx-background-color: background_fail_color;
+    -fx-text-fill: background_fail_text_color;
+    -fx-font-weight: normal;
+    -fx-font-size: 11;
 }
 
-#btn_deleteScenario_cancel{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
+.deployment_buildStatus_idle{
+    -fx-background-color: background_idle_color;
+    -fx-text-fill: background_idle_text_color;
+    -fx-font-weight: normal;
+    -fx-font-size: 11;
 }
 
-#btn_deleteScenario_cancel:hover{
-    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
-    -fx-background-color: #009933;
+.deployment_buildStatus_ok{
+    -fx-background-color: background_ok_color;
+    -fx-text-fill: background_ok_text_color;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
 }
 
-#btn_deleteScenario_confirm{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
-}
-
-#btn_deleteScenario_confirm:hover{
-    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-background-color: #990000;
-}
-
-#btn_deleteScenario_ok{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
-}
-
-#btn_deleteScenario_clear{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
-}
-
-#btn_deleteScenario_ok:hover{
-    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-background-color: #990000;
-}
-
-#btn_deleteScenario_clear:hover{
-    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
-    -fx-background-color: #009933;
-}
-
-#btn_search{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
-}
-
-#btn_search:hover{
-    -fx-background-color: #009933;
-    -fx-effect: dropshadow( three-pass-box , #009933 ,15, 0.1, 0, 0);
-    -fx-border-width: 0.3px;
-}
-
-#btn_clear{
-    -fx-background-color: common_background_color;
-    -fx-border-width: 0.3px;
-    -fx-border-color: grey;
-}
-
-#btn_clear:hover{
-    -fx-effect: dropshadow( three-pass-box , #990000 ,15, 0.1, 0, 0);
-    -fx-background-color: #990000;
+.deployment_buildStatus_fail{
+    -fx-background-color: background_fail_color;
+    -fx-text-fill: background_fail_text_color;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
 }

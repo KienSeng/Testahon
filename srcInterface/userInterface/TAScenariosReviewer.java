@@ -137,12 +137,14 @@ public class TAScenariosReviewer implements Initializable {
         btn_search.setMinWidth(Global.standardButtonWidth);
         btn_search.setAlignment(Pos.CENTER);
         btn_search.setOnAction(buttonClickedEvent);
+        btn_search.getStyleClass().addAll("button_standard", "button_standard_positive");
 
         btn_clear.setId("btn_clear");
         btn_clear.setText("Clear");
         btn_clear.setMinWidth(Global.standardButtonWidth);
         btn_clear.setAlignment(Pos.CENTER);
         btn_clear.setOnAction(buttonClickedEvent);
+        btn_clear.getStyleClass().addAll("button_standard", "button_standard_negative");
 
         spr_SearchContent.setOrientation(Orientation.HORIZONTAL);
         spr_SearchContent.setPadding(new Insets(0,30,15,0));
@@ -242,10 +244,8 @@ public class TAScenariosReviewer implements Initializable {
                     }
 
                     if(layout_FlowPane_Main.getChildren().contains(layout_TableView_Container)){
-                        System.out.println("true");
                         populateSearchResults(true);
-                    } else {
-                        System.out.println("false");
+                    } else{
                         populateSearchResults(false);
                     }
 

@@ -75,7 +75,7 @@ public class ManualDeploymentController implements Initializable {
             spr_buildInfoSeparator.setOrientation(Orientation.HORIZONTAL);
             spr_buildInfoSeparator.setPrefWidth(buildListWidth);
 
-            VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "", "LOADING...", "NA", true);
+            VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "", "LOADING...", "NA", false);
             layout_FlowPane_MainJobContainer.getChildren().addAll(flowPane_LatestBuildInfoContainer, spr_buildInfoSeparator);
 
             //loop last N build of main job
@@ -108,15 +108,28 @@ public class ManualDeploymentController implements Initializable {
         Button btn_deploy = new Button("DEPLOY THIS BUILD");
         btn_deploy.setOnAction(buttonEventHandler);
         btn_deploy.setId(buildNumber);
+        btn_deploy.getStyleClass().addAll("button_standard", "button_standard_positive");
 
         layout_Vbox_buildInfoContainer.setPadding(new Insets(0,0,5,0));
         layout_Vbox_buildInfoContainer.setAlignment(Pos.TOP_CENTER);
         layout_Vbox_buildInfoContainer.setSpacing(10);
 
+        if(buildStatus.equalsIgnoreCase("success")){
+            layout_Vbox_buildInfoContainer.getStyleClass().add("deployment_buildInfo_ok");
+            flowPane_buildNumberContainer.getStyleClass().add("deployment_buildStatus_ok");
+            flowPane_buildStatusContainer.getStyleClass().add("deployment_buildStatus_ok");
+        } else if(buildStatus.equalsIgnoreCase("fail") || buildStatus.equalsIgnoreCase("unstable")){
+            layout_Vbox_buildInfoContainer.getStyleClass().add("deployment_buildInfo_fail");
+            flowPane_buildNumberContainer.getStyleClass().add("deployment_buildStatus_fail");
+            flowPane_buildStatusContainer.getStyleClass().add("deployment_buildStatus_fail");
+        } else{
+            layout_Vbox_buildInfoContainer.getStyleClass().add("deployment_buildInfo_idle");
+            flowPane_buildNumberContainer.getStyleClass().add("deployment_buildStatus_idle");
+            flowPane_buildStatusContainer.getStyleClass().add("deployment_buildStatus_idle");
+        }
+
         flowPane_buildNumberContainer.setAlignment(Pos.CENTER);
-        flowPane_buildNumberContainer.setStyle("-fx-background-color: grey;");
         flowPane_buildStatusContainer.setAlignment(Pos.CENTER);
-        flowPane_buildStatusContainer.setStyle("-fx-background-color: grey;");
 
         lbl_buildInfo.setWrapText(true);
         lbl_buildInfo.setPrefHeight(buildListHeight/1.5);
@@ -130,13 +143,13 @@ public class ManualDeploymentController implements Initializable {
             layout_Vbox_buildInfoContainer.setMinWidth(buildListWidth);
 
             layout_Vbox_buildInfoContainer.getChildren().addAll(flowPane_buildNumberContainer, lbl_buildInfo, lbl_buildDate, flowPane_buildStatusContainer, btn_deploy);
+
         }else{
             layout_Vbox_buildInfoContainer.setMinHeight(buildListHeight);
             layout_Vbox_buildInfoContainer.setMinWidth(buildListWidth);
 
             layout_Vbox_buildInfoContainer.getChildren().addAll(flowPane_buildNumberContainer, lbl_buildInfo, lbl_buildDate, flowPane_buildStatusContainer);
         }
-        layout_Vbox_buildInfoContainer.setStyle("-fx-border-color: red;");
 
         return layout_Vbox_buildInfoContainer;
     }
@@ -216,7 +229,7 @@ public class ManualDeploymentController implements Initializable {
                                 }
                             });
                         }
-                        Thread.sleep(10000);
+                        Thread.sleep(20000);
                     }
                 }catch(Exception e){
                     e.printStackTrace();
