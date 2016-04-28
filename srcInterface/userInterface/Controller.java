@@ -1,5 +1,6 @@
 package userInterface;
 
+import Global.Global;
 import PropertiesFile.PropertiesFileReader;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyValue;
@@ -113,7 +114,6 @@ public class Controller{
                 button.setFont(Font.font(navigationBarFontSize));
                 button.setOnAction(buttonEventHandler);
                 button.setMinWidth(180);
-                button.setId("sidebarButton");
                 side_bar_child_vbox.getChildren().add(button);
 
                 pane.setContent(side_bar_child_vbox);
@@ -154,97 +154,128 @@ public class Controller{
         public void handle(ActionEvent event) {
             try{
                 Button btn = (Button) event.getSource();
+                FXMLLoader fxml = new FXMLLoader();
 
-                switch(btn.getId().toLowerCase()){
-//                    case "btn_"
+                switch(btn.getId()){
+                    case "btn_Server Status":
+                        fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
+
+                        try {
+                            deactivateAllThread();
+
+                            main_content_pane.setContent(fxml.load());
+                            serverMonitor = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_SOLR":
+                        fxml.setLocation(getClass().getResource("/userInterface/SolrMonitoring.fxml"));
+
+                        try {
+                            deactivateAllThread();
+
+                            main_content_pane.setContent(fxml.load());
+                            serviceMonitor = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_Serverchat":
+                        fxml.setLocation(getClass().getResource("/userInterface/ServerChatMonitoring.fxml"));
+
+                        try {
+                            deactivateAllThread();
+
+                            main_content_pane.setContent(fxml.load());
+                            serverChatMonitor = fxml.getController();
+                            serverChatMonitor.showPane();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_Add Test Scenario":
+                        fxml.setLocation(getClass().getResource("/userInterface/TAScenarios.fxml"));
+
+                        try {
+                            deactivateAllThread();
+                            main_content_pane.setContent(fxml.load());
+                            TAController = fxml.getController();
+                            TAController.showPane();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_Review Test Scenarios":
+                        fxml.setLocation(getClass().getResource("/userInterface/TAScenariosReviewer.fxml"));
+
+                        try {
+                            deactivateAllThread();
+                            main_content_pane.setContent(fxml.load());
+                            scenarioReviewerController = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_SiVA":
+                        fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
+
+                        try {
+                            deactivateAllThread();
+                            Global.product = btn.getId().split("_")[1];
+                            main_content_pane.setContent(fxml.load());
+                            manualDeploymentController = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_MYJS":
+                        fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
+
+                        try {
+                            deactivateAllThread();
+                            Global.product = btn.getId().split("_")[1];
+                            main_content_pane.setContent(fxml.load());
+                            manualDeploymentController = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_JBOS":
+                        fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
+
+                        try {
+                            deactivateAllThread();
+                            Global.product = btn.getId().split("_")[1];
+                            main_content_pane.setContent(fxml.load());
+                            manualDeploymentController = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "btn_PAPI":
+                        fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
+
+                        try {
+                            deactivateAllThread();
+                            Global.product = btn.getId().split("_")[1];
+                            main_content_pane.setContent(fxml.load());
+                            manualDeploymentController = fxml.getController();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
                 }
-            }catch(Exception e){
+            }catch(Exception e) {
                 e.printStackTrace();
-            }
-
-            if(event.getTarget().toString().contains("Server Status")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
-
-                try {
-                    deactivateAllThread();
-
-                    main_content_pane.setContent(fxml.load());
-                    serverMonitor = fxml.getController();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(event.getTarget().toString().contains("SOLR")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/SolrMonitoring.fxml"));
-
-                try {
-                    deactivateAllThread();
-
-                    main_content_pane.setContent(fxml.load());
-                    serviceMonitor = fxml.getController();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(event.getTarget().toString().contains("Serverchat")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/ServerChatMonitoring.fxml"));
-
-                try {
-                    deactivateAllThread();
-
-                    main_content_pane.setContent(fxml.load());
-                    serverChatMonitor = fxml.getController();
-                    serverChatMonitor.showPane();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(event.getTarget().toString().contains("Add Test Scenario")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/TAScenarios.fxml"));
-
-                try {
-                    deactivateAllThread();
-                    main_content_pane.setContent(fxml.load());
-                    TAController = fxml.getController();
-                    TAController.showPane();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(event.getTarget().toString().contains("Review Test Scenarios")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/TAScenariosReviewer.fxml"));
-
-                try {
-                    deactivateAllThread();
-                    main_content_pane.setContent(fxml.load());
-                    scenarioReviewerController = fxml.getController();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(event.getTarget().toString().contains("Manual Deploy")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
-
-                try {
-                    deactivateAllThread();
-                    main_content_pane.setContent(fxml.load());
-                    manualDeploymentController = fxml.getController();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(event.getTarget().toString().contains("siva")){
-                FXMLLoader fxml = new FXMLLoader();
-                fxml.setLocation(getClass().getResource("/userInterface/ManualDeployment.fxml"));
-
-                try {
-                    deactivateAllThread();
-                    main_content_pane.setContent(fxml.load());
-                    manualDeploymentController = fxml.getController();
-                    manualDeploymentController.setProduct("SiVA");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
     };

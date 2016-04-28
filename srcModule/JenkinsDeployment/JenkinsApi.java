@@ -30,7 +30,7 @@ public class JenkinsApi {
         HashMap<String, String> map = new HashMap<>();
 
         map.put("BuildNumber", api.getValueFromResponse(response, "number"));
-        map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName"));
+        map.put("FullDisplayName", api.getValueFromResponse(response, "fullDisplayName").split("#")[0].trim());
         map.put("Result", api.getValueFromResponse(response, "result"));
         map.put("Url", api.getValueFromResponse(response, "url"));
         map.put("TriggerBy", api.getValueFromResponse(response, "actions.causes.shortDescription").replace("[","").replace("]","").split(",")[0].trim());
