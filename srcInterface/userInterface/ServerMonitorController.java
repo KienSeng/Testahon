@@ -1,6 +1,7 @@
 package userInterface;
 
 
+import Global.Global;
 import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.PingTool;
@@ -185,7 +186,7 @@ public class ServerMonitorController implements Initializable{
                                 }
                             }
                         });
-                        Thread.sleep(10000);
+                        Thread.sleep(Integer.parseInt(Global.propertyMap.get("Server_Check_Interval")));
                     }
                 }catch(Exception e){
                     e.printStackTrace();

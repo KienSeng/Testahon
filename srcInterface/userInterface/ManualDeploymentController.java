@@ -229,7 +229,7 @@ public class ManualDeploymentController implements Initializable {
                                 }
                             });
                         }
-                        Thread.sleep(20000);
+                        Thread.sleep(Integer.parseInt(Global.propertyMap.get("Jenkins_Check_Interval")));
                     }
                 }catch(Exception e){
                     e.printStackTrace();

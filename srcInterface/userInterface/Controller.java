@@ -2,7 +2,9 @@ package userInterface;
 
 import Global.Global;
 import PropertiesFile.PropertiesFileReader;
-import javafx.animation.*;
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -26,11 +28,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Controller{
     @FXML private VBox layout_vbox;
@@ -44,7 +45,6 @@ public class Controller{
     @FXML private TitledPane pane;
 
     private int navigationBarFontSize = 15;
-    private ArrayList<String> headerImages = new ArrayList<>();
 
     ServerMonitorController serverMonitor;
     SolrMonitorController serviceMonitor;
@@ -72,18 +72,21 @@ public class Controller{
         container_content_hBox.setMinHeight(400);
 
         //Set Header image
-        File imageFile = new File("/../../Image/Headers/img_header.jpg");
-        Image headerImage = new Image(imageFile.toURI().toString());
-
-        img_header.setImage(headerImage);
+        img_header.setImage(getRandomHeaderImage());
 
         SequentialTransition headerAnimation = new SequentialTransition();
         FadeTransition fadeIn = fade(img_header, 0.0, 1.0);
-        PauseTransition pause = new PauseTransition(Duration.millis(3000));
+        PauseTransition pause = new PauseTransition(Duration.millis(Integer.parseInt(Global.propertyMap.get("Header_Change_Interval"))));
         FadeTransition fadeOut = fade(img_header, 1.0, 0.0);
-        PauseTransition pause2 = new PauseTransition(Duration.millis(1000));
-        headerAnimation.setCycleCount(Timeline.INDEFINITE);
-        headerAnimation.getChildren().addAll(fadeIn, pause, fadeOut, pause2);
+        headerAnimation.getChildren().addAll(fadeIn, pause, fadeOut);
+        headerAnimation.setOnFinished(e -> {
+            try {
+                img_header.setImage(getRandomHeaderImage());
+                headerAnimation.play();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         headerAnimation.play();
 
 
@@ -146,15 +149,20 @@ public class Controller{
         }
     }
 
-    private void getRandomHeaderImage() throws Exception{
-        File dir = new File("/../../Image/Headers");
-        File[] fileList = dir.listFiles();
+    private Image getRandomHeaderImage() throws Exception{
+        Random random = new Random();
+        File[] dir = new File("./Image/Headers").listFiles();
 
-        for(int i = 0; i < fileList.length; i++){
-            if(fileList[i].isFile()){
-                headerImages.add(fileList[i].getAbsolutePath());
+        ArrayList<String> headerImages = new ArrayList<>();
+
+        for(int i = 0; i < dir.length; i++){
+            if(dir[i].isFile()){
+                headerImages.add(dir[i].getPath());
             }
         }
+
+        File imageFile = new File(headerImages.get(random.nextInt(headerImages.size())));
+        return new Image(imageFile.toURI().toString());
     }
 
     private FadeTransition fade(ImageView image, Double start, Double end) throws Exception{

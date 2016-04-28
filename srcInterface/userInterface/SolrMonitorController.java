@@ -1,5 +1,6 @@
 package userInterface;
 
+import Global.Global;
 import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.ServiceCheck;
@@ -179,7 +180,7 @@ public class SolrMonitorController implements Initializable {
                                 }
                             }
                         });
-                        Thread.sleep(10000);
+                        Thread.sleep(Integer.parseInt(Global.propertyMap.get("Solr_Check_Interval")));
                     }
                 }catch(Exception e){
                     e.printStackTrace();

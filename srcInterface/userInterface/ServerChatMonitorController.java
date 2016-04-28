@@ -1,5 +1,6 @@
 package userInterface;
 
+import Global.Global;
 import Global.Time;
 import PropertiesFile.PropertiesFileReader;
 import ServerMonitor.ServiceCheck;
@@ -184,7 +185,7 @@ public class ServerChatMonitorController implements Initializable {
                                 }
                             }
                         });
-                        Thread.sleep(10000);
+                        Thread.sleep(Integer.parseInt(Global.propertyMap.get("Serverchat_Check_Interval")));
                     }
                 }catch(Exception e){
                     e.printStackTrace();
