@@ -118,7 +118,7 @@ public class ManualDeploymentController implements Initializable {
             layout_Vbox_buildInfoContainer.getStyleClass().add("deployment_buildInfo_ok");
             flowPane_buildNumberContainer.getStyleClass().add("deployment_buildStatus_ok");
             flowPane_buildStatusContainer.getStyleClass().add("deployment_buildStatus_ok");
-        } else if(buildStatus.equalsIgnoreCase("fail") || buildStatus.equalsIgnoreCase("unstable")){
+        } else if(buildStatus.equalsIgnoreCase("failure") || buildStatus.equalsIgnoreCase("unstable")){
             layout_Vbox_buildInfoContainer.getStyleClass().add("deployment_buildInfo_fail");
             flowPane_buildNumberContainer.getStyleClass().add("deployment_buildStatus_fail");
             flowPane_buildStatusContainer.getStyleClass().add("deployment_buildStatus_fail");
