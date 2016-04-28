@@ -41,14 +41,6 @@ public class TAScenariosReviewer implements Initializable {
     StackPane layout_TableView_Container;
 
     String inputTestClass = "";
-    int testClassId = 0;
-    int testCaseId = 0;
-    int caseDataId = 0;
-    int caseDataDescription = 0;
-    int loginTestData = 0;
-    String testClass = "";
-    String testCaseDescription = "";
-    String selectedTestClass = "";
 
     DbConnector db;
 

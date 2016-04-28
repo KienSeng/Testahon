@@ -2,10 +2,7 @@ package userInterface;
 
 import Global.Global;
 import PropertiesFile.PropertiesFileReader;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyValue;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -72,7 +69,12 @@ public class Controller{
 
         img_header.setImage(headerImage);
 
-//        SequentialTransition headerAnimation = new SequentialTransition();
+        SequentialTransition headerAnimation = new SequentialTransition();
+        FadeTransition fadeIn = fade(img_header, 0.0, 1.0);
+        PauseTransition pause = new PauseTransition(Duration.millis(3000));
+        FadeTransition fadeOut = fade(img_header, 1.0, 0.0);
+        headerAnimation.getChildren().addAll(fadeIn, pause, fadeOut);
+        headerAnimation.play();
 
         //Populate navigation bar
         PropertiesFileReader file = new PropertiesFileReader();

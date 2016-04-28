@@ -35,11 +35,6 @@ public class JenkinsApi {
         map.put("Url", api.getValueFromResponse(response, "url"));
         map.put("TriggerBy", api.getValueFromResponse(response, "actions.causes.shortDescription").replace("[","").replace("]","").split(",")[0].trim());
         map.put("TriggerDateTime", Time.convertTimestamp(Long.parseLong(api.getValueFromResponse(response, "timestamp")), "HH:mm:ss dd-MMM-YYYY"));
-//        System.out.println(map.get("BuildName"));
-//        System.out.println(map.get("FullDisplayName"));
-//        System.out.println(map.get("Result"));
-//        System.out.println(map.get("URL"));
-//        System.out.println(map.get("TriggerBy"));
         return map;
     }
 
