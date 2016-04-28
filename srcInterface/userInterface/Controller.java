@@ -26,6 +26,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +44,7 @@ public class Controller{
     @FXML private TitledPane pane;
 
     private int navigationBarFontSize = 15;
+    private ArrayList<String> headerImages = new ArrayList<>();
 
     ServerMonitorController serverMonitor;
     SolrMonitorController serviceMonitor;
@@ -50,6 +54,10 @@ public class Controller{
     ManualDeploymentController manualDeploymentController;
 
     @FXML public void initialize() throws Exception{
+        PropertiesFileReader file = new PropertiesFileReader();
+        file.setFile("DashboardSettings.properties");
+        file.loadAllPropertyToMap();
+
         //Add listener to auto resize header image
         layout_mainVPane.setMinWidth(Double.MAX_VALUE);
         layout_mainVPane.setMinHeight(Double.MAX_VALUE);
@@ -73,14 +81,12 @@ public class Controller{
         FadeTransition fadeIn = fade(img_header, 0.0, 1.0);
         PauseTransition pause = new PauseTransition(Duration.millis(3000));
         FadeTransition fadeOut = fade(img_header, 1.0, 0.0);
-        headerAnimation.getChildren().addAll(fadeIn, pause, fadeOut);
+        PauseTransition pause2 = new PauseTransition(Duration.millis(1000));
+        headerAnimation.setCycleCount(Timeline.INDEFINITE);
+        headerAnimation.getChildren().addAll(fadeIn, pause, fadeOut, pause2);
         headerAnimation.play();
 
-        //Populate navigation bar
-        PropertiesFileReader file = new PropertiesFileReader();
 
-        file.setFile("DashboardSettings.properties");
-        file.loadAllPropertyToMap();
 
         //Get parent entry for side navigation bar, filter and get total number of entries
         HashMap<String, String> layoutMap = PropertiesFileReader.returnAllValueFromPropertyMap();
@@ -137,6 +143,17 @@ public class Controller{
                     stage.close();
                 }
             });
+        }
+    }
+
+    private void getRandomHeaderImage() throws Exception{
+        File dir = new File("/../../Image/Headers");
+        File[] fileList = dir.listFiles();
+
+        for(int i = 0; i < fileList.length; i++){
+            if(fileList[i].isFile()){
+                headerImages.add(fileList[i].getAbsolutePath());
+            }
         }
     }
 
