@@ -2,6 +2,8 @@
     common_background_color: white;
     -fx-background: common_background_color;
 
+    rounded_corner: 10,10,0,0;
+
     background_fail_color: #FF3300;
     background_fail_text_color: white;
 
@@ -28,6 +30,47 @@
     button_normal_border_width: 0.3px;
 
     lightBox_background_color: rgba(0, 0, 0, 0.8);
+}
+
+.server_monitor_background_pass{
+    -fx-background-color: background_ok_color;
+    -fx-text-fill: background_ok_text_color;
+    -fx-border-radius: rounded_corner;
+    -fx-background-radius: rounded_corner;
+}
+.server_monitor_background_fail{
+    -fx-background-color: background_fail_color;
+    -fx-text-fill: background_fail_text_color;
+}
+.server_monitor_background_warning{
+    -fx-background-color: background_warning_color;
+    -fx-text-fill: background_warning_text_color;
+}
+.server_monitor_background_idle{
+    -fx-background-color: background_idle_color;
+    -fx-text-fill: background_idle_text_color;
+}
+
+.server_monitor_status_background_pass{
+    -fx-background-color: #99FFCC;
+    -fx-text-fill: background_ok_text_color;
+}
+
+.server_monitor_status_background_fail{
+    -fx-background-color: #CCCCCC;
+    -fx-text-fill: background_fail_text_color;
+}
+
+.server_monitor_status_background_warning{
+    -fx-background-color: #FFFFCC;
+    -fx-text-fill: background_warning_text_color;
+}
+
+.server_monitor_status_background_idle{
+    -fx-background-color: #A0A0A0;
+    -fx-text-fill: background_idle_text_color;
+    -fx-border-radius: 5,5,0,0;
+    -fx-background-radius: 5,5,0,0;
 }
 
 .titled-pane > .title {
@@ -132,6 +175,11 @@
     -fx-background-color: common_background_color;
     -fx-border-color: button_normal_border_color;
     -fx-border-width: button_normal_border_wwidth;
+}
+
+.titledPane_text{
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
 }
 
 .button_standard{

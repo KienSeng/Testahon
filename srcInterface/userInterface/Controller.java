@@ -138,6 +138,8 @@ public class Controller{
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+
+
             btn_exit.setId("btnExit");
             btn_exit.getStyleClass().addAll("button_standard", "button_standard_negative");
             btn_exit.setOnAction(new EventHandler<ActionEvent>() {
