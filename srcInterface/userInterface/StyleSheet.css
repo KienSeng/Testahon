@@ -35,35 +35,43 @@
 .server_monitor_background_pass{
     -fx-background-color: background_ok_color;
     -fx-text-fill: background_ok_text_color;
-    -fx-border-radius: rounded_corner;
-    -fx-background-radius: rounded_corner;
+    -fx-font-weight: normal;
 }
 .server_monitor_background_fail{
     -fx-background-color: background_fail_color;
     -fx-text-fill: background_fail_text_color;
+    -fx-font-weight: normal;
 }
 .server_monitor_background_warning{
     -fx-background-color: background_warning_color;
     -fx-text-fill: background_warning_text_color;
+    -fx-font-weight: normal;
 }
 .server_monitor_background_idle{
     -fx-background-color: background_idle_color;
     -fx-text-fill: background_idle_text_color;
+    -fx-font-weight: normal;
 }
 
 .server_monitor_status_background_pass{
     -fx-background-color: #99FFCC;
     -fx-text-fill: background_ok_text_color;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
 }
 
 .server_monitor_status_background_fail{
     -fx-background-color: #CCCCCC;
     -fx-text-fill: background_fail_text_color;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
 }
 
 .server_monitor_status_background_warning{
     -fx-background-color: #FFFFCC;
     -fx-text-fill: background_warning_text_color;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
 }
 
 .server_monitor_status_background_idle{

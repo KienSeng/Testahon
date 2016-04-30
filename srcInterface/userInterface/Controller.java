@@ -193,6 +193,7 @@ public class Controller{
                         try {
                             deactivateAllThread();
 
+                            Global.product = "server";
                             main_content_pane.setContent(fxml.load());
                             serverMonitor = fxml.getController();
                         } catch (Exception e) {
@@ -206,22 +207,24 @@ public class Controller{
                         try {
                             deactivateAllThread();
 
+                            Global.product = "solr";
                             main_content_pane.setContent(fxml.load());
-                            serviceMonitor = fxml.getController();
+                            serverMonitor = fxml.getController();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         break;
 
                     case "btn_Serverchat":
-                        fxml.setLocation(getClass().getResource("/userInterface/ServerChatMonitoring.fxml"));
+                        fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
 
                         try {
                             deactivateAllThread();
 
+                            Global.product = "service";
                             main_content_pane.setContent(fxml.load());
-                            serverChatMonitor = fxml.getController();
-                            serverChatMonitor.showPane();
+                            serverMonitor = fxml.getController();
+//                            serverChatMonitor.showPane();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -310,7 +313,7 @@ public class Controller{
         }
     };
 
-    final ChangeListener<Number> widthChangedlistener = new ChangeListener<Number>() {
+    private final ChangeListener<Number> widthChangedlistener = new ChangeListener<Number>() {
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             layout_vbox.setMinWidth((Double) newValue);
@@ -318,16 +321,12 @@ public class Controller{
         }
     };
 
-    final ChangeListener<Number> heightChangedlistener = new ChangeListener<Number>() {
+    private final ChangeListener<Number> heightChangedlistener = new ChangeListener<Number>() {
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             container_content_hBox.setPrefHeight((Double) newValue - 330);
         }
     };
-
-    public void setStage(Stage stage) throws Exception{
-        this.stage = stage;
-    }
 
     private void deactivateAllThread() throws Exception{
         try{
@@ -338,5 +337,9 @@ public class Controller{
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void setStage(Stage stage){
+        this.stage = stage;
     }
 }
