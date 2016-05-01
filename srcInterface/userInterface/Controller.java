@@ -52,6 +52,7 @@ public class Controller{
     TAScenarioController TAController;
     TAScenariosReviewer scenarioReviewerController;
     ManualDeploymentController manualDeploymentController;
+    TestDataCreationController testDataCreationController;
 
     @FXML public void initialize() throws Exception{
         PropertiesFileReader file = new PropertiesFileReader();
@@ -224,7 +225,6 @@ public class Controller{
                             Global.product = "service";
                             main_content_pane.setContent(fxml.load());
                             serverMonitor = fxml.getController();
-//                            serverChatMonitor.showPane();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -305,6 +305,20 @@ public class Controller{
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        break;
+
+                    case "btn_Test Data Creation":
+                        fxml.setLocation(getClass().getResource("/userInterface/TestDataCreation.fxml"));
+
+                        try{
+                            deactivateAllThread();
+                            main_content_pane.setContent(fxml.load());
+                            testDataCreationController = fxml.getController();
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+                    default:
                         break;
                 }
             }catch(Exception e) {

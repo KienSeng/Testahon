@@ -1,5 +1,7 @@
 package Global;
 
+import org.openqa.selenium.WebDriver;
+
 import java.sql.Connection;
 import java.util.HashMap;
 
@@ -16,4 +18,5 @@ public class Global {
     public static Double standardButtonWidth = 80.0;
 
     public static String product;
+    public static WebDriver driver;
 }

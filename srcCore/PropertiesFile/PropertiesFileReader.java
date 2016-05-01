@@ -43,7 +43,7 @@ public class PropertiesFileReader {
         return data;
     }
 
-    private HashMap<String, String> getAllFromPropertyFile (String filePath) throws Exception{
+    public HashMap<String, String> getAllFromPropertyFile(String filePath) throws Exception{
         HashMap<String, String> propertyMap = new HashMap<>();
 
         propertyFile = new FileInputStream(filePath);

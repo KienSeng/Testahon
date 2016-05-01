@@ -665,6 +665,9 @@ public class TAScenarioController implements Initializable {
                     db.executeStoredProc("{call sproc_Template_DeleteDataFromMasterTable (?)}", parameterArray);
                     layout_stackPane_MainContent.getChildren().remove(1);
                     break;
+
+                default:
+                    break;
             }
         }catch (Exception e){
             e.printStackTrace();

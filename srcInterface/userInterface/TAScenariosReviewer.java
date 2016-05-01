@@ -250,12 +250,6 @@ public class TAScenariosReviewer implements Initializable {
                     break;
 
                 default:
-                    try{
-                        String arrCaseDataId = btn.getId().split("_")[2];
-                        confirmedReviewOk(Integer.parseInt(arrCaseDataId));
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
                     break;
             }
         }catch (Exception e){

@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by kienseng.koh on 3/22/2016.
  */
 public class Logger {
-    private static boolean debugMode = false;
+    private static boolean debugMode = true;
 
     private static String getDate() throws Exception {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
