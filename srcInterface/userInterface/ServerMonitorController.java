@@ -124,7 +124,6 @@ public class ServerMonitorController implements Initializable{
                 if(entry.getKey().contains("Service_Monitor_" + environmentList[i])){
                     String[] serviceList = entry.getValue().split(",");
                     String serverName = entry.getKey().split("_")[3];
-                    System.out.println(serverName);
                     threadValue.put(serverName, serviceList);
 
                     for(int j = 0; j < serviceList.length; j++){
@@ -141,7 +140,42 @@ public class ServerMonitorController implements Initializable{
     }
 
     private void populateSolrMonitorDummyPane() throws Exception{
+        String[] environmentList = Global.propertyMap.get("Solr_Monitor_Environment").split(",");
 
+        for(int i = 0; i < environmentList.length; i++) {
+            TitledPane titledPane_Environment = new TitledPane();
+            titledPane_Environment.setExpanded(true);
+            titledPane_Environment.setText(environmentList[i]);
+            titledPane_Environment.getStyleClass().add("titledPane_text");
+            titledPane_Environment.prefWidthProperty().bind(serverMonitor_FlowPane.widthProperty().subtract(40));
+
+            FlowPane flowPane_ServerList_Container = new FlowPane();
+            flowPane_ServerList_Container.setPadding(new Insets(10, 10, 10, 10));
+            flowPane_ServerList_Container.setVgap(10);
+            flowPane_ServerList_Container.setHgap(10);
+
+            titledPane_Environment.setContent(flowPane_ServerList_Container);
+
+            HashMap<String, String[]> threadValue = new HashMap<>();
+
+            for (Map.Entry<String, String> entry : Global.propertyMap.entrySet()) {
+                if(entry.getKey().contains("Solr_Monitor_" + environmentList[i])){
+                    String serverName = entry.getKey().split("_")[3];
+                    String serviceList[] = entry.getValue().split(",");
+
+                    threadValue.put(serverName, serviceList);
+
+                    for(int j = 0; j < serviceList.length; j++){
+                        flowPane_ServerList_Container.getChildren().add(generateVbox(serverName, serviceList[j], "NA", "LOADING"));
+                    }
+                }
+            }
+
+            serverMonitor_FlowPane.getChildren().add(titledPane_Environment);
+
+            Thread thread = createSolrMonitorThread(i, threadValue);
+            thread.start();
+        }
     }
 
     private VBox generateVbox(String serverName, String misc, String lastCheck, String serverStatus) throws Exception{
@@ -231,6 +265,10 @@ public class ServerMonitorController implements Initializable{
             public void run(){
                 try{
                     while(true){
+                        if(!paneIsActive){
+                            break;
+                        }
+
                         PingTool ping = new PingTool();
 
                         for(int i = 0; i < serverList.length; i++){
@@ -286,11 +324,19 @@ public class ServerMonitorController implements Initializable{
             public void run(){
                 try{
                     while(true){
+                        if(!paneIsActive){
+                            break;
+                        }
+
                         ServiceCheck service = new ServiceCheck();
                         int index = 0;
 
                         for (Map.Entry<String, String[]> entry : map.entrySet()) {
                             for(int i = 0; i < entry.getValue().length; i++){
+                                if(!paneIsActive){
+                                    break;
+                                }
+
                                 final String result = service.checkWindowService(entry.getKey(), entry.getValue()[i]);
                                 final String serverName = entry.getKey();
                                 final String serviceName = entry.getValue()[i];
@@ -332,7 +378,43 @@ public class ServerMonitorController implements Initializable{
             public void run(){
                 try{
                     while(true){
+                        if(!paneIsActive){
+                            break;
+                        }
 
+                        ServiceCheck service = new ServiceCheck();
+                        int index = 0;
+
+                        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+                            for(int i = 0; i < entry.getValue().length; i++){
+                                if(!paneIsActive){
+                                    break;
+                                }
+
+                                final String serverName = entry.getKey();
+                                final String coreName = entry.getValue()[i];
+                                final String result = service.checkSolrServices(serverName, coreName);
+                                final int j = index;
+
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try{
+                                            TitledPane titledPane = (TitledPane) serverMonitor_FlowPane.getChildren().get(threadNumber);
+                                            FlowPane flowPane = (FlowPane) titledPane.getContent();
+                                            flowPane.getChildren().remove(j);
+                                            flowPane.getChildren().add(j, generateVbox(serverName, coreName, Time.getCurrentTime("HH:mm:ss"), result));
+                                        }catch(Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+
+                                index++;
+                            }
+                        }
+
+                        Thread.sleep(Integer.parseInt(Global.propertyMap.get("Solr_Check_Interval")));
                     }
                 }catch(Exception e){
                     e.printStackTrace();

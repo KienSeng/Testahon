@@ -202,7 +202,7 @@ public class Controller{
                         break;
 
                     case "btn_SOLR":
-                        fxml.setLocation(getClass().getResource("/userInterface/SolrMonitoring.fxml"));
+                        fxml.setLocation(getClass().getResource("/userInterface/ServerMonitoring.fxml"));
 
                         try {
                             deactivateAllThread();

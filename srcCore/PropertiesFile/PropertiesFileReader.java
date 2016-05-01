@@ -24,7 +24,6 @@ public class PropertiesFileReader {
         for (Object k : keys) {
             String key = (String) k;
             String value = prop.getProperty(key);
-            System.out.println(key + ":" + value);
             Global.propertyMap.put(key, value);
         }
 

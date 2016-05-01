@@ -1,5 +1,6 @@
 package ServerMonitor;
 
+import Global.Global;
 import sun.misc.IOUtils;
 
 import java.io.BufferedReader;
@@ -45,11 +46,14 @@ public class ServiceCheck {
         connection.setRequestMethod("GET");
 
         int code = 0;
+        int timeout = Integer.parseInt(Global.propertyMap.get("Url_Connection_Timeout"));
 
         try{
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
             connection.connect();
             code = connection.getResponseCode();
-        }catch(ConnectException e){
+        }catch(Exception e){
             return "STOPPED";
         }
 
