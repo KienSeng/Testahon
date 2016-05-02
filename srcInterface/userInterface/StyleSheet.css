@@ -252,3 +252,8 @@
     -fx-font-weight: bold;
     -fx-font-size: 14;
 }
+
+.testDate_console_textArea{
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}

@@ -3,6 +3,7 @@ package TestDataCreation;
 import Debugger.Logger;
 import Global.Global;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import javafx.application.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -67,5 +68,14 @@ public class SeleniumAction {
 
     public void close() throws Exception{
         driver.close();
+    }
+
+    private void displayInConsole() throws Exception{
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        });
     }
 }
