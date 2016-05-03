@@ -280,7 +280,7 @@ public class ServerMonitorController implements Initializable{
 
                             final int index = i;
                             final String serverAddress = result[0];
-                            final int pingTime = Integer.parseInt(result[1]);
+                            int pingTime = Integer.parseInt(result[1]);
                             final String dateTime = Time.getCurrentTime("HH:mm:ss");
                             final String buildStatus;
 
@@ -292,6 +292,12 @@ public class ServerMonitorController implements Initializable{
                                 buildStatus = "ONLINE";
                             }
 
+                            if(pingTime == -1){
+                                pingTime = 0;
+                            }
+
+                            final int finalPingTime = pingTime;
+
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -299,7 +305,7 @@ public class ServerMonitorController implements Initializable{
                                         TitledPane titledPane = (TitledPane) serverMonitor_FlowPane.getChildren().get(threadNumber);
                                         FlowPane flowPane = (FlowPane) titledPane.getContent();
                                         flowPane.getChildren().remove(index);
-                                        flowPane.getChildren().add(index, generateVbox(serverAddress, String.valueOf(pingTime), dateTime, buildStatus));
+                                        flowPane.getChildren().add(index, generateVbox(serverAddress, String.valueOf(finalPingTime), dateTime, buildStatus));
                                     }catch(Exception e){
                                         e.printStackTrace();
                                     }

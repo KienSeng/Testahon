@@ -1,13 +1,10 @@
 package userInterface;
 
-import TestDataCreation.Myjs;
-import TestDataCreation.SeleniumAction;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.openqa.selenium.By;
 
 public class Main extends Application {
 

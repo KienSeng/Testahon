@@ -66,16 +66,11 @@ public class SeleniumAction {
         return driver.getCurrentUrl();
     }
 
-    public void close() throws Exception{
-        driver.close();
+    public boolean checkElementExist(By node) throws Exception{
+        return driver.findElement(node).isDisplayed();
     }
 
-    private void displayInConsole() throws Exception{
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//            }
-//        });
+    public void close() throws Exception{
+        driver.close();
     }
 }

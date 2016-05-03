@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import Global.Global;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -40,6 +41,8 @@ public class TestDataCreationController implements Initializable{
             PropertiesFileReader prop = new PropertiesFileReader();
             settingMap = prop.getAllFromPropertyFile("TestDataCreationSettings.properties");
             generateModulePane();
+            generateCandiatePane();
+            generateConsole();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -47,11 +50,16 @@ public class TestDataCreationController implements Initializable{
 
     private void generateModulePane() throws Exception{
         HBox layout_Hbox_ProductContainer = new HBox();
+        GridPane layout_GridPane_ProductContainer = new GridPane();
+
+        Label lbl_Environment = new Label("Environment: ");
+        ComboBox cmb_Environment = new ComboBox();
         Separator spr_ProductSeparator = new Separator();
 
         ComboBox cmb_product = new ComboBox();
         Label lbl_product = new Label("Select a module: ");
 
+        lbl_Environment.setPrefWidth(Global.standardLabelWidth);
         lbl_product.setPrefWidth(Global.standardLabelWidth);
 
         cmb_product.setId("cmb_product");
@@ -59,17 +67,29 @@ public class TestDataCreationController implements Initializable{
         cmb_product.getItems().addAll(settingMap.get("UI_Products").split(","));
         cmb_product.valueProperty().addListener(comboBoxListener);
 
-        layout_Hbox_ProductContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
-        layout_Hbox_ProductContainer.getChildren().addAll(lbl_product, cmb_product);
+        cmb_Environment.setId("cmb_Environment");
+        cmb_Environment.setPrefWidth(Global.standardTextBoxWidth);
+        cmb_Environment.getItems().addAll(settingMap.get("UI_Environment").split(","));
+        cmb_Environment.valueProperty().addListener(comboBoxListener);
+
+        layout_GridPane_ProductContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
+        layout_GridPane_ProductContainer.setVgap(10);
+        layout_GridPane_ProductContainer.add(lbl_Environment,0,0);
+        layout_GridPane_ProductContainer.add(cmb_Environment,1,0);
+        layout_GridPane_ProductContainer.add(lbl_product,0,1);
+        layout_GridPane_ProductContainer.add(cmb_product,1,1);
+
+//        layout_Hbox_ProductContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
+//        layout_Hbox_ProductContainer.getChildren().addAll(lbl_product, cmb_product);
 
         spr_ProductSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_ProductSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
 
-        layout_FlowPane_Main.getChildren().addAll(layout_Hbox_ProductContainer,spr_ProductSeparator);
+        layout_FlowPane_Main.getChildren().addAll(layout_GridPane_ProductContainer,spr_ProductSeparator);
     }
 
     private void generateJobPane() throws Exception{
-        Label lbl_jobPreset = new Label("Preset: ");
+        Label lbl_jobPreset = new Label("Preset:");
         ComboBox cmb_jobPreset = new ComboBox();
         Separator spr_jobSeparator = new Separator();
 
@@ -83,29 +103,59 @@ public class TestDataCreationController implements Initializable{
     }
 
     private void generateCandiatePane() throws Exception{
-        Label lbl_myjsPreset = new Label("Preset: ");
+        Label lbl_myjsPreset = new Label("Preset:");
         ComboBox cmb_myjsPreset = new ComboBox();
+
         Separator spr_candidateSeparator = new Separator();
 
         lbl_myjsPreset.setPrefWidth(Global.standardLabelWidth);
 
         cmb_myjsPreset.setId("cmb_myjsPreset");
         cmb_myjsPreset.setPrefWidth(Global.standardTextBoxWidth);
-
         cmb_myjsPreset.getItems().addAll(settingMap.get("UI_Myjs_Preset").split(","));
 
-        Label lbl_username = new Label("Username: ");
-        Label lbl_password = new Label("Password: ");
-        TextField txt_username = new TextField();
-        TextField txt_password = new TextField();
+        Label lbl_myjsFirstName = new Label("First Name:");
+        Label lbl_myjsLastName = new Label("Last Name:");
+        Label lbl_myjsEmail = new Label("Email:");
+        Label lbl_myjsPassword = new Label("Password:");
+        TextField txt_myjsFirstName = new TextField();
+        TextField txt_myjsLastName = new TextField();
+        TextField txt_myjsEmail = new TextField();
+        TextField txt_myjsPassword = new TextField();
 
-        lbl_username.setPrefWidth(Global.standardLabelWidth);
-        lbl_password.setPrefWidth(Global.standardLabelWidth);
-        txt_username.setPrefWidth(Global.standardTextBoxWidth);
-        txt_password.setPrefWidth(Global.standardTextBoxWidth);
+        lbl_myjsFirstName.setPrefWidth(Global.standardLabelWidth);
+        lbl_myjsLastName.setPrefWidth(Global.standardLabelWidth);
+        lbl_myjsEmail.setPrefWidth(Global.standardLabelWidth);
+        lbl_myjsPassword.setPrefWidth(Global.standardLabelWidth);
+
+        txt_myjsFirstName.setPrefWidth(Global.standardTextBoxWidth);
+        txt_myjsLastName.setPrefWidth(Global.standardTextBoxWidth);
+        txt_myjsEmail.setPrefWidth(Global.standardTextBoxWidth);
+        txt_myjsPassword.setPrefWidth(Global.standardTextBoxWidth);
+
+        Button btn_myjsStart = new Button("Start Create Test Candidate");
+        btn_myjsStart.setPrefWidth(Global.standardButtonWidth + 80);
+
+        GridPane layaout_GridPane_TestDataContainer = new GridPane();
+        layaout_GridPane_TestDataContainer.setHgap(10);
+        layaout_GridPane_TestDataContainer.setVgap(10);
+
+        layaout_GridPane_TestDataContainer.add(lbl_myjsPreset,0,0);
+        layaout_GridPane_TestDataContainer.add(lbl_myjsEmail,0,1);
+        layaout_GridPane_TestDataContainer.add(lbl_myjsPassword,0,2);
+        layaout_GridPane_TestDataContainer.add(lbl_myjsFirstName,0,3);
+        layaout_GridPane_TestDataContainer.add(lbl_myjsLastName,0,4);
+
+        layaout_GridPane_TestDataContainer.add(cmb_myjsPreset,1,0);
+        layaout_GridPane_TestDataContainer.add(txt_myjsEmail,1,1);
+        layaout_GridPane_TestDataContainer.add(txt_myjsPassword,1,2);
+        layaout_GridPane_TestDataContainer.add(txt_myjsFirstName,1,3);
+        layaout_GridPane_TestDataContainer.add(txt_myjsLastName,1,4);
 
         spr_candidateSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_candidateSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
+
+        layout_FlowPane_Main.getChildren().addAll(layaout_GridPane_TestDataContainer, spr_candidateSeparator);
     }
 
     private void generateConsole() throws Exception{
@@ -117,11 +167,13 @@ public class TestDataCreationController implements Initializable{
 
         Button btn_clearConsole = new Button("Clear Console");
 
-        btn_clearConsole.setPrefWidth(Global.standardButtonWidth);
+        btn_clearConsole.setId("btn_clearConsole");
+        btn_clearConsole.setPrefWidth(Global.standardButtonWidth + 80);
         btn_clearConsole.getStyleClass().add("button_standard_negative");
 
         txt_console = new TextArea();
         txt_console.setWrapText(true);
+        txt_console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
         txt_console.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -131,9 +183,11 @@ public class TestDataCreationController implements Initializable{
 
         layout_ScrollPane_Console.getStyleClass().add("testDate_console_textArea");
         layout_ScrollPane_Console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
+        layout_ScrollPane_Console.setPrefHeight(250);
         layout_ScrollPane_Console.setContent(txt_console);
 
         layout_vbox_container.getChildren().addAll(layout_ScrollPane_Console, btn_clearConsole);
+        layout_FlowPane_Main.getChildren().addAll(layout_vbox_container);
     }
 
     public void displayInConsole(String message) throws Exception{
@@ -150,6 +204,10 @@ public class TestDataCreationController implements Initializable{
             Button btn = (Button) event.getSource();
 
             switch(btn.getId()){
+                case "btn_clearConsole":
+                    txt_console.clear();
+                    break;
+
                 default:
                     break;
             }
