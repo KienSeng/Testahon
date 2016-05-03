@@ -202,6 +202,7 @@
     -fx-text-fill: button_positive_hover_text_color;
     -fx-effect: button_positive_hover_effect;
     -fx-border-color: button_normal_border_color;
+    -fx-border-width: 0px;
 }
 
 .button_standard_negative:hover{
@@ -209,6 +210,7 @@
     -fx-text-fill: button_negative_hover_text_color;
     -fx-effect: button_negative_hover_effect;
     -fx-border-color: button_normal_border_color;
+    -fx-border-width: 0px;
 }
 
 .deployment_buildInfo_idle{
@@ -253,7 +255,7 @@
     -fx-font-size: 14;
 }
 
-.testDate_console_textArea{
+.testData_console_textArea{
     -fx-background-color: black;
     -fx-text-fill: white;
 }

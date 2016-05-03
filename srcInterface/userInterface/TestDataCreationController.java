@@ -1,6 +1,8 @@
 package userInterface;
 
 import PropertiesFile.PropertiesFileReader;
+import TestDataCreation.Myjs;
+import TestDataCreation.Siva;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,6 +23,7 @@ import Global.Global;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import sun.reflect.annotation.ExceptionProxy;
 
 /**
  * Created by kienseng on 5/1/2016.
@@ -28,8 +31,17 @@ import javafx.scene.layout.VBox;
 public class TestDataCreationController implements Initializable{
     @FXML private FlowPane layout_FlowPane_Main;
     private TextArea txt_console;
+    private TextField txt_myjsFirstName;
+    private TextField txt_myjsLastName;
+    private TextField txt_myjsEmail;
+    private TextField txt_myjsPassword;
+    private ComboBox cmb_product;
 
-    static HashMap<String, String> settingMap = new HashMap<>();
+    private static HashMap<String, String> settingMap = new HashMap<>();
+    private String consoleMessage;
+
+    private Myjs myjs;
+    private Siva siva;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -49,14 +61,13 @@ public class TestDataCreationController implements Initializable{
     }
 
     private void generateModulePane() throws Exception{
-        HBox layout_Hbox_ProductContainer = new HBox();
         GridPane layout_GridPane_ProductContainer = new GridPane();
 
         Label lbl_Environment = new Label("Environment: ");
         ComboBox cmb_Environment = new ComboBox();
         Separator spr_ProductSeparator = new Separator();
 
-        ComboBox cmb_product = new ComboBox();
+        cmb_product = new ComboBox();
         Label lbl_product = new Label("Select a module: ");
 
         lbl_Environment.setPrefWidth(Global.standardLabelWidth);
@@ -78,9 +89,6 @@ public class TestDataCreationController implements Initializable{
         layout_GridPane_ProductContainer.add(cmb_Environment,1,0);
         layout_GridPane_ProductContainer.add(lbl_product,0,1);
         layout_GridPane_ProductContainer.add(cmb_product,1,1);
-
-//        layout_Hbox_ProductContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
-//        layout_Hbox_ProductContainer.getChildren().addAll(lbl_product, cmb_product);
 
         spr_ProductSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_ProductSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
@@ -118,10 +126,11 @@ public class TestDataCreationController implements Initializable{
         Label lbl_myjsLastName = new Label("Last Name:");
         Label lbl_myjsEmail = new Label("Email:");
         Label lbl_myjsPassword = new Label("Password:");
-        TextField txt_myjsFirstName = new TextField();
-        TextField txt_myjsLastName = new TextField();
-        TextField txt_myjsEmail = new TextField();
-        TextField txt_myjsPassword = new TextField();
+
+        txt_myjsFirstName = new TextField();
+        txt_myjsLastName = new TextField();
+        txt_myjsEmail = new TextField();
+        txt_myjsPassword = new TextField();
 
         lbl_myjsFirstName.setPrefWidth(Global.standardLabelWidth);
         lbl_myjsLastName.setPrefWidth(Global.standardLabelWidth);
@@ -133,8 +142,21 @@ public class TestDataCreationController implements Initializable{
         txt_myjsEmail.setPrefWidth(Global.standardTextBoxWidth);
         txt_myjsPassword.setPrefWidth(Global.standardTextBoxWidth);
 
-        Button btn_myjsStart = new Button("Start Create Test Candidate");
+        Button btn_myjsStart = new Button("Start");
+        Button btn_myjsClear = new Button("Clear");
+        btn_myjsStart.setId("btn_myjsStart");
+        btn_myjsClear.setId("btn_myjsClear");
         btn_myjsStart.setPrefWidth(Global.standardButtonWidth + 80);
+        btn_myjsClear.setPrefWidth(Global.standardButtonWidth + 80);
+        btn_myjsStart.setPrefHeight(35);
+        btn_myjsClear.setPrefHeight(35);
+        btn_myjsStart.getStyleClass().addAll("button_standard_positive", "button_standard");
+        btn_myjsClear.getStyleClass().addAll("button_standard_negative", "button_standard");
+
+        VBox layout_Vbox_ButtonContainer = new VBox();
+        layout_Vbox_ButtonContainer.setPadding(new Insets(25,0,0,50));
+        layout_Vbox_ButtonContainer.setSpacing(50);
+        layout_Vbox_ButtonContainer.getChildren().addAll(btn_myjsStart, btn_myjsClear);
 
         GridPane layaout_GridPane_TestDataContainer = new GridPane();
         layaout_GridPane_TestDataContainer.setHgap(10);
@@ -155,7 +177,7 @@ public class TestDataCreationController implements Initializable{
         spr_candidateSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_candidateSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
 
-        layout_FlowPane_Main.getChildren().addAll(layaout_GridPane_TestDataContainer, spr_candidateSeparator);
+        layout_FlowPane_Main.getChildren().addAll(layaout_GridPane_TestDataContainer, layout_Vbox_ButtonContainer, spr_candidateSeparator);
     }
 
     private void generateConsole() throws Exception{
@@ -168,12 +190,15 @@ public class TestDataCreationController implements Initializable{
         Button btn_clearConsole = new Button("Clear Console");
 
         btn_clearConsole.setId("btn_clearConsole");
-        btn_clearConsole.setPrefWidth(Global.standardButtonWidth + 80);
-        btn_clearConsole.getStyleClass().add("button_standard_negative");
+        btn_clearConsole.setPrefWidth(Global.standardButtonWidth + 40);
+        btn_clearConsole.setPrefHeight(40);
+        btn_clearConsole.getStyleClass().addAll("button_standard_positive", "button_standard");
 
         txt_console = new TextArea();
+        txt_console.setEditable(false);
         txt_console.setWrapText(true);
         txt_console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
+        txt_console.getStyleClass().add("testData_console_textArea");
         txt_console.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -181,7 +206,6 @@ public class TestDataCreationController implements Initializable{
             }
         });
 
-        layout_ScrollPane_Console.getStyleClass().add("testDate_console_textArea");
         layout_ScrollPane_Console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
         layout_ScrollPane_Console.setPrefHeight(250);
         layout_ScrollPane_Console.setContent(txt_console);
@@ -190,13 +214,41 @@ public class TestDataCreationController implements Initializable{
         layout_FlowPane_Main.getChildren().addAll(layout_vbox_container);
     }
 
-    public void displayInConsole(String message) throws Exception{
-        Platform.runLater(new Runnable() {
+    public Thread displayInConsole() throws Exception{
+        Thread thread = new Thread(){
             @Override
-            public void run() {
-                txt_console.appendText(message);
+            public void run(){
+                try{
+                    while(true){
+                        if(!consoleMessage.isEmpty()){
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txt_console.appendText(consoleMessage + "\n");
+                                }
+                            });
+                        }
+
+                        Thread.sleep(500);
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
-        });
+        };
+
+        thread.setDaemon(true);
+        return thread;
+    }
+
+    private void createNewCandidate() throws Exception{
+        String firstName = txt_myjsFirstName.getText();
+        String lastName = txt_myjsLastName.getText();
+        String email = txt_myjsEmail.getText();
+        String password = txt_myjsPassword.getText();
+
+        myjs.candidateSignUp(firstName, lastName, email, password);
+        myjs.updateCandidateVerificationStatus(email, 1);
     }
 
     private EventHandler buttonEvent = event -> {
@@ -204,6 +256,21 @@ public class TestDataCreationController implements Initializable{
             Button btn = (Button) event.getSource();
 
             switch(btn.getId()){
+                case "btn_myjsStart":
+                    String env = cmb_product.getSelectionModel().getSelectedItem().toString();
+                    if(env.equalsIgnoreCase("siva")){
+                        siva = new Siva();
+                    }else if(env.equalsIgnoreCase("myjs")){
+                        myjs = new Myjs();
+                        myjs.setEnvironment(env);
+                    }
+
+                    displayInConsole().start();
+                    break;
+
+                case "btn_myjsClear":
+                    break;
+
                 case "btn_clearConsole":
                     txt_console.clear();
                     break;
