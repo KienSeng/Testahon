@@ -54,7 +54,7 @@ public class TestDataCreationController implements Initializable{
             PropertiesFileReader prop = new PropertiesFileReader();
             settingMap = prop.getAllFromPropertyFile("TestDataCreationSettings.properties");
             generateModulePane();
-            generateCandiatePane();
+            generateCandidatePane();
             generateConsole();
         }catch(Exception e){
             e.printStackTrace();
@@ -99,19 +99,39 @@ public class TestDataCreationController implements Initializable{
 
     private void generateJobPane() throws Exception{
         Label lbl_jobPreset = new Label("Preset:");
+        Label lbl_jobUsername = new Label("Login ID:");
+        Label lbl_jobPassword = new Label("Password:");
+        Label lbl_jobJobTitle = new Label("Job Title:");
+
         ComboBox cmb_jobPreset = new ComboBox();
+        TextArea txt_jobUsername = new TextArea();
+        TextArea txt_jobPassword = new TextArea();
+        TextArea txt_jobJobTitle = new TextArea();
+
         Separator spr_jobSeparator = new Separator();
 
         lbl_jobPreset.setPrefWidth(Global.standardLabelWidth);
+        lbl_jobUsername.setPrefWidth(Global.standardLabelWidth);
+        lbl_jobPassword.setPrefWidth(Global.standardLabelWidth);
+        lbl_jobJobTitle.setPrefWidth(Global.standardLabelWidth);
+
+        txt_jobUsername.setPrefWidth(Global.standardLabelWidth);
+        txt_jobPassword.setPrefWidth(Global.standardLabelWidth);
+        txt_jobJobTitle.setPrefWidth(Global.standardLabelWidth);
         cmb_jobPreset.setPrefWidth(Global.standardTextBoxWidth);
 
         cmb_jobPreset.getItems().addAll(settingMap.get("UI_Job_Preset").split(","));
 
         spr_jobSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_jobSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
+
+        FlowPane layout_FlowPane_JobContainer = new FlowPane();
+        layout_FlowPane_JobContainer.setHgap(20);
+        layout_FlowPane_JobContainer.setVgap(20);
+//        layout_FlowPane_JobContainer.bind(layout_FlowPane_Main.widthProperty().subtract(20));
     }
 
-    private void generateCandiatePane() throws Exception{
+    private void generateCandidatePane() throws Exception{
         Label lbl_myjsPreset = new Label("Preset:");
         ComboBox cmb_myjsPreset = new ComboBox();
 
@@ -180,7 +200,13 @@ public class TestDataCreationController implements Initializable{
         spr_candidateSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_candidateSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
 
-        layout_FlowPane_Main.getChildren().addAll(layaout_GridPane_TestDataContainer, layout_Vbox_ButtonContainer, spr_candidateSeparator);
+        FlowPane layout_FlowPane_MyjsContainer = new FlowPane();
+        layout_FlowPane_MyjsContainer.setHgap(20);
+        layout_FlowPane_MyjsContainer.setVgap(20);
+        layout_FlowPane_MyjsContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
+        layout_FlowPane_MyjsContainer.getChildren().addAll(layaout_GridPane_TestDataContainer, layout_Vbox_ButtonContainer);
+
+        layout_FlowPane_Main.getChildren().addAll(layout_FlowPane_MyjsContainer, spr_candidateSeparator);
     }
 
     private void generateConsole() throws Exception{
@@ -241,6 +267,10 @@ public class TestDataCreationController implements Initializable{
         };
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void postNewJob() throws Exception{
+
     }
 
     private EventHandler buttonEvent = event -> {
