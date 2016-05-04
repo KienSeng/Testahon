@@ -313,7 +313,7 @@ public class Controller{
                         try{
                             deactivateAllThread();
                             main_content_pane.setContent(fxml.load());
-                            testDataCreationController = fxml.getController();
+                            Global.testDataController = fxml.getController();
                         }catch(Exception e){
                             e.printStackTrace();
                         }

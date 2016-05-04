@@ -36,9 +36,10 @@ public class TestDataCreationController implements Initializable{
     private TextField txt_myjsEmail;
     private TextField txt_myjsPassword;
     private ComboBox cmb_product;
+    ComboBox cmb_environment;
 
     private static HashMap<String, String> settingMap = new HashMap<>();
-    private String consoleMessage;
+    public static String consoleMessage = "";
 
     private Myjs myjs;
     private Siva siva;
@@ -64,7 +65,6 @@ public class TestDataCreationController implements Initializable{
         GridPane layout_GridPane_ProductContainer = new GridPane();
 
         Label lbl_Environment = new Label("Environment: ");
-        ComboBox cmb_Environment = new ComboBox();
         Separator spr_ProductSeparator = new Separator();
 
         cmb_product = new ComboBox();
@@ -78,15 +78,16 @@ public class TestDataCreationController implements Initializable{
         cmb_product.getItems().addAll(settingMap.get("UI_Products").split(","));
         cmb_product.valueProperty().addListener(comboBoxListener);
 
-        cmb_Environment.setId("cmb_Environment");
-        cmb_Environment.setPrefWidth(Global.standardTextBoxWidth);
-        cmb_Environment.getItems().addAll(settingMap.get("UI_Environment").split(","));
-        cmb_Environment.valueProperty().addListener(comboBoxListener);
+        cmb_environment = new ComboBox();
+        cmb_environment.setId("cmb_Environment");
+        cmb_environment.setPrefWidth(Global.standardTextBoxWidth);
+        cmb_environment.getItems().addAll(settingMap.get("UI_Environment").split(","));
+        cmb_environment.valueProperty().addListener(comboBoxListener);
 
         layout_GridPane_ProductContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
         layout_GridPane_ProductContainer.setVgap(10);
         layout_GridPane_ProductContainer.add(lbl_Environment,0,0);
-        layout_GridPane_ProductContainer.add(cmb_Environment,1,0);
+        layout_GridPane_ProductContainer.add(cmb_environment,1,0);
         layout_GridPane_ProductContainer.add(lbl_product,0,1);
         layout_GridPane_ProductContainer.add(cmb_product,1,1);
 
@@ -146,6 +147,8 @@ public class TestDataCreationController implements Initializable{
         Button btn_myjsClear = new Button("Clear");
         btn_myjsStart.setId("btn_myjsStart");
         btn_myjsClear.setId("btn_myjsClear");
+        btn_myjsStart.setOnAction(buttonEvent);
+        btn_myjsClear.setOnAction(buttonEvent);
         btn_myjsStart.setPrefWidth(Global.standardButtonWidth + 80);
         btn_myjsClear.setPrefWidth(Global.standardButtonWidth + 80);
         btn_myjsStart.setPrefHeight(35);
@@ -208,37 +211,11 @@ public class TestDataCreationController implements Initializable{
 
         layout_ScrollPane_Console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
         layout_ScrollPane_Console.setPrefHeight(250);
+        layout_ScrollPane_Console.getStyleClass().add("testData_console_textArea");
         layout_ScrollPane_Console.setContent(txt_console);
 
         layout_vbox_container.getChildren().addAll(layout_ScrollPane_Console, btn_clearConsole);
         layout_FlowPane_Main.getChildren().addAll(layout_vbox_container);
-    }
-
-    public Thread displayInConsole() throws Exception{
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                try{
-                    while(true){
-                        if(!consoleMessage.isEmpty()){
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    txt_console.appendText(consoleMessage + "\n");
-                                }
-                            });
-                        }
-
-                        Thread.sleep(500);
-                    }
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        thread.setDaemon(true);
-        return thread;
     }
 
     private void createNewCandidate() throws Exception{
@@ -247,8 +224,23 @@ public class TestDataCreationController implements Initializable{
         String email = txt_myjsEmail.getText();
         String password = txt_myjsPassword.getText();
 
-        myjs.candidateSignUp(firstName, lastName, email, password);
-        myjs.updateCandidateVerificationStatus(email, 1);
+        myjs = new Myjs();
+        myjs.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    myjs.candidateSignUp(firstName, lastName, email, password);
+                    myjs.updateCandidateVerificationStatus(email, 1);
+                    myjs.firstTimeLoginFillIn(email, password, firstName, firstName);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private EventHandler buttonEvent = event -> {
@@ -257,18 +249,19 @@ public class TestDataCreationController implements Initializable{
 
             switch(btn.getId()){
                 case "btn_myjsStart":
-                    String env = cmb_product.getSelectionModel().getSelectedItem().toString();
-                    if(env.equalsIgnoreCase("siva")){
+                    String product = cmb_product.getSelectionModel().getSelectedItem().toString();
+                    if(product.equalsIgnoreCase("siva")){
                         siva = new Siva();
-                    }else if(env.equalsIgnoreCase("myjs")){
-                        myjs = new Myjs();
-                        myjs.setEnvironment(env);
+                    }else if(product.equalsIgnoreCase("myjs")){
+                        createNewCandidate();
                     }
-
-                    displayInConsole().start();
                     break;
 
                 case "btn_myjsClear":
+                    txt_myjsEmail.clear();
+                    txt_myjsFirstName.clear();
+                    txt_myjsLastName.clear();
+                    txt_myjsPassword.clear();
                     break;
 
                 case "btn_clearConsole":
@@ -286,4 +279,13 @@ public class TestDataCreationController implements Initializable{
     private ChangeListener comboBoxListener = (ChangeListener<String>) (observable, oldValue, newValue) -> {
 
     };
+
+    public void displayInConsole(final String message) throws Exception{
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                txt_console.appendText(message + "\n");
+            }
+        });
+    }
 }

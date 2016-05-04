@@ -7,7 +7,7 @@
     background_fail_color: #FF3300;
     background_fail_text_color: white;
 
-    background_warning_color: #FFFF66;
+        background_warning_color: #FFCC33;
     background_warning_text_color: black;
 
     background_ok_color: #00CC33;
@@ -256,6 +256,6 @@
 }
 
 .testData_console_textArea{
-    -fx-background-color: black;
+    -fx-control-inner-background: black;
     -fx-text-fill: white;
 }

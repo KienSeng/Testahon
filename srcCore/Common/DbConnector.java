@@ -4,10 +4,7 @@ import Debugger.Logger;
 import Global.Global;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 
 /**
@@ -16,31 +13,60 @@ import java.util.ArrayList;
 public class DbConnector {
     private static Statement st;
     private static ResultSet rs;
+    private static int is;
     private static CallableStatement cs;
 
     public void connectDb(String username, String password, String dbServerName, int port, String dbName) throws Exception {
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        SQLServerDataSource con = new SQLServerDataSource();
+        try{
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            SQLServerDataSource con = new SQLServerDataSource();
 
-        //Set DB connection settings
-        con.setUser(username);
-        con.setPassword(password);
-        con.setServerName(dbServerName);
-        con.setPortNumber(port);
-        con.setDatabaseName(dbName);
+            //Set DB connection settings
+            con.setUser(username);
+            con.setPassword(password);
+            con.setServerName(dbServerName);
+            con.setPortNumber(port);
+            con.setDatabaseName(dbName);
 
-        //Display connection info for debug purpose
-        Logger.write("DB Username: " + username);
-        Logger.write("DB Password: " + password);
-        Logger.write("DB Server Name: " + dbServerName);
-        Logger.write("DB Port: " + port);
-        Logger.write("DB Name: " + dbName);
+            //Display connection info for debug purpose
+            Logger.write("DB Username: " + username);
+            Logger.write("DB Password: " + password);
+            Logger.write("DB Server Name: " + dbServerName);
+            Logger.write("DB Port: " + port);
+            Logger.write("DB Name: " + dbName);
 
-        Logger.write("Connecting to SQL Server.");
-        Global.dbConnection = con.getConnection();
+            Logger.write("Connecting to SQL Server.");
+            Global.dbConnection = con.getConnection();
 
-        if (Global.dbConnection != null) {
-            Logger.write("Connection to SQL Server established.");
+            if (Global.dbConnection != null) {
+                Logger.write("Connection to SQL Server established.");
+            }
+        }catch(Exception e){
+            Logger.write("[ SQL Error ]" + "Unable to establish MSSQL connection");
+            Logger.write("[ SQL Error ]" + e.getMessage());
+        }
+    }
+
+    public void connectMysqlDb(String username, String password, String dbServerName, int port, String dbName) throws Exception{
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Global.dbConnection = DriverManager.getConnection("jdbc:mysql://" + dbServerName + ":" + port + "/" + dbName, username, password);
+
+            //Display connection info for debug purpose
+            Logger.write("DB Username: " + username);
+            Logger.write("DB Password: " + password);
+            Logger.write("DB Server Name: " + dbServerName);
+            Logger.write("DB Port: " + port);
+            Logger.write("DB Name: " + dbName);
+
+            Logger.write("Connecting to MYSQL Server.");
+
+            if (Global.dbConnection != null) {
+                Logger.write("Connection to MYSQL Server established.");
+            }
+        }catch(Exception e){
+            Logger.write("[ SQL Error ]" + "Unable to establish MSSQL connection");
+            Logger.write("[ SQL Error ]" + e.getMessage());
         }
     }
 
@@ -61,10 +87,29 @@ public class DbConnector {
     }
 
     public ResultSet executeStatement(String sqlStatement) throws Exception {
-        st = Global.dbConnection.createStatement();
-        rs = st.executeQuery(sqlStatement);
+        try{
+            st = Global.dbConnection.createStatement();
+            rs = st.executeQuery(sqlStatement);
 
+            Logger.write("Statement execute completed.");
+        }catch(Exception e){
+            Logger.write("Statement execute failed.");
+            Logger.write("[ SQL ERROR ]\t" + e.getMessage());
+        }
         return rs;
+    }
+
+    public int executeUpdate(String sqlStatement) throws Exception{
+        try {
+            st = Global.dbConnection.createStatement();
+            is = st.executeUpdate(sqlStatement);
+
+            Logger.write("Statement execute completed with code: " + is);
+        }catch(Exception e){
+            Logger.write("Statement execute failed.");
+            Logger.write("[ SQL ERROR ]\t" + e.getMessage());
+        }
+        return is;
     }
 
     public ResultSet executeStoredProc(String storedProcQuery, ArrayList<String> parameterArray) throws Exception{

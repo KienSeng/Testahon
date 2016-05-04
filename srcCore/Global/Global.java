@@ -1,6 +1,7 @@
 package Global;
 
 import org.openqa.selenium.WebDriver;
+import userInterface.TestDataCreationController;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -19,4 +20,6 @@ public class Global {
 
     public static String product;
     public static WebDriver driver;
+
+    public static TestDataCreationController testDataController;
 }

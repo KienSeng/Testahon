@@ -1,6 +1,8 @@
 package Debugger;
 
+import Global.Global;
 import sun.reflect.annotation.ExceptionProxy;
+import userInterface.TestDataCreationController;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,11 @@ public class Logger {
     public static void write(String message) throws Exception {
         if (debugMode) {
             System.out.println("DEBUG LOG(" + getDate() + "): " + message);
+            try{
+                Global.testDataController.displayInConsole("DEBUG LOG(" + getDate() + "): " + message);
+            }catch(Exception e){
+
+            }
         }
     }
 
