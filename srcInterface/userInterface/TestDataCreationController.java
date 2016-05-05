@@ -36,7 +36,12 @@ public class TestDataCreationController implements Initializable{
     private TextField txt_myjsEmail;
     private TextField txt_myjsPassword;
     private ComboBox cmb_product;
-    ComboBox cmb_environment;
+    private ComboBox cmb_environment;
+    private ComboBox cmb_myjsPreset;
+    private ComboBox cmb_jobPreset;
+    private TextField txt_jobUsername;
+    private TextField txt_jobPassword;
+    private TextField txt_jobJobTitle;
 
     private static HashMap<String, String> settingMap = new HashMap<>();
     public static String consoleMessage = "";
@@ -54,8 +59,6 @@ public class TestDataCreationController implements Initializable{
             PropertiesFileReader prop = new PropertiesFileReader();
             settingMap = prop.getAllFromPropertyFile("TestDataCreationSettings.properties");
             generateModulePane();
-            generateCandidatePane();
-            generateConsole();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -76,13 +79,13 @@ public class TestDataCreationController implements Initializable{
         cmb_product.setId("cmb_product");
         cmb_product.setPrefWidth(Global.standardTextBoxWidth);
         cmb_product.getItems().addAll(settingMap.get("UI_Products").split(","));
-        cmb_product.valueProperty().addListener(comboBoxListener);
+        cmb_product.setOnAction(comboBoxListener);
 
         cmb_environment = new ComboBox();
-        cmb_environment.setId("cmb_Environment");
+        cmb_environment.setId("cmb_environment");
         cmb_environment.setPrefWidth(Global.standardTextBoxWidth);
         cmb_environment.getItems().addAll(settingMap.get("UI_Environment").split(","));
-        cmb_environment.valueProperty().addListener(comboBoxListener);
+        cmb_environment.setOnAction(comboBoxListener);
 
         layout_GridPane_ProductContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
         layout_GridPane_ProductContainer.setVgap(10);
@@ -98,15 +101,34 @@ public class TestDataCreationController implements Initializable{
     }
 
     private void generateJobPane() throws Exception{
+        GridPane layout_GridPane_JobInfoPane = new GridPane();
+
+        layout_GridPane_JobInfoPane.setHgap(10);
+        layout_GridPane_JobInfoPane.setVgap(10);
+
         Label lbl_jobPreset = new Label("Preset:");
         Label lbl_jobUsername = new Label("Login ID:");
         Label lbl_jobPassword = new Label("Password:");
         Label lbl_jobJobTitle = new Label("Job Title:");
 
-        ComboBox cmb_jobPreset = new ComboBox();
-        TextArea txt_jobUsername = new TextArea();
-        TextArea txt_jobPassword = new TextArea();
-        TextArea txt_jobJobTitle = new TextArea();
+        Button btn_sivaStart = new Button("Start");
+        Button btn_sivaClear = new Button("Clear");
+
+        btn_sivaStart.setId("btn_sivaStart");
+        btn_sivaClear.setId("btn_sivaclear");
+        btn_sivaStart.setOnAction(buttonEvent);
+        btn_sivaClear.setOnAction(buttonEvent);
+        btn_sivaStart.setPrefWidth(Global.standardButtonWidth + 80);
+        btn_sivaClear.setPrefWidth(Global.standardButtonWidth + 80);
+        btn_sivaStart.setPrefHeight(35);
+        btn_sivaClear.setPrefHeight(35);
+        btn_sivaStart.getStyleClass().addAll("button_standard_positive", "button_standard");
+        btn_sivaClear.getStyleClass().addAll("button_standard_negative", "button_standard");
+
+        cmb_jobPreset = new ComboBox();
+        txt_jobUsername = new TextField();
+        txt_jobPassword = new TextField();
+        txt_jobJobTitle = new TextField();
 
         Separator spr_jobSeparator = new Separator();
 
@@ -115,25 +137,42 @@ public class TestDataCreationController implements Initializable{
         lbl_jobPassword.setPrefWidth(Global.standardLabelWidth);
         lbl_jobJobTitle.setPrefWidth(Global.standardLabelWidth);
 
-        txt_jobUsername.setPrefWidth(Global.standardLabelWidth);
-        txt_jobPassword.setPrefWidth(Global.standardLabelWidth);
-        txt_jobJobTitle.setPrefWidth(Global.standardLabelWidth);
+        txt_jobUsername.setPrefWidth(Global.standardTextBoxWidth);
+        txt_jobPassword.setPrefWidth(Global.standardTextBoxWidth);
+        txt_jobJobTitle.setPrefWidth(Global.standardTextBoxWidth);
         cmb_jobPreset.setPrefWidth(Global.standardTextBoxWidth);
 
         cmb_jobPreset.getItems().addAll(settingMap.get("UI_Job_Preset").split(","));
 
+        layout_GridPane_JobInfoPane.add(lbl_jobPreset,0,0);
+        layout_GridPane_JobInfoPane.add(lbl_jobUsername,0,1);
+//        layout_GridPane_JobInfoPane.add(lbl_jobPassword,0,2);
+        layout_GridPane_JobInfoPane.add(lbl_jobJobTitle,0,2);
+
+        layout_GridPane_JobInfoPane.add(cmb_jobPreset,1,0);
+        layout_GridPane_JobInfoPane.add(txt_jobUsername,1,1);
+//        layout_GridPane_JobInfoPane.add(txt_jobPassword,1,2);
+        layout_GridPane_JobInfoPane.add(txt_jobJobTitle,1,2);
+
         spr_jobSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_jobSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
+
+        VBox layout_FlowPane_ButtonContainer = new VBox();
+        layout_FlowPane_ButtonContainer.setPadding(new Insets(10,0,0,50));
+        layout_FlowPane_ButtonContainer.setSpacing(10);
+        layout_FlowPane_ButtonContainer.getChildren().addAll(btn_sivaStart, btn_sivaClear);
 
         FlowPane layout_FlowPane_JobContainer = new FlowPane();
         layout_FlowPane_JobContainer.setHgap(20);
         layout_FlowPane_JobContainer.setVgap(20);
-//        layout_FlowPane_JobContainer.bind(layout_FlowPane_Main.widthProperty().subtract(20));
+        layout_FlowPane_JobContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
+        layout_FlowPane_JobContainer.getChildren().addAll(layout_GridPane_JobInfoPane, layout_FlowPane_ButtonContainer);
+        layout_FlowPane_Main.getChildren().addAll(layout_FlowPane_JobContainer, spr_jobSeparator);
     }
 
     private void generateCandidatePane() throws Exception{
         Label lbl_myjsPreset = new Label("Preset:");
-        ComboBox cmb_myjsPreset = new ComboBox();
+        cmb_myjsPreset = new ComboBox();
 
         Separator spr_candidateSeparator = new Separator();
 
@@ -244,50 +283,43 @@ public class TestDataCreationController implements Initializable{
         layout_FlowPane_Main.getChildren().addAll(layout_vbox_container);
     }
 
-    private void createNewCandidate() throws Exception{
-        String firstName = txt_myjsFirstName.getText();
-        String lastName = txt_myjsLastName.getText();
-        String email = txt_myjsEmail.getText();
-        String password = txt_myjsPassword.getText();
-
-        myjs = new Myjs();
-        myjs.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
-
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                try{
-                    myjs.candidateSignUp(firstName, lastName, email, password);
-                    myjs.updateCandidateVerificationStatus(email, 1);
-                    myjs.firstTimeLoginFillIn(email, password, firstName, firstName);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private void postNewJob() throws Exception{
-
-    }
-
     private EventHandler buttonEvent = event -> {
         try{
             Button btn = (Button) event.getSource();
 
             switch(btn.getId()){
                 case "btn_myjsStart":
-                    String product = cmb_product.getSelectionModel().getSelectedItem().toString();
-                    if(product.equalsIgnoreCase("siva")){
-                        siva = new Siva();
-                    }else if(product.equalsIgnoreCase("myjs")){
-                        createNewCandidate();
+                    switch(cmb_myjsPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
+                        case "verified candidate with no resumes":
+                            createNewCandidateWithVerification();
+                            break;
+
+                        case "candidate without email validation":
+                            createNewCandidateNoVerification();
+                            break;
+                    }
+                    break;
+
+                case "btn_sivaStart":
+                    switch(cmb_jobPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
+                        case "normal job posting":
+                            createNormalJob();
+                            break;
+
+                        case "internship job":
+//                            createInternshipJob();
+                            break;
                     }
                     break;
 
                 case "btn_myjsClear":
+                    txt_myjsEmail.clear();
+                    txt_myjsFirstName.clear();
+                    txt_myjsLastName.clear();
+                    txt_myjsPassword.clear();
+                    break;
+
+                case "btn_sivaClear":
                     txt_myjsEmail.clear();
                     txt_myjsFirstName.clear();
                     txt_myjsLastName.clear();
@@ -306,8 +338,29 @@ public class TestDataCreationController implements Initializable{
         }
     };
 
-    private ChangeListener comboBoxListener = (ChangeListener<String>) (observable, oldValue, newValue) -> {
+    private EventHandler comboBoxListener = event -> {
+        ComboBox cmb = (ComboBox) event.getSource();
 
+        switch(cmb.getId()){
+            case "cmb_product":
+                try{
+                    layout_FlowPane_Main.getChildren().remove(2, layout_FlowPane_Main.getChildren().size());
+
+                    if(cmb_product.getSelectionModel().getSelectedItem().toString().equalsIgnoreCase("siva")){
+                        generateJobPane();
+                        generateConsole();
+                    }else if(cmb_product.getSelectionModel().getSelectedItem().toString().equalsIgnoreCase("myjs")){
+                        generateCandidatePane();
+                        generateConsole();
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                break;
+
+            default:
+                break;
+        }
     };
 
     public void displayInConsole(final String message) throws Exception{
@@ -317,5 +370,74 @@ public class TestDataCreationController implements Initializable{
                 txt_console.appendText(message + "\n");
             }
         });
+    }
+
+    private void createNewCandidateWithVerification() throws Exception{
+        String firstName = txt_myjsFirstName.getText();
+        String lastName = txt_myjsLastName.getText();
+        String email = txt_myjsEmail.getText();
+        String password = txt_myjsPassword.getText();
+
+        myjs = new Myjs();
+        myjs.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    myjs.candidateSignUp(firstName, lastName, email, password);
+                    myjs.updateCandidateVerificationStatus(email, 1);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void createNewCandidateNoVerification() throws Exception{
+        String firstName = txt_myjsFirstName.getText();
+        String lastName = txt_myjsLastName.getText();
+        String email = txt_myjsEmail.getText();
+        String password = txt_myjsPassword.getText();
+
+        myjs = new Myjs();
+        myjs.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    myjs.candidateSignUp(firstName, lastName, email, password);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void createNormalJob() throws Exception{
+        String username = txt_jobUsername.getText();
+        String jobTitle = txt_jobJobTitle.getText();
+
+        Siva siva = new Siva();
+        siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    siva.setUsername(username);
+                    siva.createSavedJob(jobTitle);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
     }
 }

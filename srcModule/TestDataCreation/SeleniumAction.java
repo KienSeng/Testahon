@@ -25,27 +25,35 @@ public class SeleniumAction {
     }
 
     public void navigateToUrl(String url) throws Exception{
-        log.write("Navigating to: " + url);
         Global.driver.navigate().to(url);
         log.write("Currently at page: " + getCurrentUrl());
     }
 
     public void pressButton(By node) throws Exception{
-        log.write("Locating: " + node.toString());
-        Global.driver.findElement(node).click();
-        log.write("Pressed Button: " + node.toString());
+        try{
+            Global.driver.findElement(node).click();
+            log.write("Pressed Button: " + node.toString());
+        }catch(Exception e){
+            Logger.write("[ FAILED ] URL: " + Global.driver.getCurrentUrl());
+            e.printStackTrace();
+            Global.driver.close();
+        }
     }
 
     public void enterTextToTextBox(By node, String text) throws Exception{
-        log.write("Locating: " + node.toString());
-        System.out.println("                       " + Global.driver.getCurrentUrl());
-        Global.driver.findElement(node).clear();
-        Global.driver.findElement(node).sendKeys(text);
-        log.write("Entered text: " + text);
-        log.write("To textbox: " + node.toString());
+        try{
+            System.out.println("                       " + Global.driver.getCurrentUrl());
+            Global.driver.findElement(node).clear();
+            Global.driver.findElement(node).sendKeys(text);
+            log.write("Entered text: " + text);
+        }catch(Exception e){
+            Logger.write("[ FAILED ] URL: " + Global.driver.getCurrentUrl());
+            e.printStackTrace();
+            Global.driver.close();
+        }
     }
 
-    public void SelectFromDropDown(By node, String selectByText) throws Exception{
+    public void selectFromDropDown(By node, String selectByText) throws Exception{
         Select select = new Select(Global.driver.findElement(node));
         select.selectByVisibleText(selectByText);
     }

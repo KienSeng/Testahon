@@ -129,7 +129,52 @@ public class Myjs {
 
         action.pressButton(By.id("header_myjobstreet_link"));
         action.pressButton(By.id("header_create_resume"));
-        Logger.write(action.getCurrentUrl());
+
+        //Education
+        Thread.sleep(4000);
+        action.enterTextToTextBox(By.id("institute_name"),"HELP College University");
+        action.pressButton(By.id("s2id_qualification_code"));
+        action.pressButton(By.id("select2-result-label-258"));
+        action.pressButton(By.id("s2id_field_of_study_code"));
+        action.pressButton(By.id("select2-result-label-276"));
+        action.enterTextToTextBox(By.id("graduation_year"), "2020");
+        action.pressButton(By.id("save"));
+
+        //Experience
+        Thread.sleep(4000);
+        action.pressButton(By.id("btn_experience_label"));
+        action.pressButton(By.id("select2-chosen-346"));
+        action.pressButton(By.id("select2-result-label-430"));
+        action.enterTextToTextBox(By.id("position_title"), positionTitle);
+        action.enterTextToTextBox(By.id("company_name"), companyName);
+        action.pressButton(By.id("s2id_specialization_code"));
+        action.pressButton(By.id("select2-result-label-699"));
+        action.pressButton(By.id("s2id_primary_role"));
+        action.pressButton(By.id("select2-result-label-767"));
+        action.pressButton(By.id("s2id_industry_code"));
+        action.pressButton(By.id("select2-result-label-774"));
+        action.pressButton(By.id("s2id_position_level_code"));
+        action.pressButton(By.id("select2-result-label-832"));
+        action.pressButton(By.id("s2id_join_date_month"));
+        action.pressButton(By.id("select2-result-label-851"));
+        action.enterTextToTextBox(By.id("join_date_year"), "2010");
+        action.pressButton(By.id("select2-chosen-353"));
+        action.pressButton(By.id("select2-result-label-862"));
+        action.enterTextToTextBox(By.id("left_date_year"), "2015");
+        action.pressButton(By.id("save"));
+
+        //About Me
+        Thread.sleep(4000);
+        action.pressButton(By.id("s2id_nationality_code"));
+        action.pressButton(By.id("select2-result-label-879"));
+        action.pressButton(By.id("s2id_state_code"));
+        action.pressButton(By.id("select2-result-label-1378"));
+        action.pressButton(By.id("s2id_handphone_country_code"));
+        action.pressButton(By.id("select2-result-label-1402"));
+        action.enterTextToTextBox(By.id("handphone_no"), "161234567");
+        action.pressButton(By.id("save_btn"));
+        action.pressButton(By.id("complete"));
+        Logger.write("Resume successfully created.");
     }
 
     public void logout() throws Exception{

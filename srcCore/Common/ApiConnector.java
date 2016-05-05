@@ -1,8 +1,13 @@
 package Common;
 
+import Debugger.Logger;
+import com.google.gson.GsonBuilder;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 
 import static com.jayway.restassured.RestAssured.given;
 
@@ -10,9 +15,9 @@ import static com.jayway.restassured.RestAssured.given;
  * Created by kienseng on 4/18/2016.
  */
 public class ApiConnector {
-    private RequestSpecBuilder requestBuilder = new RequestSpecBuilder();
+    private static RequestSpecBuilder requestBuilder = new RequestSpecBuilder();
     private String path;
-    private Response response;
+    private static Response response;
 
     public void setPath(String url) throws Exception{
         path = url;
@@ -67,5 +72,15 @@ public class ApiConnector {
 
     public String getResponse() throws Exception{
         return response.prettyPrint();
+    }
+
+    public void setPayload(String payload) throws Exception{
+        requestBuilder.setContentType("application/json; charset=UTF-8");
+        requestBuilder.setBody(payload);
+    }
+
+
+    public void setApiKey(String key) throws Exception{
+        setParameter("query", "api_key", key);
     }
 }
