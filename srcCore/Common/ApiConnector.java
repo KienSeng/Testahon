@@ -1,13 +1,8 @@
 package Common;
 
-import Debugger.Logger;
-import com.google.gson.GsonBuilder;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
 
 import static com.jayway.restassured.RestAssured.given;
 

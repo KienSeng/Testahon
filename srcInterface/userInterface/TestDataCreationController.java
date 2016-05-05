@@ -108,7 +108,6 @@ public class TestDataCreationController implements Initializable{
 
         Label lbl_jobPreset = new Label("Preset:");
         Label lbl_jobUsername = new Label("Login ID:");
-        Label lbl_jobPassword = new Label("Password:");
         Label lbl_jobJobTitle = new Label("Job Title:");
 
         Button btn_sivaStart = new Button("Start");
@@ -127,18 +126,15 @@ public class TestDataCreationController implements Initializable{
 
         cmb_jobPreset = new ComboBox();
         txt_jobUsername = new TextField();
-        txt_jobPassword = new TextField();
         txt_jobJobTitle = new TextField();
 
         Separator spr_jobSeparator = new Separator();
 
         lbl_jobPreset.setPrefWidth(Global.standardLabelWidth);
         lbl_jobUsername.setPrefWidth(Global.standardLabelWidth);
-        lbl_jobPassword.setPrefWidth(Global.standardLabelWidth);
         lbl_jobJobTitle.setPrefWidth(Global.standardLabelWidth);
 
         txt_jobUsername.setPrefWidth(Global.standardTextBoxWidth);
-        txt_jobPassword.setPrefWidth(Global.standardTextBoxWidth);
         txt_jobJobTitle.setPrefWidth(Global.standardTextBoxWidth);
         cmb_jobPreset.setPrefWidth(Global.standardTextBoxWidth);
 
@@ -146,12 +142,10 @@ public class TestDataCreationController implements Initializable{
 
         layout_GridPane_JobInfoPane.add(lbl_jobPreset,0,0);
         layout_GridPane_JobInfoPane.add(lbl_jobUsername,0,1);
-//        layout_GridPane_JobInfoPane.add(lbl_jobPassword,0,2);
         layout_GridPane_JobInfoPane.add(lbl_jobJobTitle,0,2);
 
         layout_GridPane_JobInfoPane.add(cmb_jobPreset,1,0);
         layout_GridPane_JobInfoPane.add(txt_jobUsername,1,1);
-//        layout_GridPane_JobInfoPane.add(txt_jobPassword,1,2);
         layout_GridPane_JobInfoPane.add(txt_jobJobTitle,1,2);
 
         spr_jobSeparator.setOrientation(Orientation.HORIZONTAL);
@@ -167,6 +161,7 @@ public class TestDataCreationController implements Initializable{
         layout_FlowPane_JobContainer.setVgap(20);
         layout_FlowPane_JobContainer.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
         layout_FlowPane_JobContainer.getChildren().addAll(layout_GridPane_JobInfoPane, layout_FlowPane_ButtonContainer);
+
         layout_FlowPane_Main.getChildren().addAll(layout_FlowPane_JobContainer, spr_jobSeparator);
     }
 
@@ -249,37 +244,38 @@ public class TestDataCreationController implements Initializable{
     }
 
     private void generateConsole() throws Exception{
-        ScrollPane layout_ScrollPane_Console = new ScrollPane();
+//        ScrollPane layout_ScrollPane_Console = new ScrollPane();
         VBox layout_vbox_container = new VBox();
 
-        layout_vbox_container.setAlignment(Pos.CENTER);
         layout_vbox_container.setSpacing(10);
+        layout_vbox_container.setAlignment(Pos.CENTER);
 
         Button btn_clearConsole = new Button("Clear Console");
 
         btn_clearConsole.setId("btn_clearConsole");
         btn_clearConsole.setPrefWidth(Global.standardButtonWidth + 40);
         btn_clearConsole.setPrefHeight(40);
-        btn_clearConsole.getStyleClass().addAll("button_standard_positive", "button_standard");
+        btn_clearConsole.getStyleClass().addAll("button_standard_negative", "button_standard");
+        btn_clearConsole.setOnAction(buttonEvent);
 
         txt_console = new TextArea();
         txt_console.setEditable(false);
         txt_console.setWrapText(true);
-        txt_console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
+        txt_console.setPrefWidth(650);
+        txt_console.setPrefHeight(350);
         txt_console.getStyleClass().add("testData_console_textArea");
-        txt_console.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                layout_ScrollPane_Console.setVvalue(Double.MAX_VALUE);
-            }
-        });
+//        txt_console.textProperty().addListener(new ChangeListener<String>() {
+//            @Override
+//            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+//                layout_ScrollPane_Console.setVvalue(Double.MAX_VALUE);
+//            }
+//        });
 
-        layout_ScrollPane_Console.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(40));
-        layout_ScrollPane_Console.setPrefHeight(250);
-        layout_ScrollPane_Console.getStyleClass().add("testData_console_textArea");
-        layout_ScrollPane_Console.setContent(txt_console);
+//        layout_ScrollPane_Console.setPrefHeight(250);
+//        layout_ScrollPane_Console.getStyleClass().add("testData_console_textArea");
+//        layout_ScrollPane_Console.setContent(txt_console);
 
-        layout_vbox_container.getChildren().addAll(layout_ScrollPane_Console, btn_clearConsole);
+        layout_vbox_container.getChildren().addAll(txt_console, btn_clearConsole);
         layout_FlowPane_Main.getChildren().addAll(layout_vbox_container);
     }
 
