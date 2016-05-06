@@ -33,7 +33,7 @@ public class Myjs {
 
             case "qa":
                 Logger.write("Connecting to drone.jobstreet.com.");
-                db.connectMysqlDb("default", "mysqladmin84MIMA", "drone.jobstreet.com", 3306, "myjsdb_int2");
+                db.connectMysqlDb("default", "mysqladmin84MIMA", "drone.jobstreet.com", 3306, "myjsdb_int_test2");
                 break;
 
             case "ta":

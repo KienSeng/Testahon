@@ -41,7 +41,7 @@ public class Siva {
         String fileContent = IOUtils.toString(file, "UTF-8");
         fileContent = fileContent.replace("\"replace_ProfileId\"", String.valueOf(profileId));
         fileContent = fileContent.replace("replace_JobTitle", jobTitle);
-
+        System.out.println(fileContent);
         String accessToken = getAccessToken();
 
         api = new ApiConnector();
@@ -51,6 +51,7 @@ public class Siva {
         api.setPayload(fileContent);
 
         Response response = api.perform("POST");
+        response.prettyPrint();
         String job_id = api.getValueFromResponse(response, "job_id");
         String salesOrderItemId = "";
 
@@ -125,7 +126,7 @@ public class Siva {
         db = new DbConnector();
         switch(environment.toLowerCase()){
             case "dev":
-                db.connectDb("dbuser", "pew253", "penguin.jobstreet.com", 1433, "siva");
+                db.connectDb("dbuser", "pew253", "cettia.jobstreet.com", 1433, "siva");
                 break;
 
             case "qa":

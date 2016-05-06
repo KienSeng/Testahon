@@ -1,12 +1,10 @@
 package userInterface;
 
+import Global.Global;
 import PropertiesFile.PropertiesFileReader;
 import TestDataCreation.Myjs;
 import TestDataCreation.Siva;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,15 +13,12 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import Global.Global;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import sun.reflect.annotation.ExceptionProxy;
 
 /**
  * Created by kienseng on 5/1/2016.
