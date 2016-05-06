@@ -1,8 +1,13 @@
 package Common;
 
+import Debugger.Logger;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import org.apache.commons.io.IOUtils;
+
+import java.io.FileInputStream;
+import java.sql.ResultSet;
 
 import static com.jayway.restassured.RestAssured.given;
 
@@ -10,12 +15,13 @@ import static com.jayway.restassured.RestAssured.given;
  * Created by kienseng on 4/18/2016.
  */
 public class ApiConnector {
-    private static RequestSpecBuilder requestBuilder = new RequestSpecBuilder();
+    private RequestSpecBuilder requestBuilder = new RequestSpecBuilder();
     private String path;
-    private static Response response;
+    private Response response;
 
     public void setPath(String url) throws Exception{
         path = url;
+        Logger.write("\t\t" + path);
     }
 
     public Response perform(String action) throws Exception{
@@ -75,7 +81,7 @@ public class ApiConnector {
     }
 
 
-    public void setApiKey(String key) throws Exception{
+    public void setApiKey(String key) throws Exception {
         setParameter("query", "api_key", key);
     }
 }

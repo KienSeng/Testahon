@@ -1,0 +1,14 @@
+{
+  "credit_consumptions": [
+    {
+      "sales_order_item_id": "replace_salesOrderItemId",
+      "site": {
+        "code": 1
+      },
+      "product_service": {
+        "code": 1
+      }
+    }
+  ],
+  "realert_flag": false
+}

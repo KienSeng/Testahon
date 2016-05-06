@@ -1,0 +1,38 @@
+{
+  "educations": [
+    {
+      "latest_flag": true,
+      "average_grade": {
+        "code": 9
+      },
+      "cgpa": {
+        "value": 3.5,
+        "base": 3.1
+      },
+      "institute": {
+        "name": "TARC College University",
+        "country": {
+          "code": 100
+        }
+      },
+      "field_of_study": {
+        "other": "TA_Other Field Of Study ",
+        "code": 13
+      },
+      "graduation_date": {
+        "month": 12,
+        "year": 2008
+      },
+      "major": "Nothing major1",
+      "college": {},
+      "qualification": {
+        "rank": 20,
+        "code": 8
+      },
+      "sub_qualification": {
+        "code": 13
+      },
+      "additional_info": "1 Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info Additional Info"
+    }
+  ]
+}

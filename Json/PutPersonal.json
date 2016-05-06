@@ -1,0 +1,53 @@
+{
+  "name": {
+    "first": "replace_firstName",
+    "last": "replace_lastName"
+  },
+  "birth_date": {
+    "date": "1989-12-1"
+  },
+  "gender": {
+    "code": 2
+  },
+  "phone": {
+    "country": "60",
+    "area_code": "3",
+    "value": "1234567"
+  },
+  "handphone": {
+    "country": "62",
+    "value": "0121234567"
+  },
+  "address": {
+    "line_1": "JobStreet.com Sdn Bhd Wisma JobStreet.com",
+    "line_2": "27 Lorong Medan Tuanku 1 (Off Jalan Sultan Ismail)",
+    "city": "Kuala Lumpur",
+    "postcode": "12345",
+    "location": {
+      "code": 50300
+    },
+    "state": {
+      "code": 70
+    },
+    "country": {
+      "code": 150
+    }
+  },
+  "nationality": {
+    "code": 150
+  },
+  "identification": {
+    "value": "901010-10-1010",
+    "type": {
+      "code": 1
+    }
+  },
+  "permanent_residences": [
+    {
+      "code": 14
+    },
+    {
+      "code": 36
+    }
+  ]
+}

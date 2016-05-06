@@ -1,0 +1,42 @@
+{
+  "experiences": [
+    {
+      "latest_flag": false,
+      "company": {
+        "name": "replace_companyName",
+        "country": {
+          "code": 150
+        },
+        "state": {
+          "code": 73
+        }
+      },
+      "joined_date": {
+        "date": "2016-3-16"
+      },
+      "left_date": {
+        "date": "2016-5-4"
+      },
+      "specialization": {
+        "code": 103
+      },
+      "role": {
+        "code": 1156
+      },
+      "industry": {
+        "code": 18
+      },
+      "position_title": "replace_positionTitle",
+      "position_level": {
+        "code": 3
+      },
+      "salary": {
+        "currency": {
+          "code": 1
+        },
+        "value": "2500"
+      },
+      "work_description": "Testathon Testathon Testathon Testathon Testathon Testathon Testathon Testathon Testathon Testathon "
+    }
+  ]
+}

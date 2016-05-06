@@ -1,52 +1,116 @@
 package TestDataCreation;
 
+import Common.ApiConnector;
 import Common.DbConnector;
 import Debugger.Logger;
-import Global.Global;
-import javafx.application.Platform;
+import com.jayway.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.By;
-import userInterface.TestDataCreationController;
+
+import java.io.FileInputStream;
+import java.sql.ResultSet;
 
 /**
  * Created by kienseng on 5/1/2016.
  */
 public class Myjs {
     static SeleniumAction action = new SeleniumAction();
+    static ApiConnector api;
+    static DbConnector db;
     static String environment;
+    static FileInputStream file;
 
-    public void updateCandidateVerificationStatus(String email, int status) throws Exception{
-        DbConnector db = new DbConnector();
-        String dbName = "";
+    private void connectToDb() throws Exception{
+        db = new DbConnector();
 
-        Logger.write("Update candidate's email validation status.");
+        Logger.write("Connecting to DB.");
 
         switch(environment.toLowerCase()){
             case "dev":
-                dbName = "myjsdb_int2";
                 Logger.write("Connecting to bat.jobstreet.com.");
-                db.connectMysqlDb("default", "mysqladmin84MIMA", "bat", 3309, dbName);
+                db.connectMysqlDb("default", "mysqladmin84MIMA", "bat", 3309, "myjsdb_int2");
                 break;
 
             case "qa":
-                dbName = "myjsdb_int2";
                 Logger.write("Connecting to drone.jobstreet.com.");
-                db.connectMysqlDb("default", "mysqladmin84MIMA", "drone.jobstreet.com", 3306, dbName);
+                db.connectMysqlDb("default", "mysqladmin84MIMA", "drone.jobstreet.com", 3306, "myjsdb_int2");
                 break;
 
             case "ta":
-                dbName = "myjsdb";
                 Logger.write("Connecting to cormorant.jobstreet.com.");
-                db.connectMysqlDb("default", "mysqladmin84MIMA", "cormorant", 3306, dbName);
+                db.connectMysqlDb("default", "mysqladmin84MIMA", "cormorant", 3306, "myjsdb");
                 break;
 
             case "stage":
-                dbName = "myjsdb";
                 Logger.write("Connecting to .");
                 break;
 
             default:
                 break;
         }
+    }
+
+    public String getCandidateAccessToken(String email) throws Exception{
+        Logger.write("Retrieving candidate's encrypted password.");
+        connectToDb();
+
+        String hashPassword = "";
+        ResultSet rs = db.executeStatement("SELECT password FROM candidate where login_id = '" + email + "'");
+
+        while(rs.next()){
+            hashPassword = rs.getString("password");
+        }
+
+        api = new ApiConnector();
+        file = new FileInputStream("Json/AccessToken.json");
+        String fileContent = IOUtils.toString(file, "UTF-8");
+        fileContent = fileContent.replace("replace_UserName", email);
+        fileContent = fileContent.replace("replace_HashPassword", hashPassword);
+
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/auth/access-token");
+        api.setApiKey(getApiKey());
+        api.setPayload(fileContent);
+        Response response = api.perform("POST");
+        String accessToken = api.getValueFromResponse(response, "access_token");
+        response.prettyPrint();
+        Logger.write("ACCESS TOKEN: " + accessToken);
+
+        return accessToken;
+    }
+
+    private String getApiKey() throws Exception{
+        String apiKey = "";
+
+        switch(environment.toLowerCase()){
+            case "dev":
+                apiKey = "myjslocalmy";
+                break;
+
+            case "qa":
+                apiKey = "myjslocalmy";
+                break;
+
+            case "ta":
+                apiKey = "myjslocaltasg";
+                break;
+
+            case "stage":
+                apiKey = "myjslocalsg";
+                break;
+
+            default:
+                break;
+        }
+
+        Logger.write("API KEY: "+apiKey);
+
+        return apiKey;
+    }
+
+    public void updateCandidateVerificationStatus(String email, int status) throws Exception{
+        Logger.write("Update candidate's email validation status.");
+
+        connectToDb();
 
         Logger.write("Updating candidate email_status_code.");
 
@@ -105,76 +169,62 @@ public class Myjs {
         }
     }
 
-    public void updateProfile(String module) throws Exception{
-        action.pressButton(By.id("header_myjobstreet_link"));
-        action.pressButton(By.id("header_work_exp_link"));
+    public void updateExperience(String accessToken, String companyName, String positionTitle) throws Exception{
+        Logger.write("Updating candidate's experience.");
+        Logger.write("\t\t" + accessToken);
+
+        file = new FileInputStream("Json/PostExperience.json");
+        String fileContent = IOUtils.toString(file, "UTF-8");
+        fileContent = fileContent.replace("replace_companyName", companyName);
+        fileContent = fileContent.replace("replace_positionTitle", positionTitle);
+
+        api = new ApiConnector();
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/resumes/me/experiences");
+        api.setApiKey(getApiKey());
+        api.setParameter("header", "Access-Token", accessToken);
+        api.setPayload(fileContent);
+        Response response = api.perform("POST");
+
+        response.prettyPrint();
+        Logger.write("Candidate's experience has been updated.");
     }
 
-    public void updateResumes() throws Exception{
-        action.navigateToUrl("http://myjobstreet-" + environment + ".jobstreet.com.my/resume/edit-work-experience.php");
+    public void updateEducation(String accessToken) throws Exception{
+        Logger.write("Updating candidate's education.");
+        Logger.write("\t\t" + accessToken);
+
+        file = new FileInputStream("Json/PostEducation.json");
+        String fileContent = IOUtils.toString(file, "UTF-8");
+
+        api = new ApiConnector();
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/resumes/me/educations");
+        api.setApiKey(getApiKey());
+        api.setParameter("header", "Access-Token", accessToken);
+        api.setPayload(fileContent);
+        Response response = api.perform("POST");
+
+        response.prettyPrint();
+        Logger.write("Candidate's education has been updated.");
     }
 
-    public void closeFirstTimeLoginPrompt() throws Exception{
-        Logger.write("\t\t" + action.getCurrentUrl());
-        if(action.checkElementExist(By.id("lbl_main_header"))){
-            Logger.write("\t\t" + action.getValueFromAttribute(By.xpath("//a[@class='skip-close']"), "href"));
-            action.navigateToUrl(action.getValueFromAttribute(By.xpath("//a[@class='skip-close']"), "href"));
-        }
-    }
+    public void updatePersonalInfo(String accessToken, String firstName, String lastName) throws Exception{
+        Logger.write("Updating candidate's personal info.");
+        Logger.write("\t\t" + accessToken);
 
-    public void firstTimeLoginFillIn(String email, String password, String positionTitle, String companyName)throws Exception{
-        action.close();
-        login(email, password);
-        closeFirstTimeLoginPrompt();
+        file = new FileInputStream("Json/PutPersonal.json");
+        String fileContent = IOUtils.toString(file, "UTF-8");
+        fileContent = fileContent.replace("replace_firstName", firstName);
+        fileContent = fileContent.replace("replace_lastName", lastName);
 
-        action.pressButton(By.id("header_myjobstreet_link"));
-        action.pressButton(By.id("header_create_resume"));
+        api = new ApiConnector();
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/candidates/me/personal");
+        api.setApiKey(getApiKey());
+        api.setParameter("header", "Access-Token", accessToken);
+        api.setPayload(fileContent);
+        Response response = api.perform("PUT");
 
-        //Education
-        Thread.sleep(4000);
-        action.enterTextToTextBox(By.id("institute_name"),"HELP College University");
-        action.pressButton(By.id("s2id_qualification_code"));
-        action.pressButton(By.id("select2-result-label-258"));
-        action.pressButton(By.id("s2id_field_of_study_code"));
-        action.pressButton(By.id("select2-result-label-276"));
-        action.enterTextToTextBox(By.id("graduation_year"), "2020");
-        action.pressButton(By.id("save"));
-
-        //Experience
-        Thread.sleep(4000);
-        action.pressButton(By.id("btn_experience_label"));
-        action.pressButton(By.id("select2-chosen-346"));
-        action.pressButton(By.id("select2-result-label-430"));
-        action.enterTextToTextBox(By.id("position_title"), positionTitle);
-        action.enterTextToTextBox(By.id("company_name"), companyName);
-        action.pressButton(By.id("s2id_specialization_code"));
-        action.pressButton(By.id("select2-result-label-699"));
-        action.pressButton(By.id("s2id_primary_role"));
-        action.pressButton(By.id("select2-result-label-767"));
-        action.pressButton(By.id("s2id_industry_code"));
-        action.pressButton(By.id("select2-result-label-774"));
-        action.pressButton(By.id("s2id_position_level_code"));
-        action.pressButton(By.id("select2-result-label-832"));
-        action.pressButton(By.id("s2id_join_date_month"));
-        action.pressButton(By.id("select2-result-label-851"));
-        action.enterTextToTextBox(By.id("join_date_year"), "2010");
-        action.pressButton(By.id("select2-chosen-353"));
-        action.pressButton(By.id("select2-result-label-862"));
-        action.enterTextToTextBox(By.id("left_date_year"), "2015");
-        action.pressButton(By.id("save"));
-
-        //About Me
-        Thread.sleep(4000);
-        action.pressButton(By.id("s2id_nationality_code"));
-        action.pressButton(By.id("select2-result-label-879"));
-        action.pressButton(By.id("s2id_state_code"));
-        action.pressButton(By.id("select2-result-label-1378"));
-        action.pressButton(By.id("s2id_handphone_country_code"));
-        action.pressButton(By.id("select2-result-label-1402"));
-        action.enterTextToTextBox(By.id("handphone_no"), "161234567");
-        action.pressButton(By.id("save_btn"));
-        action.pressButton(By.id("complete"));
-        Logger.write("Resume successfully created.");
+        response.prettyPrint();
+        Logger.write("Candidate's personal info has been updated.");
     }
 
     public void logout() throws Exception{

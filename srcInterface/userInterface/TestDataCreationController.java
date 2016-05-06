@@ -40,11 +40,11 @@ public class TestDataCreationController implements Initializable{
     private ComboBox cmb_myjsPreset;
     private ComboBox cmb_jobPreset;
     private TextField txt_jobUsername;
-    private TextField txt_jobPassword;
     private TextField txt_jobJobTitle;
+    private TextField txt_myjsPositionTitle;
+    private TextField txt_myjsCompanyName;
 
     private static HashMap<String, String> settingMap = new HashMap<>();
-    public static String consoleMessage = "";
 
     private Myjs myjs;
     private Siva siva;
@@ -181,21 +181,29 @@ public class TestDataCreationController implements Initializable{
         Label lbl_myjsLastName = new Label("Last Name:");
         Label lbl_myjsEmail = new Label("Email:");
         Label lbl_myjsPassword = new Label("Password:");
+        Label lbl_myjsPositionTitle = new Label("Position Title:");
+        Label lbl_myjsCompanyName = new Label("Company Name:");
 
         txt_myjsFirstName = new TextField();
         txt_myjsLastName = new TextField();
         txt_myjsEmail = new TextField();
         txt_myjsPassword = new TextField();
+        txt_myjsPositionTitle = new TextField();
+        txt_myjsCompanyName = new TextField();
 
         lbl_myjsFirstName.setPrefWidth(Global.standardLabelWidth);
         lbl_myjsLastName.setPrefWidth(Global.standardLabelWidth);
         lbl_myjsEmail.setPrefWidth(Global.standardLabelWidth);
         lbl_myjsPassword.setPrefWidth(Global.standardLabelWidth);
+        lbl_myjsPositionTitle.setPrefWidth(Global.standardLabelWidth);
+        lbl_myjsCompanyName.setPrefWidth(Global.standardLabelWidth);
 
         txt_myjsFirstName.setPrefWidth(Global.standardTextBoxWidth);
         txt_myjsLastName.setPrefWidth(Global.standardTextBoxWidth);
         txt_myjsEmail.setPrefWidth(Global.standardTextBoxWidth);
         txt_myjsPassword.setPrefWidth(Global.standardTextBoxWidth);
+        txt_myjsPositionTitle.setPrefWidth(Global.standardTextBoxWidth);
+        txt_myjsCompanyName.setPrefWidth(Global.standardTextBoxWidth);
 
         Button btn_myjsStart = new Button("Start");
         Button btn_myjsClear = new Button("Clear");
@@ -224,12 +232,16 @@ public class TestDataCreationController implements Initializable{
         layaout_GridPane_TestDataContainer.add(lbl_myjsPassword,0,2);
         layaout_GridPane_TestDataContainer.add(lbl_myjsFirstName,0,3);
         layaout_GridPane_TestDataContainer.add(lbl_myjsLastName,0,4);
+        layaout_GridPane_TestDataContainer.add(lbl_myjsPositionTitle,2,0);
+        layaout_GridPane_TestDataContainer.add(lbl_myjsCompanyName,2,1);
 
         layaout_GridPane_TestDataContainer.add(cmb_myjsPreset,1,0);
         layaout_GridPane_TestDataContainer.add(txt_myjsEmail,1,1);
         layaout_GridPane_TestDataContainer.add(txt_myjsPassword,1,2);
         layaout_GridPane_TestDataContainer.add(txt_myjsFirstName,1,3);
         layaout_GridPane_TestDataContainer.add(txt_myjsLastName,1,4);
+        layaout_GridPane_TestDataContainer.add(txt_myjsPositionTitle,3,0);
+        layaout_GridPane_TestDataContainer.add(txt_myjsCompanyName,3,1);
 
         spr_candidateSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_candidateSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
@@ -264,16 +276,6 @@ public class TestDataCreationController implements Initializable{
         txt_console.setPrefWidth(650);
         txt_console.setPrefHeight(350);
         txt_console.getStyleClass().add("testData_console_textArea");
-//        txt_console.textProperty().addListener(new ChangeListener<String>() {
-//            @Override
-//            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//                layout_ScrollPane_Console.setVvalue(Double.MAX_VALUE);
-//            }
-//        });
-
-//        layout_ScrollPane_Console.setPrefHeight(250);
-//        layout_ScrollPane_Console.getStyleClass().add("testData_console_textArea");
-//        layout_ScrollPane_Console.setContent(txt_console);
 
         layout_vbox_container.getChildren().addAll(txt_console, btn_clearConsole);
         layout_FlowPane_Main.getChildren().addAll(layout_vbox_container);
@@ -287,11 +289,18 @@ public class TestDataCreationController implements Initializable{
                 case "btn_myjsStart":
                     switch(cmb_myjsPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
                         case "verified candidate with no resumes":
-                            createNewCandidateWithVerification();
+                            createNewCandidate(true, false);
                             break;
 
                         case "candidate without email validation":
-                            createNewCandidateNoVerification();
+                            createNewCandidate(false, false);
+                            break;
+
+                        case "verified candidate with resumes":
+                            createNewCandidate(true, true);
+                            break;
+
+                        default:
                             break;
                     }
                     break;
@@ -351,8 +360,8 @@ public class TestDataCreationController implements Initializable{
                     }
                 }catch(Exception e){
                     e.printStackTrace();
+                    break;
                 }
-                break;
 
             default:
                 break;
@@ -368,11 +377,13 @@ public class TestDataCreationController implements Initializable{
         });
     }
 
-    private void createNewCandidateWithVerification() throws Exception{
+    private void createNewCandidate(boolean verifyCandidate, boolean createResumes) throws Exception{
         String firstName = txt_myjsFirstName.getText();
         String lastName = txt_myjsLastName.getText();
         String email = txt_myjsEmail.getText();
         String password = txt_myjsPassword.getText();
+        String positionTitle = txt_myjsPositionTitle.getText();
+        String companyName = txt_myjsCompanyName.getText();
 
         myjs = new Myjs();
         myjs.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
@@ -382,30 +393,17 @@ public class TestDataCreationController implements Initializable{
             public void run(){
                 try{
                     myjs.candidateSignUp(firstName, lastName, email, password);
-                    myjs.updateCandidateVerificationStatus(email, 1);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
-    }
 
-    private void createNewCandidateNoVerification() throws Exception{
-        String firstName = txt_myjsFirstName.getText();
-        String lastName = txt_myjsLastName.getText();
-        String email = txt_myjsEmail.getText();
-        String password = txt_myjsPassword.getText();
+                    if(verifyCandidate){
+                        myjs.updateCandidateVerificationStatus(email, 1);
+                    }
 
-        myjs = new Myjs();
-        myjs.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
-
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                try{
-                    myjs.candidateSignUp(firstName, lastName, email, password);
+                    if(createResumes){
+                        String accessToken = myjs.getCandidateAccessToken(email);
+                        myjs.updateExperience(accessToken, companyName, positionTitle);
+                        myjs.updatePersonalInfo(accessToken, firstName, lastName);
+                        myjs.updateEducation(accessToken);
+                    }
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -427,7 +425,7 @@ public class TestDataCreationController implements Initializable{
             public void run(){
                 try{
                     siva.setUsername(username);
-                    siva.createSavedJob(jobTitle);
+                    siva.postNormalJob(jobTitle);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
