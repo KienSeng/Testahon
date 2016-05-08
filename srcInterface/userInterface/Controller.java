@@ -90,21 +90,8 @@ public class Controller{
         });
         headerAnimation.play();
 
-
-
-        //Get parent entry for side navigation bar, filter and get total number of entries
-        HashMap<String, String> layoutMap = PropertiesFileReader.returnAllValueFromPropertyMap();
-        int paneCount = 0;
-
-        //Get number of pane to add
-        for (Map.Entry<String, String> entry : layoutMap.entrySet()) {
-            if(entry.getKey().contains("left_nav_bar_item_parent_")){
-                paneCount++;
-            }
-        }
-
-        //Loop for n number of time to set pane
-        for(int i = 0; i < paneCount; i++){
+        String[] navBarParentList = Global.propertyMap.get("left_nav_bar_item_parent").split(",");
+        for(int i = 0; i < navBarParentList.length; i++){
             pane = new TitledPane();
 
             VBox side_bar_child_vbox = new VBox(10);
@@ -112,17 +99,15 @@ public class Controller{
             side_bar_child_vbox.setAlignment(Pos.CENTER_LEFT);
 
             pane.setMaxHeight(Double.MAX_VALUE);
-            pane.setText(layoutMap.get("left_nav_bar_item_parent_" + i));
+            pane.setText(navBarParentList[i]);
             pane.setFont(Font.font(navigationBarFontSize));
 
-            //Split comma separated child content into array
-            String[] childItems = layoutMap.get("left_nav_bar_item_child_" + i).split(",");
+            String[] navBarChildList = Global.propertyMap.get("left_nav_bar_item_child_" + navBarParentList[i].trim().replace(" ", "_")).split(",");
 
-            //Loop child content array to populate pane
-            for(int j = 0; j < childItems.length; j++){
+            for(int j = 0; j < navBarChildList.length; j++){
                 Button button = new Button();
-                button.setId("btn_" + childItems[j].trim());
-                button.setText("  " + childItems[j].trim());
+                button.setId("btn_" + navBarChildList[j].trim());
+                button.setText("  " + navBarChildList[j].trim());
                 button.setFont(Font.font(navigationBarFontSize));
                 button.setOnAction(buttonEventHandler);
                 button.setMinWidth(180);
@@ -130,6 +115,7 @@ public class Controller{
 
                 pane.setContent(side_bar_child_vbox);
             }
+
             //Add pane to an array
             side_nav_bar.getPanes().addAll(pane);
             side_nav_bar.setMaxHeight(200);
@@ -138,8 +124,6 @@ public class Controller{
             main_content_pane.setFitToWidth(true);
             main_content_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             main_content_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-
 
             btn_exit.setId("btnExit");
             btn_exit.getStyleClass().addAll("button_standard", "button_standard_negative");

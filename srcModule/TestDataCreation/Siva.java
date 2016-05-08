@@ -90,6 +90,33 @@ public class Siva {
 //        Logger.write("Job URL: " + api.getValueFromResponse(response, "url"));
     }
 
+    public void postInternshipJob(String jobTitle) throws Exception{
+        setupDbConnection();
+
+        ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
+        int profileId = 0;
+        while(rs.next()){
+            profileId = rs.getInt("profile_id");
+        }
+
+        file = new FileInputStream("Json/PostInternshipJob.json");
+        String fileContent = IOUtils.toString(file, "UTF-8");
+        fileContent = fileContent.replace("\"replace_ProfileId\"", String.valueOf(profileId));
+        fileContent = fileContent.replace("replace_JobTitle", jobTitle);
+        System.out.println(fileContent);
+        String accessToken = getAccessToken();
+
+        api = new ApiConnector();
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/jobs/me");
+        api.setParameter("header", "Access-Token", accessToken);
+        api.setApiKey(getApiKey());
+        api.setPayload(fileContent);
+
+        Response response = api.perform("POST");
+        response.prettyPrint();
+        String job_id = api.getValueFromResponse(response, "job_id");
+    }
+
     private String getAccessToken() throws Exception{
         api = new ApiConnector();
         file = new FileInputStream("Json/AccessToken.json");

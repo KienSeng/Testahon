@@ -1,0 +1,94 @@
+{
+  "profile_id": "replace_ProfileId",
+  "language": {
+    "code": 3
+  },
+  "position_title": "replace_JobTitle",
+  "employment_types": [
+    {
+      "code": 16
+    }
+  ],
+  "min_monthly_salary": "3000",
+  "max_monthly_salary": "5000",
+  "salary_display_flag": "true",
+  "work_locations": [
+    {
+      "code": 50300
+    }
+  ],
+  "work_auth_relevant_flag": "true",
+  "job_description": "Description Put Here",
+  "specialization": {
+    "code": 131
+  },
+  "role": {
+    "code": 1130
+  },
+  "qualifications": [
+    {
+      "code": 48
+    },
+    {
+      "code": 448
+    }
+  ],
+  "field_of_studies": [
+    {
+      "code": 8
+    },
+    {
+      "code": 28
+    }
+  ],
+  "position_level": {
+    "code": 8
+  },
+  "years_of_experience": {
+    "code": 5
+  },
+  "salary_currency": {
+    "code": 1
+  },
+  "skills": [
+    "Java",
+    "Coffee",
+    "WebDriver"
+  ],
+  "selling_points": [
+    "Point 1",
+    "Point 2",
+    "Point 3"
+  ],
+  "resume_receiver_emails": [
+    "email1@jmail.com",
+    "email2@jmail.com"
+  ],
+  "ea_personnel_id": "RA1234",
+  "sites": [
+    {
+      "code": 1
+    },
+    {
+      "code": 2
+    },
+    {
+      "code": 4
+    }
+  ],
+  "blind_flag": false,
+  "language_requirements": [
+    {
+      "code": 1
+    },
+    {
+      "code": 7
+    },
+    {
+      "code": 9
+    },
+    {
+      "code": 14
+    }
+  ]
+}
