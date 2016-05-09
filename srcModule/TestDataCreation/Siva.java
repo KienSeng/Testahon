@@ -22,13 +22,14 @@ public class Siva {
     String username = "";
 
     public void login(String username, String password) throws Exception{
+        action.setupDriver();
         action.navigateToUrl("https://siva-" + environment.toLowerCase() + ".jobstreet.com/login.asp");
         action.enterTextToTextBox(By.name("LoginID"), username);
         action.enterTextToTextBox(By.name("Password"), password);
-        action.pressButton(By.cssSelector("img"));
+        action.pressButton(By.xpath("//img[@src='/_pics/sign-in.gif']"));
     }
 
-    public void postNormalJob(String jobTitle) throws Exception{
+    public void createNormalJob(String jobTitle) throws Exception{
         setupDbConnection();
 
         ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
@@ -90,7 +91,34 @@ public class Siva {
 //        Logger.write("Job URL: " + api.getValueFromResponse(response, "url"));
     }
 
-    public void postInternshipJob(String jobTitle) throws Exception{
+    public void createInternshipJob(String jobTitle) throws Exception{
+        setupDbConnection();
+
+        ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
+        int profileId = 0;
+        while(rs.next()){
+            profileId = rs.getInt("profile_id");
+        }
+
+        file = new FileInputStream("Json/PostInternshipJob.json");
+        String fileContent = IOUtils.toString(file, "UTF-8");
+        fileContent = fileContent.replace("\"replace_ProfileId\"", String.valueOf(profileId));
+        fileContent = fileContent.replace("replace_JobTitle", jobTitle);
+        System.out.println(fileContent);
+        String accessToken = getAccessToken();
+
+        api = new ApiConnector();
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/jobs/me");
+        api.setParameter("header", "Access-Token", accessToken);
+        api.setApiKey(getApiKey());
+        api.setPayload(fileContent);
+
+        Response response = api.perform("POST");
+        response.prettyPrint();
+        String job_id = api.getValueFromResponse(response, "job_id");
+    }
+
+    public void createJobWithSol(String jobTitle) throws Exception{
         setupDbConnection();
 
         ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
@@ -199,5 +227,16 @@ public class Siva {
         }
         Logger.write("API KEY: "+apiKey);
         return apiKey;
+    }
+
+    public void searchAndPostJob(String jobTitle) throws Exception{
+//        action.navigateToUrl("http://siva-" + environment.toLowerCase() + ".jobstreet.com/agena/listAd.asp");
+        action.pressButton(By.linkText("Advertisements"));
+        action.enterTextToTextBox(By.id("position"), jobTitle);
+        action.pressButton(By.name("btnSubmit1"));
+        action.pressButton(By.xpath("//img[@src='_pics/Edit.gif']"));
+        action.pressButton(By.id("ctl00_cphAdForm_imgSaveNext"));
+        action.pressButton(By.id("ctl00_cphAdForm_imgSaveNext"));
+        action.pressButton(By.id("ctl00_cphAdForm_imgPost"));
     }
 }

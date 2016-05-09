@@ -6,7 +6,7 @@
   "position_title": "replace_JobTitle",
   "employment_types": [
     {
-      "code": 16
+      "code": 1
     }
   ],
   "min_monthly_salary": "3000",
@@ -54,6 +54,11 @@
     "Java",
     "Coffee",
     "WebDriver"
+  ],
+  "selling_points": [
+    "Point 1",
+    "Point 2",
+    "Point 3"
   ],
   "resume_receiver_emails": [
     "email1@jmail.com",

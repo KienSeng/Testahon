@@ -18,7 +18,7 @@
     }
   ],
   "work_auth_relevant_flag": "true",
-  "job_description": "Description Put Here",
+  "job_description": "Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here Description Put Here",
   "specialization": {
     "code": 131
   },
@@ -55,11 +55,6 @@
     "Coffee",
     "WebDriver"
   ],
-  "selling_points": [
-    "Point 1",
-    "Point 2",
-    "Point 3"
-  ],
   "resume_receiver_emails": [
     "email1@jmail.com",
     "email2@jmail.com"
@@ -68,12 +63,6 @@
   "sites": [
     {
       "code": 1
-    },
-    {
-      "code": 2
-    },
-    {
-      "code": 4
     }
   ],
   "blind_flag": false,

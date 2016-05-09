@@ -25,9 +25,9 @@ public class Logger {
 
     public static void write(String message) throws Exception {
         if (debugMode) {
-            System.out.println("DEBUG LOG(" + getDate() + "): " + message);
+            System.out.println("[ " + getDate() + " ] : " + message);
             try{
-                Global.testDataController.displayInConsole("DEBUG LOG(" + getDate() + "): " + message);
+                Global.testDataController.displayInConsole("[ " + getDate() + " ] : " + message);
             }catch(Exception e){
 
             }

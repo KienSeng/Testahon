@@ -35,9 +35,14 @@ public class TestDataCreationController implements Initializable{
     private ComboBox cmb_myjsPreset;
     private ComboBox cmb_jobPreset;
     private TextField txt_jobUsername;
+    private TextField txt_jobPassword;
     private TextField txt_jobJobTitle;
     private TextField txt_myjsPositionTitle;
     private TextField txt_myjsCompanyName;
+    private Button btn_sivaStart;
+    private Button btn_sivaClear;
+    private Button btn_myjsStart;
+    private Button btn_myjsClear;
 
     private static HashMap<String, String> settingMap = new HashMap<>();
 
@@ -103,10 +108,11 @@ public class TestDataCreationController implements Initializable{
 
         Label lbl_jobPreset = new Label("Preset:");
         Label lbl_jobUsername = new Label("Login ID:");
+        Label lbl_jobPassword = new Label("Password:");
         Label lbl_jobJobTitle = new Label("Job Title:");
 
-        Button btn_sivaStart = new Button("Start");
-        Button btn_sivaClear = new Button("Clear");
+        btn_sivaStart = new Button("Start");
+        btn_sivaClear = new Button("Clear");
 
         btn_sivaStart.setId("btn_sivaStart");
         btn_sivaClear.setId("btn_sivaclear");
@@ -121,15 +127,18 @@ public class TestDataCreationController implements Initializable{
 
         cmb_jobPreset = new ComboBox();
         txt_jobUsername = new TextField();
+        txt_jobPassword = new TextField();
         txt_jobJobTitle = new TextField();
 
         Separator spr_jobSeparator = new Separator();
 
         lbl_jobPreset.setPrefWidth(Global.standardLabelWidth);
         lbl_jobUsername.setPrefWidth(Global.standardLabelWidth);
+        lbl_jobPassword.setPrefWidth(Global.standardLabelWidth);
         lbl_jobJobTitle.setPrefWidth(Global.standardLabelWidth);
 
         txt_jobUsername.setPrefWidth(Global.standardTextBoxWidth);
+        txt_jobPassword.setPrefWidth(Global.standardTextBoxWidth);
         txt_jobJobTitle.setPrefWidth(Global.standardTextBoxWidth);
         cmb_jobPreset.setPrefWidth(Global.standardTextBoxWidth);
 
@@ -137,10 +146,12 @@ public class TestDataCreationController implements Initializable{
 
         layout_GridPane_JobInfoPane.add(lbl_jobPreset,0,0);
         layout_GridPane_JobInfoPane.add(lbl_jobUsername,0,1);
+//        layout_GridPane_JobInfoPane.add(lbl_jobPassword,0,2);
         layout_GridPane_JobInfoPane.add(lbl_jobJobTitle,0,2);
 
         layout_GridPane_JobInfoPane.add(cmb_jobPreset,1,0);
         layout_GridPane_JobInfoPane.add(txt_jobUsername,1,1);
+//        layout_GridPane_JobInfoPane.add(txt_jobPassword,1,2);
         layout_GridPane_JobInfoPane.add(txt_jobJobTitle,1,2);
 
         spr_jobSeparator.setOrientation(Orientation.HORIZONTAL);
@@ -200,8 +211,8 @@ public class TestDataCreationController implements Initializable{
         txt_myjsPositionTitle.setPrefWidth(Global.standardTextBoxWidth);
         txt_myjsCompanyName.setPrefWidth(Global.standardTextBoxWidth);
 
-        Button btn_myjsStart = new Button("Start");
-        Button btn_myjsClear = new Button("Clear");
+        btn_myjsStart = new Button("Start");
+        btn_myjsClear = new Button("Clear");
         btn_myjsStart.setId("btn_myjsStart");
         btn_myjsClear.setId("btn_myjsClear");
         btn_myjsStart.setOnAction(buttonEvent);
@@ -282,6 +293,7 @@ public class TestDataCreationController implements Initializable{
 
             switch(btn.getId()){
                 case "btn_myjsStart":
+                    disableButton(true);
                     switch(cmb_myjsPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
                         case "verified candidate with no resumes":
                             createNewCandidate(true, false);
@@ -301,13 +313,18 @@ public class TestDataCreationController implements Initializable{
                     break;
 
                 case "btn_sivaStart":
+                    disableButton(true);
                     switch(cmb_jobPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
                         case "normal job posting":
                             createNormalJob();
                             break;
 
                         case "internship job":
-//                            createInternshipJob();
+                            createInternshipJob();
+                            break;
+
+                        case "normal job posting with sol":
+                            createJobWithSol();
                             break;
                     }
                     break;
@@ -401,6 +418,11 @@ public class TestDataCreationController implements Initializable{
                     }
                 }catch(Exception e){
                     e.printStackTrace();
+                    try{
+                        disableButton(false);
+                    }catch(Exception f){
+                        f.printStackTrace();
+                    }
                 }
             }
         };
@@ -411,6 +433,7 @@ public class TestDataCreationController implements Initializable{
     private void createNormalJob() throws Exception{
         String username = txt_jobUsername.getText();
         String jobTitle = txt_jobJobTitle.getText();
+        String password = txt_jobPassword.getText();
 
         Siva siva = new Siva();
         siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
@@ -420,13 +443,98 @@ public class TestDataCreationController implements Initializable{
             public void run(){
                 try{
                     siva.setUsername(username);
-                    siva.postNormalJob(jobTitle);
+                    siva.createNormalJob(jobTitle);
+//                    siva.login(username, password);
+//                    siva.searchAndPostJob(jobTitle);
                 }catch(Exception e){
                     e.printStackTrace();
+                    try{
+                        disableButton(false);
+                    }catch(Exception f){
+                        f.printStackTrace();
+                    }
                 }
             }
         };
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void createInternshipJob() throws Exception{
+        String username = txt_jobUsername.getText();
+        String jobTitle = txt_jobJobTitle.getText();
+        String password = txt_jobPassword.getText();
+
+        Siva siva = new Siva();
+        siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    siva.setUsername(username);
+                    siva.createInternshipJob(jobTitle);
+//                    siva.login(username, password);
+//                    siva.searchAndPostJob(jobTitle);
+                }catch(Exception e){
+                    e.printStackTrace();
+                    try{
+                        disableButton(false);
+                    }catch(Exception f){
+                        f.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void createJobWithSol() throws Exception{
+        String username = txt_jobUsername.getText();
+        String jobTitle = txt_jobJobTitle.getText();
+        String password = txt_jobPassword.getText();
+
+        Siva siva = new Siva();
+        siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    siva.setUsername(username);
+                    siva.createJobWithSol(jobTitle);
+//                    siva.login(username, password);
+//                    siva.searchAndPostJob(jobTitle);
+                }catch(Exception e){
+                    e.printStackTrace();
+                    try{
+                        disableButton(false);
+                    }catch(Exception f){
+                        f.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void disableButton(boolean flag) throws Exception{
+        if(cmb_jobPreset.isVisible()){
+            btn_sivaStart.setDisable(flag);
+            btn_sivaClear.setDisable(flag);
+            txt_jobJobTitle.setDisable(flag);
+            txt_jobUsername.setDisable(flag);
+        } else if(cmb_myjsPreset.isVisible()){
+            btn_myjsStart.setDisable(flag);
+            btn_myjsClear.setDisable(flag);
+            txt_myjsCompanyName.setDisable(flag);
+            txt_myjsEmail.setDisable(flag);
+            txt_myjsPassword.setDisable(flag);
+            txt_myjsPositionTitle.setDisable(flag);
+            txt_myjsFirstName.setDisable(flag);
+            txt_myjsLastName.setDisable(flag);
+        }
     }
 }
