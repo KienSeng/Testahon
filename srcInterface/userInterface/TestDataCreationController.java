@@ -5,6 +5,8 @@ import PropertiesFile.PropertiesFileReader;
 import TestDataCreation.Myjs;
 import TestDataCreation.Siva;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,6 +36,7 @@ public class TestDataCreationController implements Initializable{
     private ComboBox cmb_environment;
     private ComboBox cmb_myjsPreset;
     private ComboBox cmb_jobPreset;
+    private ComboBox cmb_jobPackage;
     private TextField txt_jobUsername;
     private TextField txt_jobPassword;
     private TextField txt_jobJobTitle;
@@ -43,8 +46,10 @@ public class TestDataCreationController implements Initializable{
     private Button btn_sivaClear;
     private Button btn_myjsStart;
     private Button btn_myjsClear;
+    private Button btn_sivaGetPackage;
 
     private static HashMap<String, String> settingMap = new HashMap<>();
+    private static boolean packageButtonClicked = false;
 
     private Myjs myjs;
     private Siva siva;
@@ -110,9 +115,11 @@ public class TestDataCreationController implements Initializable{
         Label lbl_jobUsername = new Label("Login ID:");
         Label lbl_jobPassword = new Label("Password:");
         Label lbl_jobJobTitle = new Label("Job Title:");
+        Label lbl_jobPackage = new Label("Package:");
 
         btn_sivaStart = new Button("Start");
         btn_sivaClear = new Button("Clear");
+        btn_sivaGetPackage = new Button("GET Packages");
 
         btn_sivaStart.setId("btn_sivaStart");
         btn_sivaClear.setId("btn_sivaclear");
@@ -125,7 +132,13 @@ public class TestDataCreationController implements Initializable{
         btn_sivaStart.getStyleClass().addAll("button_standard_positive", "button_standard");
         btn_sivaClear.getStyleClass().addAll("button_standard_negative", "button_standard");
 
+        btn_sivaGetPackage.setId("btn_sivaGetPackage");
+        btn_sivaGetPackage.setPrefWidth(Global.standardButtonWidth + 40);
+        btn_sivaGetPackage.setOnAction(buttonEvent);
+        btn_sivaGetPackage.getStyleClass().addAll("button_standard_positive", "button_standard");
+
         cmb_jobPreset = new ComboBox();
+        cmb_jobPackage = new ComboBox();
         txt_jobUsername = new TextField();
         txt_jobPassword = new TextField();
         txt_jobJobTitle = new TextField();
@@ -141,6 +154,7 @@ public class TestDataCreationController implements Initializable{
         txt_jobPassword.setPrefWidth(Global.standardTextBoxWidth);
         txt_jobJobTitle.setPrefWidth(Global.standardTextBoxWidth);
         cmb_jobPreset.setPrefWidth(Global.standardTextBoxWidth);
+        cmb_jobPackage.setPrefWidth(Global.standardTextBoxWidth);
 
         cmb_jobPreset.getItems().addAll(settingMap.get("UI_Job_Preset").split(","));
 
@@ -148,11 +162,14 @@ public class TestDataCreationController implements Initializable{
         layout_GridPane_JobInfoPane.add(lbl_jobUsername,0,1);
 //        layout_GridPane_JobInfoPane.add(lbl_jobPassword,0,2);
         layout_GridPane_JobInfoPane.add(lbl_jobJobTitle,0,2);
+        layout_GridPane_JobInfoPane.add(lbl_jobPackage,0,3);
 
         layout_GridPane_JobInfoPane.add(cmb_jobPreset,1,0);
         layout_GridPane_JobInfoPane.add(txt_jobUsername,1,1);
 //        layout_GridPane_JobInfoPane.add(txt_jobPassword,1,2);
         layout_GridPane_JobInfoPane.add(txt_jobJobTitle,1,2);
+        layout_GridPane_JobInfoPane.add(cmb_jobPackage,1,3);
+        layout_GridPane_JobInfoPane.add(btn_sivaGetPackage,2,3);
 
         spr_jobSeparator.setOrientation(Orientation.HORIZONTAL);
         spr_jobSeparator.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(20));
@@ -294,6 +311,7 @@ public class TestDataCreationController implements Initializable{
             switch(btn.getId()){
                 case "btn_myjsStart":
                     disableButton(true);
+                    txt_console.clear();
                     switch(cmb_myjsPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
                         case "verified candidate with no resumes":
                             createNewCandidate(true, false);
@@ -314,6 +332,7 @@ public class TestDataCreationController implements Initializable{
 
                 case "btn_sivaStart":
                     disableButton(true);
+                    txt_console.clear();
                     switch(cmb_jobPreset.getSelectionModel().getSelectedItem().toString().toLowerCase()){
                         case "normal job posting":
                             createNormalJob();
@@ -327,6 +346,14 @@ public class TestDataCreationController implements Initializable{
                             createJobWithSol();
                             break;
                     }
+                    break;
+
+                case "btn_sivaGetPackage":
+                    txt_console.clear();
+                    siva = new Siva();
+                    siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
+                    cmb_jobPackage.getItems().clear();
+                    cmb_jobPackage.getItems().addAll(siva.getAdvertiserOrderList(txt_jobUsername.getText()));
                     break;
 
                 case "btn_myjsClear":
@@ -433,7 +460,16 @@ public class TestDataCreationController implements Initializable{
     private void createNormalJob() throws Exception{
         String username = txt_jobUsername.getText();
         String jobTitle = txt_jobJobTitle.getText();
-        String password = txt_jobPassword.getText();
+
+        String tmp_packageName = "";
+
+        try{
+            tmp_packageName = cmb_jobPackage.getSelectionModel().getSelectedItem().toString();
+        }catch(Exception e){
+            tmp_packageName = "";
+        }
+
+        final String packageName = tmp_packageName;
 
         Siva siva = new Siva();
         siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
@@ -443,9 +479,13 @@ public class TestDataCreationController implements Initializable{
             public void run(){
                 try{
                     siva.setUsername(username);
-                    siva.createNormalJob(jobTitle);
-//                    siva.login(username, password);
-//                    siva.searchAndPostJob(jobTitle);
+                    String jobId = siva.createNormalJob(jobTitle);
+
+                    if(!packageName.equals("")){
+                        siva.postJob(packageName.split(" - ")[0], jobId);
+                    }
+
+                    disableButton(false);
                 }catch(Exception e){
                     e.printStackTrace();
                     try{
@@ -463,7 +503,16 @@ public class TestDataCreationController implements Initializable{
     private void createInternshipJob() throws Exception{
         String username = txt_jobUsername.getText();
         String jobTitle = txt_jobJobTitle.getText();
-        String password = txt_jobPassword.getText();
+
+        String tmp_packageName = "";
+
+        try{
+            tmp_packageName = cmb_jobPackage.getSelectionModel().getSelectedItem().toString();
+        }catch(Exception e){
+            tmp_packageName = "";
+        }
+
+        final String packageName = tmp_packageName;
 
         Siva siva = new Siva();
         siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
@@ -473,9 +522,13 @@ public class TestDataCreationController implements Initializable{
             public void run(){
                 try{
                     siva.setUsername(username);
-                    siva.createInternshipJob(jobTitle);
-//                    siva.login(username, password);
-//                    siva.searchAndPostJob(jobTitle);
+                    String jobId = siva.createInternshipJob(jobTitle);
+
+                    if(!packageName.equals("")){
+                        siva.postJob(packageName.split(" - ")[0], jobId);
+                    }
+
+                    disableButton(false);
                 }catch(Exception e){
                     e.printStackTrace();
                     try{
@@ -493,7 +546,16 @@ public class TestDataCreationController implements Initializable{
     private void createJobWithSol() throws Exception{
         String username = txt_jobUsername.getText();
         String jobTitle = txt_jobJobTitle.getText();
-        String password = txt_jobPassword.getText();
+
+        String tmp_packageName = "";
+
+        try{
+            tmp_packageName = cmb_jobPackage.getSelectionModel().getSelectedItem().toString();
+        }catch(Exception e){
+            tmp_packageName = "";
+        }
+
+        final String packageName = tmp_packageName;
 
         Siva siva = new Siva();
         siva.setEnvironment(cmb_environment.getSelectionModel().getSelectedItem().toString());
@@ -503,9 +565,13 @@ public class TestDataCreationController implements Initializable{
             public void run(){
                 try{
                     siva.setUsername(username);
-                    siva.createJobWithSol(jobTitle);
-//                    siva.login(username, password);
-//                    siva.searchAndPostJob(jobTitle);
+                    String jobId = siva.createJobWithSol(jobTitle);
+
+                    if(!packageName.equals("")){
+                        siva.postJob(packageName.split(" - ")[0], jobId);
+                    }
+
+                    disableButton(false);
                 }catch(Exception e){
                     e.printStackTrace();
                     try{
@@ -526,6 +592,8 @@ public class TestDataCreationController implements Initializable{
             btn_sivaClear.setDisable(flag);
             txt_jobJobTitle.setDisable(flag);
             txt_jobUsername.setDisable(flag);
+            btn_sivaGetPackage.setDisable(flag);
+            cmb_jobPreset.setDisable(flag);
         } else if(cmb_myjsPreset.isVisible()){
             btn_myjsStart.setDisable(flag);
             btn_myjsClear.setDisable(flag);
@@ -535,6 +603,7 @@ public class TestDataCreationController implements Initializable{
             txt_myjsPositionTitle.setDisable(flag);
             txt_myjsFirstName.setDisable(flag);
             txt_myjsLastName.setDisable(flag);
+            cmb_myjsPreset.setDisable(flag);
         }
     }
 }

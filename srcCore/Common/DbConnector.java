@@ -29,11 +29,11 @@ public class DbConnector {
             con.setDatabaseName(dbName);
 
             //Display connection info for debug purpose
-            Logger.write("DB Username: " + username);
-            Logger.write("DB Password: " + password);
-            Logger.write("DB Server Name: " + dbServerName);
-            Logger.write("DB Port: " + port);
-            Logger.write("DB Name: " + dbName);
+//            Logger.write("DB Username: " + username);
+//            Logger.write("DB Password: " + password);
+//            Logger.write("DB Server Name: " + dbServerName);
+//            Logger.write("DB Port: " + port);
+//            Logger.write("DB Name: " + dbName);
 
             Logger.write("Connecting to SQL Server.");
             Global.dbConnection = con.getConnection();

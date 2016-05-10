@@ -4,11 +4,13 @@ import Common.ApiConnector;
 import Common.DbConnector;
 import Debugger.Logger;
 import com.jayway.restassured.response.Response;
+import com.sun.corba.se.spi.orbutil.fsm.Guard;
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.By;
 
 import java.io.FileInputStream;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 /**
  * Created by kienseng on 5/1/2016.
@@ -29,7 +31,7 @@ public class Siva {
         action.pressButton(By.xpath("//img[@src='/_pics/sign-in.gif']"));
     }
 
-    public void createNormalJob(String jobTitle) throws Exception{
+    public String createNormalJob(String jobTitle) throws Exception{
         setupDbConnection();
 
         ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
@@ -54,44 +56,14 @@ public class Siva {
         Response response = api.perform("POST");
         response.prettyPrint();
         String job_id = api.getValueFromResponse(response, "job_id");
-        String salesOrderItemId = "";
 
-//        switch(environment.toLowerCase()){
-//            case "dev":
-//                salesOrderItemId = "163";
-//                break;
-//
-//            case "qa":
-//                salesOrderItemId = "163";
-//                break;
-//
-//            case "ta":
-//                salesOrderItemId = "163";
-//                break;
-//
-//            case "stage":
-//                salesOrderItemId = "163";
-//                break;
-//        }
-
-//        file = new FileInputStream("Json/CreditConsumption.json");
-//        fileContent = IOUtils.toString(file, "UTF-8");
-//        fileContent = fileContent.replace("\"replace_salesOrderItemId\"", "163");
-//
-//        api = new ApiConnector();
-//        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/jobs/me/{job_id}/post");
-//        api.setParameter("header", "Access-Token", accessToken);
-//        api.setParameter("path", "job_id", job_id);
-//        api.setApiKey(getApiKey());
-//        api.setPayload(fileContent);
-//        response = api.perform("PUT");
-//
         Logger.write("New job has been successfully created");
         Logger.write("Job ID: " + job_id);
-//        Logger.write("Job URL: " + api.getValueFromResponse(response, "url"));
+
+        return job_id;
     }
 
-    public void createInternshipJob(String jobTitle) throws Exception{
+    public String createInternshipJob(String jobTitle) throws Exception{
         setupDbConnection();
 
         ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
@@ -116,9 +88,14 @@ public class Siva {
         Response response = api.perform("POST");
         response.prettyPrint();
         String job_id = api.getValueFromResponse(response, "job_id");
+
+        Logger.write("New job has been successfully created");
+        Logger.write("Job ID: " + job_id);
+
+        return job_id;
     }
 
-    public void createJobWithSol(String jobTitle) throws Exception{
+    public String createJobWithSol(String jobTitle) throws Exception{
         setupDbConnection();
 
         ResultSet rs = db.executeStatement("SELECT profile_id FROM advertiser_profile WITH (NOLOCK) WHERE advertiser_id = (SELECT advertiser_id FROM svuser WITH (NOLOCK) WHERE login_id = '" + username + "') AND profile_name IS NULL");
@@ -143,6 +120,11 @@ public class Siva {
         Response response = api.perform("POST");
         response.prettyPrint();
         String job_id = api.getValueFromResponse(response, "job_id");
+
+        Logger.write("New job has been successfully created");
+        Logger.write("Job ID: " + job_id);
+
+        return job_id;
     }
 
     private String getAccessToken() throws Exception{
@@ -168,7 +150,7 @@ public class Siva {
         Response response = api.perform("POST");
         String accessToken = api.getValueFromResponse(response, "access_token");
 
-        Logger.write("ACCESS TOKEN: " + accessToken);
+        Logger.write("Access Token: " + accessToken);
 
         return accessToken;
     }
@@ -225,18 +207,58 @@ public class Siva {
             default:
                 break;
         }
-        Logger.write("API KEY: "+apiKey);
+
         return apiKey;
     }
 
-    public void searchAndPostJob(String jobTitle) throws Exception{
-//        action.navigateToUrl("http://siva-" + environment.toLowerCase() + ".jobstreet.com/agena/listAd.asp");
-        action.pressButton(By.linkText("Advertisements"));
-        action.enterTextToTextBox(By.id("position"), jobTitle);
-        action.pressButton(By.name("btnSubmit1"));
-        action.pressButton(By.xpath("//img[@src='_pics/Edit.gif']"));
-        action.pressButton(By.id("ctl00_cphAdForm_imgSaveNext"));
-        action.pressButton(By.id("ctl00_cphAdForm_imgSaveNext"));
-        action.pressButton(By.id("ctl00_cphAdForm_imgPost"));
+    public void postJob(String order, String jobId) throws Exception{
+        int contractItemId = 0;
+        int orderNumber = Integer.parseInt(order.substring(2, order.length()));
+        String orderPrefix = order.substring(0,2);
+        String accessToken = getAccessToken();
+
+        System.out.println(orderPrefix + "\t\t" + orderNumber);
+
+        setupDbConnection();
+        ResultSet rs = db.executeStatement("SELECT contract_item_id from contract_item WHERE contract_id = (SELECT contract_id from contract where order_number = " + orderNumber + " and order_prefix = '" + orderPrefix + "')");
+//        SELECT contract_item_id from contract_item WHERE contract_id = (SELECT contract_id from contract where order_number = 74 and order_prefix = 'MY')
+
+        while(rs.next()){
+            contractItemId = rs.getInt("contract_item_id");
+            System.out.println(contractItemId);
+        }
+
+        api = new ApiConnector();
+        file = new FileInputStream("Json/CreditConsumption.json");
+
+        String fileContent = IOUtils.toString(file, "UTF-8");
+        fileContent = fileContent.replace("\"replace_salesOrderItemId\"", String.valueOf(contractItemId));
+        fileContent = fileContent.replace("\"replace_productServiceCode\"", "1");
+
+        api.setPath("http://api-" + environment.toLowerCase() + ".jobstreet.com:80/v/jobs/me/{job_id}/post");
+        api.setApiKey(getApiKey());
+        api.setParameter("path", "job_id", jobId);
+        api.setParameter("header", "Access-Token", accessToken);
+        api.setPayload(fileContent);
+        Response response = api.perform("PUT");
+        response.prettyPrint();
+        String jobUrl = api.getValueFromResponse(response, "url");
+        Logger.write(jobUrl);
+    }
+
+    public ArrayList<String> getAdvertiserOrderList(String userName) throws Exception{
+        String orderName;
+        ArrayList<String> packageList = new ArrayList<>();
+
+        setupDbConnection();
+        ResultSet rs;
+        rs = db.executeStatement("SELECT order_prefix, order_number, product_service_name FROM contract_item INNER JOIN contract ON contract_item.contract_id = contract.contract_id INNER JOIN svuser ON contract.advertiser_id = svuser.advertiser_id INNER JOIN ref_product_service ON ref_product_service.product_service_code = contract_item.product_service_code WHERE svuser.login_id = '" + userName + "'");
+
+        while(rs.next()){
+            orderName = rs.getString("order_prefix") + rs.getString("order_number") + " - " + rs.getString("product_service_name");
+            packageList.add(orderName);
+        }
+
+        return packageList;
     }
 }

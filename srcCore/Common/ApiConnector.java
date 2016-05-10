@@ -21,7 +21,6 @@ public class ApiConnector {
 
     public void setPath(String url) throws Exception{
         path = url;
-        Logger.write("\t\t" + path);
     }
 
     public Response perform(String action) throws Exception{
@@ -49,8 +48,7 @@ public class ApiConnector {
         try{
             value = response.then().extract().path(jsonPath).toString();
         }catch(Exception e){
-            e.printStackTrace();
-            value = null;
+            value = response.then().extract().path("error.message").toString();
         }
         return value;
     }

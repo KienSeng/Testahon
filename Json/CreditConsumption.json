@@ -6,7 +6,7 @@
         "code": 1
       },
       "product_service": {
-        "code": 1
+        "code": "replace_productServiceCode"
       }
     }
   ],
