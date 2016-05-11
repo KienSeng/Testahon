@@ -36,7 +36,9 @@ import java.util.Random;
 public class Controller{
     @FXML private VBox layout_vbox;
     @FXML private FlowPane layout_mainVPane;
-    @FXML private ImageView img_header;
+    @FXML private ImageView img_header_top;
+    @FXML private ImageView img_header_middle;
+    @FXML private ImageView img_header_bottom;
     @FXML private Accordion side_nav_bar;
     @FXML private ScrollPane main_content_pane;
     @FXML private HBox container_content_hBox;
@@ -45,6 +47,8 @@ public class Controller{
     @FXML private TitledPane pane;
 
     private int navigationBarFontSize = 15;
+    private static int currentHeaderIndex = -1;
+    private static ArrayList<String> headerImages = new ArrayList<>();
 
     ServerMonitorController serverMonitor;
     SolrMonitorController serviceMonitor;
@@ -73,16 +77,42 @@ public class Controller{
         container_content_hBox.setMinHeight(400);
 
         //Set Header image
-        img_header.setImage(getRandomHeaderImage());
+        Image topHeader = null;
+        Image bottomHeader = null;
+
+        File[] dir = new File("./Image/Headers").listFiles();
+        for(int i = 0; i < dir.length; i++){
+            if(dir[i].getName().contains("_top")){
+                topHeader = new Image(new File(dir[i].getPath()).toURI().toString());
+            }
+            if(dir[i].getName().contains("_bottom")){
+                bottomHeader = new Image(new File(dir[i].getPath()).toURI().toString());
+            }
+            if(dir[i].getName().contains("icon")){
+                stage.getIcons().add(new Image(new File(dir[i].getPath()).toURI().toString()));
+            }
+        }
+
+        dir = new File("./Image/Headers").listFiles();
+
+        for(int i = 0; i < dir.length - 1; i++){
+            if(dir[i].isFile() && !dir[i].getName().contains("_bottom") && !dir[i].getName().contains("_top")){
+                headerImages.add(dir[i].getPath());
+            }
+        }
+
+        img_header_top.setImage(topHeader);
+        img_header_middle.setImage(getRandomHeaderImage());
+        img_header_bottom.setImage(bottomHeader);
 
         SequentialTransition headerAnimation = new SequentialTransition();
-        FadeTransition fadeIn = fade(img_header, 0.0, 1.0);
+        FadeTransition fadeIn = fade(img_header_middle, 0.0, 1.0);
         PauseTransition pause = new PauseTransition(Duration.millis(Integer.parseInt(Global.propertyMap.get("Header_Change_Interval"))));
-        FadeTransition fadeOut = fade(img_header, 1.0, 0.0);
+        FadeTransition fadeOut = fade(img_header_middle, 1.0, 0.0);
         headerAnimation.getChildren().addAll(fadeIn, pause, fadeOut);
         headerAnimation.setOnFinished(e -> {
             try {
-                img_header.setImage(getRandomHeaderImage());
+                img_header_middle.setImage(getRandomHeaderImage());
                 headerAnimation.play();
             } catch (Exception e1) {
                 e1.printStackTrace();
@@ -138,23 +168,26 @@ public class Controller{
 
     private Image getRandomHeaderImage() throws Exception{
         Random random = new Random();
-        File[] dir = new File("./Image/Headers").listFiles();
 
-        ArrayList<String> headerImages = new ArrayList<>();
-
-        for(int i = 0; i < dir.length; i++){
-            if(dir[i].isFile()){
-                headerImages.add(dir[i].getPath());
+        String imageFilePath;
+        int nextHeaderIndex = -1;
+        while(true){
+            nextHeaderIndex = random.nextInt(headerImages.size());
+            if(nextHeaderIndex != currentHeaderIndex){
+                currentHeaderIndex = nextHeaderIndex;
+                imageFilePath = headerImages.get(currentHeaderIndex);
+                break;
             }
         }
 
-        File imageFile = new File(headerImages.get(random.nextInt(headerImages.size())));
+//        File imageFile = new File(headerImages.get(random.nextInt(headerImages.size())));
+        File imageFile = new File(imageFilePath);
         return new Image(imageFile.toURI().toString());
     }
 
     private FadeTransition fade(ImageView image, Double start, Double end) throws Exception{
         FadeTransition fade = new FadeTransition();
-        fade.setNode(img_header);
+        fade.setNode(img_header_middle);
         fade.setDuration(new Duration(1500));
         fade.setFromValue(start);
         fade.setToValue(end);

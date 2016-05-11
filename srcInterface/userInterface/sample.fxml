@@ -14,11 +14,9 @@
    <children>
       <VBox fx:id="layout_vbox" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT">
          <children>
-            <ImageView fx:id="img_header" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img_header.jpg" />
-               </image>
-            </ImageView>
+            <ImageView fx:id="img_header_top" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="img_header_middle" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="img_header_bottom" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
          </children>
       </VBox>
       <HBox fx:id="container_content_hBox" prefHeight="100.0" prefWidth="200.0">

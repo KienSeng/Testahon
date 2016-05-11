@@ -5,7 +5,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class Main extends Application {
 
@@ -26,7 +29,20 @@ public class Main extends Application {
         controller.setStage(primaryStage);
 
         Scene scene = new Scene(root);
+
+        File[] dir = new File("./Image").listFiles();
+        for(int i = 0; i < dir.length; i++){
+            if(dir[i].getName().contains("icon")){
+                primaryStage.getIcons().add(new Image(new File(dir[i].getPath()).toURI().toString()));
+            }
+        }
+
         scene.getStylesheets().add(getClass().getResource("StyleSheet.css").toExternalForm());
+//        try{
+//            primaryStage.getIcons().add(new Image("http://www.seek.com.au/content/images/logos/logo-seek-share.gif"));
+//        }catch(Exception e){
+//
+//        }
         primaryStage.setTitle("JSQA Dashboard");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1024);

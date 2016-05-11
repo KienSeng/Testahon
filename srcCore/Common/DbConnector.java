@@ -116,7 +116,6 @@ public class DbConnector {
         cs = Global.dbConnection.prepareCall(storedProcQuery);
 
         for(int i = 0; i < parameterArray.size(); i++){
-            System.out.println(parameterArray.get(i));
             String[] splittedString = parameterArray.get(i).split("\\|");
             String parameterType = splittedString[0];
             String parameterName = splittedString[1];

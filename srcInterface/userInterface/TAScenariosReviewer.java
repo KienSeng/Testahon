@@ -157,7 +157,6 @@ public class TAScenariosReviewer implements Initializable {
         ArrayList<String> parameterMap = new ArrayList<>();
         parameterMap.add("string|TestClass|" + inputTestClass);
 
-        System.out.println("string|TestClass|" + inputTestClass);
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
         ResultSet rs = null;
 
@@ -165,6 +164,10 @@ public class TAScenariosReviewer implements Initializable {
             layout_TableView_Container = new StackPane();
             layout_TableView_result = new TableView();
             layout_FlowPane_Main.getChildren().add(3, layout_TableView_Container);
+
+            layout_TableView_Container.getChildren().add(layout_TableView_result);
+            layout_TableView_Container.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
+            layout_TableView_result.prefWidthProperty().bind(layout_TableView_Container.widthProperty());
 
             rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
 
@@ -174,17 +177,19 @@ public class TAScenariosReviewer implements Initializable {
                 final int j = i;
                 column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(j).toString());
+                        try{
+                            return new SimpleStringProperty(param.getValue().get(j).toString());
+                        }catch(Exception e){
+                            return new SimpleStringProperty("N/A");
+                        }
                     }
                 });
+
                 column.setPrefWidth(250);
                 column.setEditable(false);
                 layout_TableView_result.getColumns().add(column);
             }
 
-            layout_TableView_Container.getChildren().add(layout_TableView_result);
-            layout_TableView_Container.prefWidthProperty().bind(layout_FlowPane_Main.widthProperty().subtract(30));
-            layout_TableView_result.prefWidthProperty().bind(layout_TableView_Container.widthProperty());
         } else {
             rs = db.executeStoredProc("{call sproc_ListTestCoverageByTestSuiteNameOrTestCaseName (?)}", parameterMap);
         }
