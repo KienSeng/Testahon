@@ -75,13 +75,13 @@ public class ManualDeploymentController implements Initializable {
             spr_buildInfoSeparator.setOrientation(Orientation.HORIZONTAL);
             spr_buildInfoSeparator.setPrefWidth(buildListWidth);
 
-            VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "", "LOADING...", "NA", false);
+            VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(allBuildName[i], "NA", "", "LOADING...", "NA", false);
             layout_FlowPane_MainJobContainer.getChildren().addAll(flowPane_LatestBuildInfoContainer, spr_buildInfoSeparator);
 
             //loop last N build of main job
             //to be move to thread
             for(int j = 0; j < listOfSubBuild; j++){
-                VBox flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest("NA", "", "LOADING...", "NA", false);
+                VBox flowPane_buildInfoContainer = generateBuildInfoFlowPaneLatest(allBuildName[i], "NA", "", "LOADING...", "NA", false);
                 layout_FlowPane_MainJobContainer.getChildren().add(flowPane_buildInfoContainer);
             }
 
@@ -95,7 +95,7 @@ public class ManualDeploymentController implements Initializable {
         }
     }
 
-    private VBox generateBuildInfoFlowPaneLatest(String buildNumber, String triggerTime, String triggerBy, String buildStatus, boolean isLatest) throws Exception{
+    private VBox generateBuildInfoFlowPaneLatest(String buildName, String buildNumber, String triggerTime, String triggerBy, String buildStatus, boolean isLatest) throws Exception{
         VBox layout_Vbox_buildInfoContainer = new VBox();
         FlowPane flowPane_buildNumberContainer = new FlowPane();
         FlowPane flowPane_buildStatusContainer = new FlowPane();
@@ -107,7 +107,7 @@ public class ManualDeploymentController implements Initializable {
 
         Button btn_deploy = new Button("DEPLOY THIS BUILD");
         btn_deploy.setOnAction(buttonEventHandler);
-        btn_deploy.setId(buildNumber);
+        btn_deploy.setId(buildName);
         btn_deploy.getStyleClass().addAll("button_standard", "button_standard_positive");
 
         layout_Vbox_buildInfoContainer.setPadding(new Insets(0,0,5,0));
@@ -180,7 +180,7 @@ public class ManualDeploymentController implements Initializable {
 
                         JenkinsApi jenkins = new JenkinsApi();
 
-                        jenkins.getResponseFromJenkins("http://jenkins.jobstreet.com:8080/view/SiVA_DEV/job/" + mainBuildJobName + "/api/json", "GET");
+                        jenkins.getResponseFromJenkins("http://jenkins.jobstreet.com:8080/view/job/" + mainBuildJobName + "/api/json", "GET");
                         ArrayList<String> buildList = jenkins.getLastBuildNumberExcludeLatest(listOfSubBuild);
                         String latestBuildUrl = jenkins.getMainJobBuildInfo().get("LatestBuildUrl");
 
@@ -195,7 +195,7 @@ public class ManualDeploymentController implements Initializable {
                                     VBox mainbuild_FlowPane = (VBox) layout_FlowPane_Main.getChildren().get(threadNum);
 
                                     mainbuild_FlowPane.getChildren().remove(0);
-                                    VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(mainJobBuildInfo.get("FullDisplayName"), mainJobBuildInfo.get("TriggerDateTime"), mainJobBuildInfo.get("TriggerBy"), mainJobBuildInfo.get("Result"), true);
+                                    VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(mainBuildJobName, mainJobBuildInfo.get("FullDisplayName"), mainJobBuildInfo.get("TriggerDateTime"), mainJobBuildInfo.get("TriggerBy"), mainJobBuildInfo.get("Result"), true);
                                     mainbuild_FlowPane.getChildren().add(0, flowPane_LatestBuildInfoContainer);
                                 }catch(Exception e){
                                     e.printStackTrace();
@@ -221,7 +221,7 @@ public class ManualDeploymentController implements Initializable {
                                         VBox mainbuild_FlowPane = (VBox) layout_FlowPane_Main.getChildren().get(threadNum);
 
                                         mainbuild_FlowPane.getChildren().remove(j + 2);
-                                        VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest(buildInfo.get("BuildNumber"), buildInfo.get("TriggerDateTime"), buildInfo.get("TriggerBy"), buildInfo.get("Result"), false);
+                                        VBox flowPane_LatestBuildInfoContainer = generateBuildInfoFlowPaneLatest("", buildInfo.get("BuildNumber"), buildInfo.get("TriggerDateTime"), buildInfo.get("TriggerBy"), buildInfo.get("Result"), false);
                                         mainbuild_FlowPane.getChildren().add(j + 2, flowPane_LatestBuildInfoContainer);
                                     }catch(Exception e){
                                         e.printStackTrace();
