@@ -662,7 +662,11 @@ public class TAScenarioController implements Initializable {
                     ArrayList<String> parameterArray = new ArrayList<>();
                     parameterArray.add("integer|" + "CaseDataId" + "|" + getCaseDataIdToDelete());
 
-                    db.executeStoredProc("{call sproc_Template_DeleteDataFromMasterTable (?)}", parameterArray);
+                    try{
+                        db.executeStoredProc("{call sproc_Template_DeleteDataFromMasterTable (?)}", parameterArray);
+                    }catch(Exception e){
+
+                    }
                     layout_stackPane_MainContent.getChildren().remove(1);
                     break;
 
